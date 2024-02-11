@@ -69,9 +69,10 @@ const InputText = ({
           onBlur={onBlur}
           placeholder={placeholder}
           style={styles.input}
+          secureTextEntry={hiddePassword!}
         />
         {isPassword && (
-          <TouchableOpacity onPress={setHidePassword!}>
+          <TouchableOpacity onPress={setHidePassword}>
             <FontAwesomeIcon
               icon={!hiddePassword ? faEye : faEyeSlash}
               size={25}
