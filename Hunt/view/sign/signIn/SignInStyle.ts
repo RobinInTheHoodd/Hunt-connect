@@ -23,11 +23,6 @@ const SignInStyle = (width: number, height: number) =>
       color: "white",
       fontWeight: "normal",
     },
-    errorMessage: {
-      color: "red",
-      fontSize: 14,
-      marginBottom: height * 0.02,
-    },
     whiteBackgroundContainer: {
       backgroundColor: "white",
       borderTopLeftRadius: width * 0.07,
@@ -37,32 +32,6 @@ const SignInStyle = (width: number, height: number) =>
       flex: 1,
       width: "100%",
       padding: "10%",
-    },
-    inputContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      borderBottomWidth: 1,
-      borderBottomColor: "#ccc",
-      marginBottom: height * 0.01,
-    },
-    invalidInput: {
-      borderBottomColor: "red",
-    },
-    validInput: {
-      borderBottomColor: "green",
-    },
-    icon: {
-      marginRight: 10,
-    },
-    inputTag: {
-      color: "green",
-      fontWeight: "bold",
-      fontSize: width * 0.04,
-    },
-    input: {
-      flex: 1,
-      paddingVertical: height * 0.01,
-      paddingHorizontal: width * 0.02,
     },
     forgotPassword: {
       alignSelf: "flex-end",

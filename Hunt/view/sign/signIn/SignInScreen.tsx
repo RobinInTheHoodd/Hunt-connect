@@ -26,6 +26,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignInStyle from "./SignInStyle";
+import InputText from "../../../components/Input/InputText";
 
 export default function SignInScreen() {
   const { height, width } = useWindowDimensions();
@@ -66,68 +67,43 @@ export default function SignInScreen() {
         </View>
 
         <View style={styles.whiteBackgroundContainer}>
-          <Text style={styles.inputTag}>
-            Email<Text style={{ color: "red" }}> *</Text>
-          </Text>
+          <InputText
+            tagName={"Email"}
+            value={signForm.email}
+            onChangeText={(value) => {
+              setSignForm({ ...signForm, email: value });
+              if (!emailTouched) setEmailTouched(true);
+              setIsEmailValid(UtilsSign.validateEmail(value));
+            }}
+            onBlur={() => signForm.email == "" && setEmailTouched(false)}
+            placeholder="Email"
+            iconName={faEnvelope}
+            isTouched={emailTouched}
+            isValid={isEmailValid}
+            errorMessage={emailError}
+            require={true}
+            isPassword={false}
+          />
 
-          <View
-            style={[
-              styles.inputContainer,
-              emailTouched &&
-                (isEmailValid ? styles.validInput : styles.invalidInput),
-            ]}
-          >
-            <FontAwesomeIcon icon={faEnvelope} style={styles.icon} />
-            <TextInput
-              value={signForm.email}
-              onChangeText={(value) => {
-                setSignForm({ ...signForm, email: value });
-                if (!emailTouched) setEmailTouched(true);
-                setIsEmailValid(UtilsSign.validateEmail(value));
-              }}
-              onBlur={() => signForm.email == "" && setEmailTouched(false)}
-              placeholder="Email"
-              style={styles.input}
-            />
-          </View>
-
-          <Text style={styles.errorMessage}>
-            {emailError !== "" && emailError}
-          </Text>
-
-          <Text style={styles.inputTag}>
-            Password<Text style={{ color: "red" }}> *</Text>
-          </Text>
-          <View
-            style={[
-              styles.inputContainer,
-              passwordTouched &&
-                (isPasswordValid ? styles.validInput : styles.invalidInput),
-            ]}
-          >
-            <FontAwesomeIcon icon={faLock} style={styles.icon} />
-            <TextInput
-              value={signForm.password}
-              onChangeText={(value) => {
-                setSignForm({ ...signForm, password: value });
-                if (!passwordTouched) setPasswordTouched(true);
-                setIsPasswordValid(UtilsSign.validatePassword(value));
-              }}
-              onBlur={() => signForm.password == "" && setEmailTouched(false)}
-              placeholder="Password"
-              secureTextEntry={hidePassword}
-              style={styles.input}
-            />
-            <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
-              <FontAwesomeIcon
-                icon={!hidePassword ? faEye : faEyeSlash}
-                size={25}
-              ></FontAwesomeIcon>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.errorMessage}>
-            {passwordError !== "" && passwordError}
-          </Text>
+          <InputText
+            tagName={"Password"}
+            value={signForm.password}
+            onChangeText={(value) => {
+              setSignForm({ ...signForm, password: value });
+              if (!passwordTouched) setPasswordTouched(true);
+              setIsPasswordValid(UtilsSign.validateEmail(value));
+            }}
+            onBlur={() => signForm.password == "" && setPasswordTouched(false)}
+            placeholder="Password"
+            iconName={faLock}
+            isTouched={passwordTouched}
+            isValid={isPasswordValid}
+            errorMessage={passwordError}
+            require={true}
+            isPassword={true}
+            setHidePassword={() => setHidePassword(!hidePassword)}
+            hiddePassword={hidePassword}
+          />
 
           <TouchableOpacity style={styles.forgotPassword}>
             <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
