@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faL, faLock } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { UtilsSign } from "../service/sign/utils";
 
@@ -16,6 +16,12 @@ export default function SignInScreen() {
     email: "",
     password: "",
   });
+
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -32,26 +38,44 @@ export default function SignInScreen() {
 
         <View style={styles.whiteBackgroundContainer}>
           <Text style={styles.inputTag}>Email</Text>
-          <View style={styles.inputContainer}>
+          <View
+            style={[
+              styles.inputContainer,
+              emailTouched &&
+                (isEmailValid ? styles.validInput : styles.invalidInput),
+            ]}
+          >
             <FontAwesomeIcon icon={faEnvelope} style={styles.icon} />
             <TextInput
               value={signForm.email}
-              onChangeText={(value) =>
-                setSignForm({ ...signForm, email: value })
-              }
+              onChangeText={(value) => {
+                setSignForm({ ...signForm, email: value });
+                if (!emailTouched) setEmailTouched(true);
+                setIsEmailValid(UtilsSign.validateEmail(value));
+              }}
+              onBlur={() => signForm.email == "" && setEmailTouched(false)}
               placeholder="Email"
               style={styles.input}
             />
           </View>
 
           <Text style={styles.inputTag}>Password</Text>
-          <View style={styles.inputContainer}>
+          <View
+            style={[
+              styles.inputContainer,
+              passwordTouched &&
+                (isPasswordValid ? styles.validInput : styles.invalidInput),
+            ]}
+          >
             <FontAwesomeIcon icon={faLock} style={styles.icon} />
             <TextInput
               value={signForm.password}
-              onChangeText={(value) =>
-                setSignForm({ ...signForm, password: value })
-              }
+              onChangeText={(value) => {
+                setSignForm({ ...signForm, password: value });
+                if (!passwordTouched) setPasswordTouched(true);
+                setIsPasswordValid(UtilsSign.validatePassword(value));
+              }}
+              onBlur={() => signForm.password == "" && setEmailTouched(false)}
               placeholder="Password"
               secureTextEntry
               style={styles.input}
@@ -126,6 +150,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     marginBottom: 20,
+  },
+  invalidInput: {
+    borderBottomColor: "red",
+  },
+  validInput: {
+    borderBottomColor: "green",
   },
   icon: {
     marginRight: 10,
