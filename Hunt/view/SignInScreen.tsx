@@ -9,10 +9,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { UtilsSign } from "../service/sign/utils";
 
 export default function SignInScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [signForm, setSignForm] = useState<SignInForm>({
+    email: "",
+    password: "",
+  });
 
   return (
     <View style={styles.container}>
@@ -32,8 +35,10 @@ export default function SignInScreen() {
           <View style={styles.inputContainer}>
             <FontAwesomeIcon icon={faEnvelope} style={styles.icon} />
             <TextInput
-              value={email}
-              onChangeText={setEmail}
+              value={signForm.email}
+              onChangeText={(value) =>
+                setSignForm({ ...signForm, email: value })
+              }
               placeholder="Email"
               style={styles.input}
             />
@@ -43,8 +48,10 @@ export default function SignInScreen() {
           <View style={styles.inputContainer}>
             <FontAwesomeIcon icon={faLock} style={styles.icon} />
             <TextInput
-              value={password}
-              onChangeText={setPassword}
+              value={signForm.password}
+              onChangeText={(value) =>
+                setSignForm({ ...signForm, password: value })
+              }
               placeholder="Password"
               secureTextEntry
               style={styles.input}
@@ -55,7 +62,10 @@ export default function SignInScreen() {
             <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.signInButton} onPress={() => {}}>
+          <TouchableOpacity
+            style={styles.signInButton}
+            onPress={() => console.log(UtilsSign.validateEmail(signForm.email))}
+          >
             <LinearGradient
               colors={["#556b2f", "#8b4513"]}
               start={{ x: 0, y: 0.5 }}
