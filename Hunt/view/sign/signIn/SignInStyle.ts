@@ -23,6 +23,11 @@ const SignInStyle = (width: number, height: number) =>
       color: "white",
       fontWeight: "normal",
     },
+    errorMessage: {
+      color: "red",
+      fontSize: 14,
+      marginBottom: height * 0.02,
+    },
     whiteBackgroundContainer: {
       backgroundColor: "white",
       borderTopLeftRadius: width * 0.07,
@@ -38,7 +43,7 @@ const SignInStyle = (width: number, height: number) =>
       alignItems: "center",
       borderBottomWidth: 1,
       borderBottomColor: "#ccc",
-      marginBottom: height * 0.06,
+      marginBottom: height * 0.01,
     },
     invalidInput: {
       borderBottomColor: "red",
@@ -85,7 +90,7 @@ const SignInStyle = (width: number, height: number) =>
     signUpContainer: {
       justifyContent: "flex-end",
       alignItems: "flex-end",
-      marginTop: height * 0.1,
+      marginTop: height * 0.05,
     },
     textNormal: {
       fontSize: width * 0.04,
@@ -96,6 +101,46 @@ const SignInStyle = (width: number, height: number) =>
       color: "black",
       marginTop: 5,
       fontWeight: "bold",
+    },
+    footerContainer: {
+      justifyContent: "flex-end",
+      alignItems: "center",
+    },
+    socialMediaLoginText: {
+      fontSize: 14,
+      color: "black",
+      paddingVertical: height * 0.04,
+    },
+    socialMediaIcons: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    socialIcon: {
+      marginHorizontal: width * 0.05,
+      backgroundColor: "black",
+      borderRadius: width + height / 2,
+      width: width * 0.1,
+      height: height * 0.1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: width * 0.1,
+    },
+    iconButton: {
+      marginHorizontal: width * 0.05,
+      borderRadius: (width * 0.19) / 2,
+      width: width * 0.19,
+      height: width * 0.19,
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 20,
+      elevation: 10,
     },
   });
 

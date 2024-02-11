@@ -8,7 +8,21 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEnvelope, faL, faLock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faGoogle,
+  faApple,
+  faInstagram,
+  faTwitter,
+  faFacebookF,
+} from "@fortawesome/free-brands-svg-icons";
+
+import {
+  faEnvelope,
+  faEye,
+  faEyeSlash,
+  faL,
+  faLock,
+} from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignInStyle from "./SignInStyle";
@@ -27,6 +41,16 @@ export default function SignInScreen() {
 
   const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
+
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [hidePassword, setHidePassword] = useState(true);
+
+  const validateEmail = () => {
+    setEmailError(isEmailValid ? "" : "Adresse email invalide");
+    setPasswordError(isEmailValid ? "" : "password invalide");
+  };
 
   return (
     <View style={styles.container}>
@@ -67,6 +91,10 @@ export default function SignInScreen() {
             />
           </View>
 
+          <Text style={styles.errorMessage}>
+            {emailError !== "" && emailError}
+          </Text>
+
           <Text style={styles.inputTag}>
             Password<Text style={{ color: "red" }}> *</Text>
           </Text>
@@ -87,10 +115,19 @@ export default function SignInScreen() {
               }}
               onBlur={() => signForm.password == "" && setEmailTouched(false)}
               placeholder="Password"
-              secureTextEntry
+              secureTextEntry={hidePassword}
               style={styles.input}
             />
+            <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
+              <FontAwesomeIcon
+                icon={!hidePassword ? faEye : faEyeSlash}
+                size={25}
+              ></FontAwesomeIcon>
+            </TouchableOpacity>
           </View>
+          <Text style={styles.errorMessage}>
+            {passwordError !== "" && passwordError}
+          </Text>
 
           <TouchableOpacity style={styles.forgotPassword}>
             <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
@@ -98,7 +135,7 @@ export default function SignInScreen() {
 
           <TouchableOpacity
             style={styles.signInButton}
-            onPress={() => console.log(UtilsSign.validateEmail(signForm.email))}
+            onPress={() => validateEmail()}
           >
             <LinearGradient
               colors={["#556b2f", "#8b4513"]}
@@ -109,6 +146,50 @@ export default function SignInScreen() {
               <Text style={styles.signInButtonText}>SE CONNECTER</Text>
             </LinearGradient>
           </TouchableOpacity>
+
+          <View style={styles.footerContainer}>
+            <Text style={styles.socialMediaLoginText}>
+              Connectez-vous avec les réseaux sociaux
+            </Text>
+            <View style={styles.socialMediaIcons}>
+              <LinearGradient
+                colors={["#556b2f", "#8b4513"]}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.iconButton}
+              >
+                <TouchableOpacity activeOpacity={0.7}>
+                  <FontAwesomeIcon icon={faGoogle} size={40} color="#ffffff" />
+                </TouchableOpacity>
+              </LinearGradient>
+
+              <LinearGradient
+                colors={["#556b2f", "#8b4513"]}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.iconButton}
+              >
+                <TouchableOpacity activeOpacity={0.7}>
+                  <FontAwesomeIcon icon={faApple} size={40} color="#ffffff" />
+                </TouchableOpacity>
+              </LinearGradient>
+
+              <LinearGradient
+                colors={["#556b2f", "#8b4513"]}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.iconButton}
+              >
+                <TouchableOpacity activeOpacity={0.7}>
+                  <FontAwesomeIcon
+                    icon={faFacebookF}
+                    size={40}
+                    color="#ffffff"
+                  />
+                </TouchableOpacity>
+              </LinearGradient>
+            </View>
+          </View>
 
           <View style={styles.signUpContainer}>
             <Text style={styles.textNormal}>Vous n'avez pas de compte ?</Text>
