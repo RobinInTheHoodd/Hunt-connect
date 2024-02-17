@@ -30,7 +30,10 @@ Hunt/.DS_Store
 Hunt/*.pem
 
 # local env files
-Hunt/.env*.local
+Hunt/.env*
+server/.env*
+.env
+.env*
 
 # typescript
 Hunt/*.tsbuildinfo

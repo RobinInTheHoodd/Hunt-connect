@@ -29,7 +29,20 @@ import InputText from "../../../components/Input/InputText";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignUpStyle from "./SignUpStyle";
 
+import axios from "../../../config/axiosConfig";
+
 export default function SignUpScreen() {
+  const api = () => {
+    axios
+      .get("/test")
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
+  };
+
   const { height, width } = useWindowDimensions();
   const styles = SignUpStyle(width, height);
   const [signForm, setSignForm] = useState<SignUpForm>({
@@ -383,7 +396,7 @@ export default function SignUpScreen() {
 
             <View style={styles.footerContainer}>
               <Text style={styles.footerText}>Vous n'avez pas de compte ?</Text>
-              <TouchableOpacity onPress={() => console.log("Pas de compte")}>
+              <TouchableOpacity onPress={api}>
                 <Text style={styles.signUpText}>Se connecter</Text>
               </TouchableOpacity>
             </View>
