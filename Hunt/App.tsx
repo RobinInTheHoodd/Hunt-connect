@@ -6,7 +6,7 @@ import SignUpScreen from "./view/sign/signUp/SignUpScreen";
 export default function App() {
   return (
     <View style={styles.container}>
-      <SignUpScreen />
+      <SignInScreen />
     </View>
   );
 }

@@ -195,6 +195,14 @@ export default function SignUpScreen() {
               isPassword={false}
             />
 
+            <View
+              style={{
+                flexDirection: "row", // Aligner les enfants horizontalement
+                justifyContent: "space-between", // Ajuste cela pour changer l'espacement entre les éléments
+                alignItems: "center",
+              }}
+            ></View>
+
             <InputText
               tagName={"Mot de passe"}
               value={signForm.password}
@@ -425,7 +433,8 @@ const SignInStyle = (width: number, height: number) =>
     button: {
       padding: 0,
       borderRadius: 20,
-      marginTop: 30,
+      marginTop: 20,
+      paddingBottom: 10,
       width: "80%",
       alignSelf: "center",
       overflow: "hidden",
@@ -445,8 +454,7 @@ const SignInStyle = (width: number, height: number) =>
     footerContainer: {
       justifyContent: "flex-end",
       alignItems: "flex-end",
-      paddingVertical: 20,
-      marginTop: 50,
+      paddingTop: 10,
     },
     footerText: {
       fontSize: 16,

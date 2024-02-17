@@ -80,7 +80,13 @@ const InputText = ({
           </TouchableOpacity>
         )}
       </View>
-      <Text style={styles.errorMessage}>
+
+      <Text
+        style={[
+          styles.errorMessage,
+          { marginBottom: errorMessage === "" ? -20 : height * 0.02 },
+        ]}
+      >
         {errorMessage !== "" && errorMessage}
       </Text>
     </>
@@ -120,6 +126,5 @@ const InputTextStyle = (width: number, height: number) =>
     errorMessage: {
       color: "red",
       fontSize: 14,
-      marginBottom: height * 0.02,
     },
   });
