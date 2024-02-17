@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start": "npm-run-all --parallel start-server start-expo",
+    "start-server": "cd server && npm start",
+    "start-expo": "cd Hunt && npm start"
+  },
+  "dependencies": {
+    "parallelshell": "^3.0.2"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
