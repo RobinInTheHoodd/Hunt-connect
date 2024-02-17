@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import SignUpScreen from "./SignUpScreen";
 
-const SignUpStyle = (screenWidth: number, screenHeight: number) =>
+const SignUpStyle = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -10,67 +10,67 @@ const SignUpStyle = (screenWidth: number, screenHeight: number) =>
       flex: 1,
     },
     headerContainer: {
-      paddingHorizontal: screenWidth * 0.08,
-      paddingTop: screenHeight * 0.1,
+      paddingHorizontal: width * 0.08,
+      paddingTop: height * 0.1,
       alignItems: "flex-start",
     },
     headerText: {
-      fontSize: screenWidth * 0.09,
+      fontSize: width * 0.09,
       color: "white",
       fontWeight: "bold",
     },
     whiteBackgroundContainer: {
       backgroundColor: "white",
-      borderTopLeftRadius: screenWidth * 0.07,
-      borderTopRightRadius: screenWidth * 0.07,
-      marginTop: screenHeight * 0.05,
-      paddingTop: screenHeight * 0.05,
+      borderTopLeftRadius: width * 0.07,
+      borderTopRightRadius: width * 0.07,
+      marginTop: height * 0.05,
+      paddingTop: "10%",
       flex: 1,
       width: "100%",
-      padding: screenWidth * 0.05,
+      padding: "10%",
     },
     input: {
       flex: 1,
-      padding: screenWidth * 0.02,
+      padding: width * 0.02,
     },
     icon: {
       color: "#6D3358",
-      marginRight: screenWidth * 0.02,
+      marginRight: width * 0.02,
     },
     button: {
       padding: 0,
-      borderRadius: screenWidth * 0.05,
-      marginTop: screenHeight * 0.03,
-      paddingBottom: screenHeight * 0.01,
+      borderRadius: width * 0.05,
+      marginTop: height * 0.03,
+      paddingBottom: height * 0.01,
       width: "80%",
       alignSelf: "center",
       overflow: "hidden",
     },
     buttonGradient: {
-      paddingVertical: screenHeight * 0.015,
-      paddingHorizontal: screenWidth * 0.09,
-      borderRadius: screenWidth * 0.05,
+      paddingVertical: height * 0.015,
+      paddingHorizontal: width * 0.09,
+      borderRadius: width * 0.05,
       alignItems: "center",
       justifyContent: "center",
     },
     buttonText: {
-      fontSize: screenWidth * 0.045,
+      fontSize: width * 0.045,
       color: "white",
       fontWeight: "bold",
     },
     footerContainer: {
       justifyContent: "flex-end",
       alignItems: "flex-end",
-      paddingTop: screenHeight * 0.05,
+      paddingTop: height * 0.02,
     },
     footerText: {
-      fontSize: screenWidth * 0.04,
+      fontSize: width * 0.04,
       color: "gray",
     },
     signUpText: {
-      fontSize: screenWidth * 0.045,
+      fontSize: width * 0.045,
       color: "black",
-      marginTop: screenHeight * 0.005,
+      marginTop: height * 0.005,
       fontWeight: "bold",
     },
     switchContainer: {
@@ -84,8 +84,8 @@ const SignUpStyle = (screenWidth: number, screenHeight: number) =>
       alignItems: "center",
     },
     image: {
-      width: screenWidth * 0.9,
-      height: screenHeight * 0.3,
+      width: width * 0.9,
+      height: height * 0.3,
     },
   });
 

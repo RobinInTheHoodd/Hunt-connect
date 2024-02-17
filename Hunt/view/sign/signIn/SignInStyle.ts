@@ -9,12 +9,12 @@ const SignInStyle = (width: number, height: number) =>
       flex: 1,
     },
     headerContainer: {
-      paddingHorizontal: "8%",
+      paddingHorizontal: width * 0.08,
       paddingTop: height * 0.1,
       alignItems: "flex-start",
     },
     headerText: {
-      fontSize: width * 0.08,
+      fontSize: width * 0.09,
       color: "white",
       fontWeight: "bold",
     },
