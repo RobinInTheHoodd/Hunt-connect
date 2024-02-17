@@ -27,10 +27,11 @@ import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
 import InputText from "../../../components/Input/InputText";
 import { UtilsSign } from "../../../service/sign/utils";
+import SignUpStyle from "./SignUpStyle";
 
 export default function SignUpScreen() {
   const { height, width } = useWindowDimensions();
-  const styles = SignInStyle(width, height);
+  const styles = SignUpStyle(width, height);
   const [signForm, setSignForm] = useState<SignUpForm>({
     fullName: "",
     fullNameTouched: false,
@@ -392,92 +393,3 @@ export default function SignUpScreen() {
     </GestureHandlerRootView>
   );
 }
-
-const SignInStyle = (width: number, height: number) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    gradient: {
-      flex: 1,
-    },
-    headerContainer: {
-      paddingHorizontal: 30,
-      paddingTop: 100,
-      alignItems: "flex-start",
-    },
-    headerText: {
-      fontSize: 35,
-      color: "white",
-      fontWeight: "bold",
-    },
-    whiteBackgroundContainer: {
-      backgroundColor: "white",
-      borderTopLeftRadius: width * 0.07,
-      borderTopRightRadius: width * 0.07,
-      marginTop: height * 0.05,
-      paddingTop: "10%",
-      flex: 1,
-      width: "100%",
-      padding: "10%",
-    },
-
-    input: {
-      flex: 1,
-      padding: 10,
-    },
-    icon: {
-      color: "#6D3358",
-      marginRight: 10,
-    },
-    button: {
-      padding: 0,
-      borderRadius: 20,
-      marginTop: 20,
-      paddingBottom: 10,
-      width: "80%",
-      alignSelf: "center",
-      overflow: "hidden",
-    },
-    buttonGradient: {
-      paddingVertical: 12,
-      paddingHorizontal: 36,
-      borderRadius: 20,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    buttonText: {
-      fontSize: 18,
-      color: "white",
-      fontWeight: "bold",
-    },
-    footerContainer: {
-      justifyContent: "flex-end",
-      alignItems: "flex-end",
-      paddingTop: 10,
-    },
-    footerText: {
-      fontSize: 16,
-      color: "gray",
-    },
-    signUpText: {
-      fontSize: 18,
-      color: "black",
-      marginTop: 5,
-      fontWeight: "bold",
-    },
-    switchContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    imageContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    image: {
-      width: 350,
-      height: 250,
-    },
-  });
