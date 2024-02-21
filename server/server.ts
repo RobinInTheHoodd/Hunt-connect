@@ -1,5 +1,7 @@
 import express from "express";
 import * as bodyParser from "body-parser";
+
+import verifyTokenMiddleware from "./middleware/authMiddleware";
 import router from "./routes/index";
 
 const app = express();
@@ -8,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+app.use(verifyTokenMiddleware);
 app.use(router);
 
 app.listen(PORT, () => {
