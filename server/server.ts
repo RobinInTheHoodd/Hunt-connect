@@ -1,12 +1,14 @@
 import express from "express";
 import * as bodyParser from "body-parser";
-
 import verifyTokenMiddleware from "./middleware/authMiddleware";
 import router from "./routes/index";
+import pool from "./db/pgPool";
+
+require("dotenv").config();
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_PORT;
 
 app.use(bodyParser.json());
 
