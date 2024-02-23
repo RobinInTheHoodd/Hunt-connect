@@ -12,6 +12,7 @@ const errorPostgresMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(err);
   if (err.errorType == "postgres") {
     switch (err.code) {
       case "23505":
@@ -72,7 +73,10 @@ const errorPostgresMiddleware = (
           invalidValue: invalidValue,
         });
       default:
-        next(err);
+        return res.status(500).json({
+          message: "Erreur interne du serveur.",
+          field: "unknown",
+        });
     }
   }
   next(err);
