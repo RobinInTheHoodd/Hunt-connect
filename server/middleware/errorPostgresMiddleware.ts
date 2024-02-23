@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import e, { Request, Response, NextFunction } from "express";
 
 export interface DatabaseError extends Error {
   errorType: string;
@@ -12,7 +12,6 @@ const errorPostgresMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(err);
   if (err.errorType == "postgres") {
     switch (err.code) {
       case "23505":
@@ -79,6 +78,7 @@ const errorPostgresMiddleware = (
         });
     }
   }
+
   next(err);
 };
 

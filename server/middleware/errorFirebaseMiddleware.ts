@@ -73,3 +73,5 @@ const errorFirebaseMiddleware = (
     }
   } else next(err);
 };
+
+export default errorFirebaseMiddleware;

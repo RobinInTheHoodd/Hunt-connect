@@ -1,8 +1,7 @@
 import firebase from "../config/firebaseConfig";
 import RegisterRequest from "../models/auth/registerRequest";
-import pool from "../db/pgPool";
 import userDataAccess from "../repository/userDataAccess";
-import { FirebaseError } from "firebase-admin";
+import { FirebaseError } from "../middleware/errorFirebaseMiddleware";
 
 const register = async (register: RegisterRequest): Promise<string> => {
   try {
@@ -35,7 +34,7 @@ const firebaseRegister = async (register: RegisterRequest) => {
 
     return { register, customeToken };
   } catch (err: any) {
-    const firebaseError = {
+    const firebaseError: FirebaseError = {
       name: "FirebaseError",
       message: "Une erreur de firebase s'est produite",
       errorType: "firebase",

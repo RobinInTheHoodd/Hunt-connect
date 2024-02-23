@@ -3,6 +3,7 @@ import * as bodyParser from "body-parser";
 import verifyTokenMiddleware from "./middleware/authMiddleware";
 import router from "./routes/index";
 import errorPostgresMiddleware from "./middleware/errorPostgresMiddleware";
+import errorFirebaseMiddleware from "./middleware/errorFirebaseMiddleware";
 require("dotenv").config();
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(verifyTokenMiddleware);
 app.use(router);
 
 app.use(errorPostgresMiddleware);
+app.use(errorFirebaseMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
