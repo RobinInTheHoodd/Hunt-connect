@@ -3,15 +3,14 @@ import RegisterRequest from "../models/auth/registerRequest";
 import pool from "../db/pgPool";
 import userDataAccess from "../repository/userDataAccess";
 
-const register = async (register: RegisterRequest) => {
+const register = async (register: RegisterRequest): Promise<string> => {
   try {
     const user = await firebaseRegister(register);
 
-    userDataAccess.createUser(user!.register);
+    await userDataAccess.createUser(register);
 
     return user!.customeToken;
   } catch (e) {
-    console.log(e);
     throw e;
   }
 };

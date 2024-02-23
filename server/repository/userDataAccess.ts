@@ -2,8 +2,9 @@
 import e from "express";
 import pool from "../db/pgPool";
 import RegisterRequest from "../models/auth/registerRequest";
+import { DatabaseError } from "../middleware/errorPostgresMiddleware";
 
-const createUser = async (user: RegisterRequest) => {
+const createUser = async (user: RegisterRequest): Promise<any> => {
   const sql =
     "INSERT INTO udb.USERS " +
     "(" +
@@ -16,7 +17,7 @@ const createUser = async (user: RegisterRequest) => {
     "$1, $2, $3, $4, $5, $6, $7, $8" +
     ");";
 
-  const value = [
+  const values = [
     user.UUID,
     user.display_name,
     user.email,
@@ -26,13 +27,19 @@ const createUser = async (user: RegisterRequest) => {
     user.hut_name,
     user.hut_number,
   ];
-  pool.query(sql, value, (err, res) => {
-    if (err) {
-      throw err;
-    } else {
-      return res.rows[0];
-    }
-  });
+  try {
+    const res = await pool.query(sql, values);
+    return res.rows[0];
+  } catch (err: any) {
+    const errorDatabase: DatabaseError = {
+      name: "DatabaseError",
+      message: "Une erreur de base de données s'est produite",
+      errorType: "postgres",
+      code: err.code,
+      detail: err.detail,
+    };
+    throw errorDatabase;
+  }
 };
 
 export default { createUser };
