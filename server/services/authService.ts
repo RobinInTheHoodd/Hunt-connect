@@ -5,11 +5,11 @@ import userDataAccess from "../repository/userDataAccess";
 
 const register = async (register: RegisterRequest) => {
   try {
-    //    const user = await firebaseRegister(register);
-    register.UUID = "dffdsfds";
-    userDataAccess.createUser(register);
+    const user = await firebaseRegister(register);
 
-    return "BONJOUR";
+    userDataAccess.createUser(user!.register);
+
+    return user!.customeToken;
   } catch (e) {
     console.log(e);
     throw e;
@@ -35,7 +35,7 @@ const firebaseRegister = async (register: RegisterRequest) => {
 
     return { register, customeToken };
   } catch (e) {
-    console.log(e);
+    throw e;
   }
 };
 
