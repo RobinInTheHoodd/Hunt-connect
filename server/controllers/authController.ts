@@ -8,7 +8,9 @@ const register = async (req: Request, res: Response) => {
     const customToken = await authService.register(registerReq);
     console.log(customToken);
     res.send(customToken);
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 export default {
