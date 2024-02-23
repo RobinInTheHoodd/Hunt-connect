@@ -2,6 +2,7 @@ import firebase from "../config/firebaseConfig";
 import RegisterRequest from "../models/auth/registerRequest";
 import pool from "../db/pgPool";
 import userDataAccess from "../repository/userDataAccess";
+import { FirebaseError } from "firebase-admin";
 
 const register = async (register: RegisterRequest): Promise<string> => {
   try {
@@ -33,8 +34,16 @@ const firebaseRegister = async (register: RegisterRequest) => {
     );
 
     return { register, customeToken };
-  } catch (e) {
-    throw e;
+  } catch (err: any) {
+    const firebaseError = {
+      name: "FirebaseError",
+      message: "Une erreur de firebase s'est produite",
+      errorType: "firebase",
+      code: err.code,
+      detail: err.message,
+    };
+
+    throw firebaseError;
   }
 };
 
