@@ -1,51 +1,54 @@
 import firebase from "../config/firebaseConfig";
 import RegisterRequest from "../models/auth/registerRequest";
-import userDataAccess from "../repository/userDataAccess";
+
 import { FirebaseError } from "../middleware/errorFirebaseMiddleware";
+import UserDataAccess from "../repository/userDataAccess";
 
-const register = async (register: RegisterRequest): Promise<string> => {
-  try {
-    const user = await firebaseRegister(register);
+export default class AuthService {
+  private _userDatabase: UserDataAccess = new UserDataAccess();
 
-    await userDataAccess.createUser(register);
+  constructor() {}
 
-    return user!.customeToken;
-  } catch (e) {
-    throw e;
-  }
-};
+  public register = async (register: RegisterRequest): Promise<string> => {
+    try {
+      const user = await this._firebaseRegister(register);
 
-const firebaseRegister = async (register: RegisterRequest) => {
-  try {
-    const userRecord = await firebase.firebaseAuth.createUser({
-      displayName: register.display_name,
-      email: register.email,
-      emailVerified: false,
-      password: register.password,
-      phoneNumber: register.phone,
-      disabled: false,
-    });
+      await this._userDatabase.createUser(register);
 
-    register.UUID = userRecord.uid;
+      return user!.customeToken;
+    } catch (e) {
+      throw e;
+    }
+  };
 
-    const customeToken = await firebase.firebaseAuth.createCustomToken(
-      userRecord.uid
-    );
+  private _firebaseRegister = async (register: RegisterRequest) => {
+    try {
+      const userRecord = await firebase.firebaseAuth.createUser({
+        displayName: register.display_name,
+        email: register.email,
+        emailVerified: false,
+        password: register.password,
+        phoneNumber: register.phone,
+        disabled: false,
+      });
 
-    return { register, customeToken };
-  } catch (err: any) {
-    const firebaseError: FirebaseError = {
-      name: "FirebaseError",
-      message: "Une erreur de firebase s'est produite",
-      errorType: "firebase",
-      code: err.code,
-      detail: err.message,
-    };
+      register.UUID = userRecord.uid;
 
-    throw firebaseError;
-  }
-};
+      const customeToken = await firebase.firebaseAuth.createCustomToken(
+        userRecord.uid
+      );
 
-export default {
-  register,
-};
+      return { register, customeToken };
+    } catch (err: any) {
+      const firebaseError: FirebaseError = {
+        name: "FirebaseError",
+        message: "Une erreur de firebase s'est produite",
+        errorType: "firebase",
+        code: err.code,
+        detail: err.message,
+      };
+
+      throw firebaseError;
+    }
+  };
+}
