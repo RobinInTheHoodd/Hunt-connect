@@ -1,14 +1,11 @@
-// userDataAccess.js
-import e from "express";
 import pool from "../db/pgPool";
 import RegisterRequest from "../models/auth/registerRequest";
 import { DatabaseError } from "../middleware/errorPostgresMiddleware";
-import { Query } from "firebase-admin/database";
 
-export default class UserDataAccess {
+class UserDataAccess {
   constructor() {}
 
-  public createUser = async (user: RegisterRequest): Promise<any> => {
+  public async createUser(user: RegisterRequest): Promise<any> {
     const sql =
       "INSERT INTO udb.USERS " +
       "(" +
@@ -33,7 +30,7 @@ export default class UserDataAccess {
     ];
     try {
       const res = await pool.query(sql, values);
-      return res.rows[0];
+      return;
     } catch (err: any) {
       const errorDatabase: DatabaseError = {
         name: "DatabaseError",
@@ -44,5 +41,8 @@ export default class UserDataAccess {
       };
       throw errorDatabase;
     }
-  };
+  }
 }
+
+const userDataAccess = new UserDataAccess();
+export default userDataAccess as UserDataAccess;

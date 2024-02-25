@@ -1,29 +1,29 @@
-import firebase from "../config/firebaseConfig";
+import { FirebaseAdminSingleton } from "../config/firebaseConfig";
 import RegisterRequest from "../models/auth/registerRequest";
 
 import { FirebaseError } from "../middleware/errorFirebaseMiddleware";
-import UserDataAccess from "../repository/userDataAccess";
+import userDataAccess from "../repository/userDataAccess";
 
-export default class AuthService {
-  private _userDatabase: UserDataAccess = new UserDataAccess();
+class AuthService {
+  private _firebaseAuth = FirebaseAdminSingleton.getFirebaseAuth();
 
   constructor() {}
 
-  public register = async (register: RegisterRequest): Promise<string> => {
+  public async register(register: RegisterRequest): Promise<string> {
     try {
       const user = await this._firebaseRegister(register);
 
-      await this._userDatabase.createUser(register);
+      await userDataAccess.createUser(register);
 
       return user!.customeToken;
-    } catch (e) {
+    } catch (e: any) {
       throw e;
     }
-  };
+  }
 
-  private _firebaseRegister = async (register: RegisterRequest) => {
+  private async _firebaseRegister(register: RegisterRequest) {
     try {
-      const userRecord = await firebase.firebaseAuth.createUser({
+      const userRecord = await this._firebaseAuth.createUser({
         displayName: register.display_name,
         email: register.email,
         emailVerified: false,
@@ -34,7 +34,7 @@ export default class AuthService {
 
       register.UUID = userRecord.uid;
 
-      const customeToken = await firebase.firebaseAuth.createCustomToken(
+      const customeToken = await this._firebaseAuth.createCustomToken(
         userRecord.uid
       );
 
@@ -50,5 +50,8 @@ export default class AuthService {
 
       throw firebaseError;
     }
-  };
+  }
 }
+
+const authService = new AuthService();
+export default authService as AuthService;
