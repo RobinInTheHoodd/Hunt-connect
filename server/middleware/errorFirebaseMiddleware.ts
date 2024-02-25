@@ -20,6 +20,11 @@ const errorFirebaseMiddleware = (
             "Cette adresse e-mail est déjà utilisée par un autre compte.",
           field: "email",
         });
+      case "auth/invalid-uid":
+        return res.status(409).json({
+          message: "Invalid id pour cette utilisateur",
+          field: "uid",
+        });
       case "auth/invalid-email":
         return res.status(400).json({
           message: "L'adresse e-mail fournie est invalide.",

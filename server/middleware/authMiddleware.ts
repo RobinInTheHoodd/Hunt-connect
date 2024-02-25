@@ -1,5 +1,7 @@
-import firebaseConfig from "../config/firebaseConfig";
 import { Request, Response, NextFunction } from "express";
+import { FirebaseAdminSingleton } from "../config/firebaseConfig";
+
+const _firebase = FirebaseAdminSingleton.getFirebaseAuth();
 
 const verifyTokenMiddleware = (
   req: Request,
@@ -14,7 +16,7 @@ const verifyTokenMiddleware = (
   if (typeof bearerHeader !== "undefined") {
     const bearerToken = bearerHeader.split(" ")[1];
 
-    firebaseConfig.firebaseAuth.verifyIdToken(bearerToken);
+    _firebase.verifyIdToken(bearerToken);
     next();
   } else {
     res.sendStatus(401);

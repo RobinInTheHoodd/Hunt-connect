@@ -2,10 +2,20 @@ import * as firebaseAdmin from "firebase-admin";
 
 var serviceAccount = require("./firebase-admin-key.json");
 
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
-});
+export class FirebaseAdminSingleton {
+  private static instance: firebaseAdmin.auth.Auth;
 
-const firebaseAuth = firebaseAdmin.auth();
+  private constructor() {}
 
-export default { firebaseAuth };
+  public static getFirebaseAuth(): firebaseAdmin.auth.Auth {
+    if (!FirebaseAdminSingleton.instance) {
+      firebaseAdmin.initializeApp({
+        credential: firebaseAdmin.credential.cert(serviceAccount),
+      });
+
+      FirebaseAdminSingleton.instance = firebaseAdmin.auth();
+    }
+
+    return FirebaseAdminSingleton.instance;
+  }
+}

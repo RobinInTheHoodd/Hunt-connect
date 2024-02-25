@@ -45,8 +45,8 @@ const errorPostgresMiddleware = (
         });
       case "23502":
         // Gérer une violation de contrainte de non null
-        const nonNullViolationFull = err.message
-          ? err.message.match(/column "(.*?)" /)
+        const nonNullViolationFull = err.detail
+          ? err.detail.match(/column "(.*?)" /)
           : null;
         const fieldNameNN = nonNullViolationFull
           ? nonNullViolationFull[1]
