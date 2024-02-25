@@ -1,6 +1,6 @@
 import { Router, response } from "express";
 import { Response } from "express";
-import authController from "../controllers/authController";
+import AuthController from "../controllers/authController";
 
 const router = Router();
 
@@ -9,6 +9,6 @@ router.get("/login", (res: Response) => {
   res.send("Bonjour depuis le serveur!");
 });
 
-router.post("/register", authController.register);
+router.post("/register", AuthController.registerController);
 
 export default router;
