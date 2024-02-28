@@ -17,7 +17,7 @@ import { StyleSheet } from "react-native";
 
 interface inputTextField {
   tagName: string;
-  iconName: IconDefinition; // L'icône à utiliser (e.g., faEnvelope)
+  iconName: IconDefinition; // L'icône à utiliser
   value: any; // La valeur actuelle de l'input
   onChangeText: (value: any) => void; // La fonction à appeler lors de la modification du texte
   onBlur?: () => void; // La fonction à appeler lorsque l'input perd le focus
@@ -33,13 +33,13 @@ interface inputTextField {
 
 const InputText = ({
   tagName,
-  iconName, // L'icône à utiliser (e.g., faEnvelope)
-  value, // La valeur actuelle de l'input
-  onChangeText, // La fonction à appeler lors de la modification du texte
-  onBlur, // La fonction à appeler lorsque l'input perd le focus
-  placeholder, // Le texte indicatif à afficher
-  isTouched, // Booléen pour indiquer si l'input a été touché
-  isValid, // Booléen pour indiquer si la valeur de l'input est valide
+  iconName,
+  value,
+  onChangeText,
+  onBlur,
+  placeholder,
+  isTouched,
+  isValid,
   errorMessage,
   require,
   isPassword,
@@ -47,7 +47,7 @@ const InputText = ({
   hiddePassword,
 }: inputTextField) => {
   const { width, height } = useWindowDimensions();
-  const styles = InputTextStyle(width, height); // Calculez les styles en fonction des dimensions de la fenêtre
+  const styles = InputTextStyle(width, height);
 
   return (
     <>
@@ -59,7 +59,10 @@ const InputText = ({
       <View
         style={[
           styles.inputContainer,
-          isTouched && (isValid ? styles.validInput : styles.invalidInput),
+          isTouched &&
+            (errorMessage == "" && isValid
+              ? styles.validInput
+              : styles.invalidInput),
         ]}
       >
         <FontAwesomeIcon icon={iconName} style={styles.icon} />
