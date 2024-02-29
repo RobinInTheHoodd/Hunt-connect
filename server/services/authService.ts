@@ -17,8 +17,11 @@ class AuthService {
       customeToken: string;
     };
     try {
-      user = await this._firebaseRegister(register); //{ customeToken: "dsds" };
-      await userDataAccess.createUser(user.register);
+      user = await this._firebaseRegister(register);
+      await userDataAccess.createUser(user.register).catch((e: any) => {
+        this._firebaseAuth.deleteUser(user.register.UUID!);
+        throw e;
+      });
       return user!.customeToken!;
     } catch (e: any) {
       throw e;
