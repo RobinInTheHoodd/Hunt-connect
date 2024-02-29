@@ -17,19 +17,8 @@ class AuthService {
       customeToken: string;
     };
     try {
-      await this._firebaseAuth
-        .getUserByEmail(register.email)
-        .then(async (userRecord: UserRecord) => {
-          const registerReq: IRegisterRequest =
-            RegisterRequest.fromUserContext(userRecord);
-          await userDataAccess.createUser(registerReq);
-          user.customeToken = "";
-          user.register = registerReq;
-        })
-        .catch(async () => {
-          user = await this._firebaseRegister(register); //{ customeToken: "dsds" };
-          await userDataAccess.createUser(register);
-        });
+      user = await this._firebaseRegister(register); //{ customeToken: "dsds" };
+      await userDataAccess.createUser(user.register);
       return user!.customeToken!;
     } catch (e: any) {
       throw e;
@@ -37,22 +26,28 @@ class AuthService {
   }
 
   private async _firebaseRegister(register: IRegisterRequest) {
+    let registerReq: IRegisterRequest = register;
+    let customeToken: string;
     try {
-      const userRecord = await this._firebaseAuth.createUser({
-        displayName: register.display_name,
-        email: register.email,
-        emailVerified: false,
-        password: register.password,
-        phoneNumber: register.phone,
-        disabled: false,
-      });
-
-      register.UUID = userRecord.uid;
-
-      const customeToken = await this._firebaseAuth.createCustomToken(
-        userRecord.uid
+      this._firebaseAuth
+        .getUserByEmail(register.email)
+        .then(async (userRecord: UserRecord) => {
+          registerReq = RegisterRequest.fromUserContext(userRecord);
+        })
+        .catch(async () => {
+          const userRecord = await this._firebaseAuth.createUser({
+            displayName: register.display_name,
+            email: register.email,
+            emailVerified: false,
+            password: register.password,
+            phoneNumber: register.phone,
+            disabled: false,
+          });
+          registerReq.UUID = userRecord.uid;
+        });
+      customeToken = await this._firebaseAuth.createCustomToken(
+        registerReq.UUID!
       );
-
       return { register, customeToken };
     } catch (err: any) {
       const firebaseError: FirebaseError = {
