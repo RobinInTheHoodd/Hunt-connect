@@ -57,8 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function googleLogin() {
     try {
       GoogleSignin.configure({
-        webClientId:
-          Constants.manifest2?.extra.EXPO_PUBLIC_API_URL_GOOGLE_WEB_ID,
+        webClientId: "", //Constants.manifest2?.extra.EXPO_PUBLIC_API_URL_GOOGLE_WEB_ID,
         forceCodeForRefreshToken: true,
         offlineAccess: true,
       });
