@@ -1,6 +1,6 @@
 import { UserRecord } from "firebase-admin/auth";
 
-export interface IRegisterRequest {
+export declare class IRegisterRequest {
   UUID?: string;
   display_name?: string;
   email: string;
@@ -11,6 +11,8 @@ export interface IRegisterRequest {
   hut_number?: string;
   create_at?: Date;
   last_update?: Date;
+
+  toJson(): JSON | void;
 }
 
 export default class RegisterRequest implements IRegisterRequest {
@@ -58,6 +60,10 @@ export default class RegisterRequest implements IRegisterRequest {
     this.hut_number = hut_number;
     this.create_at = create_at;
     this.last_update = last_update;
+  }
+
+  toJson(): JSON | void {
+    throw new Error("Method not implemented.");
   }
 
   static fromUserContext(userRecord: UserRecord): RegisterRequest {
