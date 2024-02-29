@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -30,73 +30,61 @@ import { UtilsSign } from "../../../service/sign/utils";
 import SignUpStyle from "./SignUpStyle";
 
 import axios from "../../../config/axiosConfig";
+import { authService } from "../../../service/authService";
+import * as SecureStore from "expo-secure-store";
+import { useAuth } from "../../../utils/context/authContext";
+import { ApiError } from "../../../model/ApiError";
+import { ISignUpForm } from "../../../model/SignUpForm";
+import { AxiosError } from "axios";
 
-export default function SignUpScreen() {
-  const api = () => {
-    axios
-      .get("/test")
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Erreur:", error);
-      });
-  };
-
+export default function SignUpScreen({ navigation }: any) {
   const { height, width } = useWindowDimensions();
   const styles = SignUpStyle(width, height);
-  const [signForm, setSignForm] = useState<SignUpForm>({
-    fullName: "",
+  const [signForm, setSignForm] = useState<ISignUpForm>({
+    fullName: "Robin Mazouni",
     fullNameTouched: false,
     fullNameError: "",
-    isFullNameValid: false,
+    isFullNameValid: true,
 
-    email: "",
+    email: "robin@gmail.com",
     emailTouched: false,
     emailError: "",
-    isEmailValid: false,
+    isEmailValid: true,
 
-    phone: "",
+    phone: "8822093819",
     phoneTouched: false,
     phoneError: "",
-    isPhoneValid: false,
+    isPhoneValid: true,
 
-    password: "",
+    password: "Robin88-",
     passwordTouched: false,
     passwordError: "",
-    isPasswordValid: false,
+    isPasswordValid: true,
     hiddePassword: true,
 
-    confirmPassword: "",
+    confirmPassword: "Robin88-",
     confirmPasswordTouched: false,
     confirmPasswordError: "",
-    isConfirmPasswordValid: false,
+    isConfirmPasswordValid: true,
     hiddeConfirmPassword: true,
 
-    hutName: "",
+    hutName: "Hut name",
     hutNameTouched: false,
     hutNameError: "",
-    isHutNameValid: false,
+    isHutNameValid: true,
 
-    hutNumber: "",
+    hutNumber: "1235467",
     hutNumberTouched: false,
     hutNumberError: "",
-    isHutNumberValid: false,
+    isHutNumberValid: true,
+
+    isOwner: false,
+    isValidForm: false,
   });
 
-  const [fullNameTouched, setFullNameTouched] = useState(false);
-  const [isFullNameValid, setIsFullNameValid] = useState(false);
-  const [fullNameError, setFullNameError] = useState("");
-
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [isOwner, setIsOwner] = useState(false);
-  const [hutteName, setHutteName] = useState("");
-  const [hutteNumber, setHutteNumber] = useState("");
   const [image, setImage] = useState("");
+  const { login } = useAuth();
+  const [shouldRegister, setShouldRegister] = useState(false);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -111,9 +99,63 @@ export default function SignUpScreen() {
     }
   };
 
+  const register = async () => {
+    console.log("VALID");
+    const resgisterRequest: ISignUpModel = {
+      display_name: signForm.fullName!,
+      email: signForm.email,
+      password: signForm.password,
+      phone: "+1" + signForm.phone,
+      role: 1,
+      hut_name: signForm.hutName,
+      hut_number: signForm.hutNumber,
+    };
+
+    try {
+      await authService.userRegisterFirebase(resgisterRequest);
+
+      login(signForm.email, signForm.password);
+    } catch (e: any) {
+      const error: ApiError = {
+        field: e.response.data.field,
+        message: e.response.data.message,
+      };
+
+      if (error.field) {
+        const formFieldName = UtilsSign.mapApiFieldToForm(error.field);
+        const formFieldErrorName = formFieldName + "Error";
+        console.log(error);
+        console.log(formFieldName);
+        console.log(formFieldErrorName);
+
+        console.log(error.message);
+        if (formFieldName) {
+          setSignForm((prevForm) => ({
+            ...prevForm,
+            [formFieldErrorName]: error.message,
+          }));
+        }
+      } else {
+        let errorr: AxiosError = e;
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (shouldRegister) {
+      const doRegistration = async () => {
+        await register();
+        setShouldRegister(false);
+        console.log("Registration finished");
+      };
+      doRegistration();
+    }
+  }, [signForm, shouldRegister]);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScrollView style={styles.container}>
+      <ScrollView>
         <LinearGradient
           colors={["#556b2f", "#8b4513"]}
           start={{ x: 0, y: 0 }}
@@ -129,22 +171,18 @@ export default function SignUpScreen() {
               tagName={"Prénom nom"}
               value={signForm.fullName}
               onChangeText={(value) => {
+                let updateForm = UtilsSign.validateName(signForm, value);
                 setSignForm({
                   ...signForm,
-                  fullName: value,
-                  isFullNameValid: UtilsSign.validateEmail(value),
+                  ...updateForm,
                 });
               }}
-              onBlur={() =>
-                signForm.fullName == ""
-                  ? setSignForm({ ...signForm, fullNameTouched: false })
-                  : setSignForm({ ...signForm, fullNameTouched: true })
-              }
+              onBlur={() => {}}
               placeholder="Prénom nom"
               iconName={faPortrait}
-              isTouched={signForm.fullNameTouched}
-              isValid={signForm.isFullNameValid}
-              errorMessage={signForm.fullNameError}
+              isTouched={signForm.fullNameTouched!}
+              isValid={signForm.isFullNameValid!}
+              errorMessage={signForm.fullNameError!}
               require={true}
               isPassword={false}
             />
@@ -153,23 +191,13 @@ export default function SignUpScreen() {
               tagName={"Email"}
               value={signForm.email}
               onChangeText={(value) => {
+                let updateForm = UtilsSign.validateEmail(signForm, value);
                 setSignForm({
                   ...signForm,
-                  email: value,
-                  isEmailValid: UtilsSign.validateEmail(value),
+                  ...updateForm,
                 });
               }}
-              onBlur={() =>
-                signForm.email == ""
-                  ? setSignForm({
-                      ...signForm,
-                      emailTouched: false,
-                    })
-                  : setSignForm({
-                      ...signForm,
-                      emailTouched: true,
-                    })
-              }
+              onBlur={() => {}}
               placeholder="example@gmail.com"
               iconName={faEnvelope}
               isTouched={signForm.emailTouched}
@@ -183,36 +211,26 @@ export default function SignUpScreen() {
               tagName={"Téléphone"}
               value={signForm.phone}
               onChangeText={(value) => {
+                let updateForm = UtilsSign.validatePhone(signForm, value);
                 setSignForm({
                   ...signForm,
-                  phone: value,
-                  isPhoneValid: UtilsSign.validateEmail(value),
+                  ...updateForm,
                 });
               }}
-              onBlur={() =>
-                signForm.phone == ""
-                  ? setSignForm({
-                      ...signForm,
-                      phoneTouched: false,
-                    })
-                  : setSignForm({
-                      ...signForm,
-                      phoneTouched: true,
-                    })
-              }
+              onBlur={() => {}}
               placeholder="1234567890"
               iconName={faLock}
-              isTouched={signForm.phoneTouched}
-              isValid={signForm.isPhoneValid}
-              errorMessage={signForm.phoneError}
+              isTouched={signForm.phoneTouched!}
+              isValid={signForm.isPhoneValid!}
+              errorMessage={signForm.phoneError!}
               require={true}
               isPassword={false}
             />
 
             <View
               style={{
-                flexDirection: "row", // Aligner les enfants horizontalement
-                justifyContent: "space-between", // Ajuste cela pour changer l'espacement entre les éléments
+                flexDirection: "row",
+                justifyContent: "space-between",
                 alignItems: "center",
               }}
             ></View>
@@ -221,23 +239,13 @@ export default function SignUpScreen() {
               tagName={"Mot de passe"}
               value={signForm.password}
               onChangeText={(value) => {
+                let updateForm = UtilsSign.validatePassword(signForm, value);
                 setSignForm({
                   ...signForm,
-                  password: value,
-                  isPasswordValid: UtilsSign.validateEmail(value),
+                  ...updateForm,
                 });
               }}
-              onBlur={() =>
-                signForm.password == ""
-                  ? setSignForm({
-                      ...signForm,
-                      passwordTouched: false,
-                    })
-                  : setSignForm({
-                      ...signForm,
-                      passwordTouched: true,
-                    })
-              }
+              onBlur={() => {}}
               placeholder="mot de passe"
               iconName={faLock}
               isTouched={signForm.passwordTouched}
@@ -256,30 +264,23 @@ export default function SignUpScreen() {
 
             <InputText
               tagName={"Confirmation mot de passe"}
-              value={signForm.hiddeConfirmPassword}
+              value={signForm.confirmPassword}
               onChangeText={(value) => {
+                let updateForm = UtilsSign.validateConfirmPassword(
+                  signForm,
+                  value
+                );
                 setSignForm({
                   ...signForm,
-                  confirmPassword: value,
-                  isConfirmPasswordValid: UtilsSign.validateEmail(value),
+                  ...updateForm,
                 });
               }}
-              onBlur={() =>
-                signForm.password == ""
-                  ? setSignForm({
-                      ...signForm,
-                      confirmPasswordTouched: false,
-                    })
-                  : setSignForm({
-                      ...signForm,
-                      confirmPasswordTouched: true,
-                    })
-              }
+              onBlur={() => {}}
               placeholder="mot de passe"
               iconName={faLock}
-              isTouched={signForm.confirmPasswordTouched}
-              isValid={signForm.isConfirmPasswordValid}
-              errorMessage={signForm.confirmPasswordError}
+              isTouched={signForm.confirmPasswordTouched!}
+              isValid={signForm.isConfirmPasswordValid!}
+              errorMessage={signForm.confirmPasswordError!}
               require={true}
               isPassword={true}
               hiddePassword={signForm.hiddeConfirmPassword}
@@ -295,42 +296,32 @@ export default function SignUpScreen() {
               <Text>Propriétaire d'une hutte ?</Text>
               <Switch
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={isOwner ? "#f5dd4b" : "#f4f3f4"}
+                thumbColor={signForm.isOwner ? "#f5dd4b" : "#f4f3f4"}
                 onValueChange={() =>
-                  setIsOwner((previousState) => !previousState)
+                  setSignForm({ ...signForm, isOwner: !signForm.isOwner })
                 }
-                value={isOwner}
+                value={signForm.isOwner}
               />
             </View>
 
-            {isOwner && (
+            {signForm.isOwner && (
               <>
                 <InputText
                   tagName={"Nom de hutte"}
                   value={signForm.hutName}
                   onChangeText={(value) => {
+                    let updateForm = UtilsSign.validateHutName(signForm, value);
                     setSignForm({
                       ...signForm,
-                      hutName: value,
-                      isHutNameValid: UtilsSign.validateEmail(value),
+                      ...updateForm,
                     });
                   }}
-                  onBlur={() =>
-                    signForm.hutName == ""
-                      ? setSignForm({
-                          ...signForm,
-                          hutNameTouched: false,
-                        })
-                      : setSignForm({
-                          ...signForm,
-                          hutNameTouched: true,
-                        })
-                  }
+                  onBlur={() => {}}
                   placeholder="Hutte"
                   iconName={faTent}
-                  isTouched={signForm.hutNameTouched}
-                  isValid={signForm.isHutNameValid}
-                  errorMessage={signForm.hutNameError}
+                  isTouched={signForm.hutNameTouched!}
+                  isValid={signForm.isHutNameValid!}
+                  errorMessage={signForm.hutNameError!}
                   require={true}
                   isPassword={false}
                 />
@@ -339,28 +330,21 @@ export default function SignUpScreen() {
                   tagName={"Numéro de hutte"}
                   value={signForm.hutNumber}
                   onChangeText={(value) => {
+                    let updateForm = UtilsSign.validateHutNumber(
+                      signForm,
+                      value
+                    );
                     setSignForm({
                       ...signForm,
-                      hutNumber: value,
-                      isHutNumberValid: UtilsSign.validateEmail(value),
+                      ...updateForm,
                     });
                   }}
-                  onBlur={() =>
-                    signForm.hutNumber == ""
-                      ? setSignForm({
-                          ...signForm,
-                          hutNumberTouched: false,
-                        })
-                      : setSignForm({
-                          ...signForm,
-                          hutNumberTouched: true,
-                        })
-                  }
+                  onBlur={() => {}}
                   placeholder="Hutte"
                   iconName={faHashtag}
-                  isTouched={signForm.hutNumberTouched}
-                  isValid={signForm.isHutNumberValid}
-                  errorMessage={signForm.hutNumberError}
+                  isTouched={signForm.hutNumberTouched!}
+                  isValid={signForm.isHutNumberValid!}
+                  errorMessage={signForm.hutNumberError!}
                   require={true}
                   isPassword={false}
                 />
@@ -380,9 +364,10 @@ export default function SignUpScreen() {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() =>
-                setSignForm({ ...signForm, fullNameError: "Email invlaid" })
-              }
+              onPress={async () => {
+                let isValidForm = UtilsSign.validateForm(signForm);
+                setShouldRegister(isValidForm);
+              }}
             >
               <LinearGradient
                 colors={["#556b2f", "#8b4513"]}
@@ -396,7 +381,7 @@ export default function SignUpScreen() {
 
             <View style={styles.footerContainer}>
               <Text style={styles.footerText}>Vous n'avez pas de compte ?</Text>
-              <TouchableOpacity onPress={api}>
+              <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
                 <Text style={styles.signUpText}>Se connecter</Text>
               </TouchableOpacity>
             </View>

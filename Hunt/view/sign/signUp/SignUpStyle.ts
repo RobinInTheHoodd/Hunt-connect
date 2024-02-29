@@ -25,9 +25,9 @@ const SignUpStyle = (width: number, height: number) =>
       borderTopRightRadius: width * 0.07,
       marginTop: height * 0.05,
       paddingTop: "10%",
-      flex: 1,
+      height: height,
       width: "100%",
-      padding: "10%",
+      padding: "8%",
     },
     input: {
       flex: 1,
