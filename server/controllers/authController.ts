@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import AuthService from "../services/authService";
-import RegisterRequest from "../models/auth/registerRequest";
+import IRegisterRequest from "../models/auth/RegisterRequest";
 import { Auth } from "firebase-admin/auth";
 
 class AuthController {
@@ -12,11 +12,12 @@ class AuthController {
     next: NextFunction
   ) {
     try {
-      const registerReq: RegisterRequest = req.body;
+      const registerReq: IRegisterRequest = req.body;
       const customToken = await AuthService.register(registerReq);
 
-      res.send(customToken);
+      res.status(200).send(customToken);
     } catch (e) {
+      console.log(e);
       next(e);
     }
   }
