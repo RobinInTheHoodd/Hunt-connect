@@ -82,7 +82,6 @@ describe("Service Authentication", () => {
         role: 1,
         hut_name: "Test Hut",
         hut_number: "1",
-        toJson: () => {},
       };
     };
     const getSqlValue = () => {

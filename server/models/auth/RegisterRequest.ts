@@ -11,8 +11,6 @@ export declare class IRegisterRequest {
   hut_number?: string;
   create_at?: Date;
   last_update?: Date;
-
-  toJson(): JSON | void;
 }
 
 export default class RegisterRequest implements IRegisterRequest {
@@ -38,18 +36,7 @@ export default class RegisterRequest implements IRegisterRequest {
     hut_number,
     create_at,
     last_update,
-  }: {
-    UUID?: string;
-    display_name: string;
-    email: string;
-    phone?: string;
-    password?: string;
-    role: number;
-    hut_name?: string;
-    hut_number?: string;
-    create_at?: Date;
-    last_update?: Date;
-  }) {
+  }: IRegisterRequest) {
     this.UUID = UUID;
     this.display_name = display_name;
     this.email = email;
@@ -62,16 +49,13 @@ export default class RegisterRequest implements IRegisterRequest {
     this.last_update = last_update;
   }
 
-  toJson(): JSON | void {
-    throw new Error("Method not implemented.");
-  }
-
   static fromUserContext(userRecord: UserRecord): RegisterRequest {
     return new RegisterRequest({
       UUID: userRecord.uid,
-      display_name: userRecord.displayName!,
-      email: userRecord.email!,
-      phone: userRecord.phoneNumber,
+      display_name: userRecord.displayName! || "",
+      email: userRecord.email! || "",
+      phone: userRecord.phoneNumber || "",
+
       role: 1, // TOD need an update (ask user)
     });
   }

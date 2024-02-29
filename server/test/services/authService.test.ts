@@ -44,7 +44,8 @@ jest.mock("../../repository/userDataAccess", () => {
     __esModule: true, // Utilisez cette propriété pour simuler un export par défaut
     default: {
       createUser: () => {
-        Promise.resolve("success");
+        if (state == "rejected") return Promise.reject("");
+        else return Promise.resolve("Succes");
       },
     },
   };
@@ -124,7 +125,6 @@ describe("Service Authentication", () => {
         role: 1,
         hut_name: "Test Hut",
         hut_number: "1",
-        toJson: () => {},
       };
     };
     describe("createUser", () => {
