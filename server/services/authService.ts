@@ -1,27 +1,40 @@
 import { FirebaseAdminSingleton } from "../config/firebaseConfig";
-import RegisterRequest from "../models/auth/registerRequest";
+import IRegisterRequest from "../models/auth/RegisterRequest";
 
 import { FirebaseError } from "../middleware/errorFirebaseMiddleware";
 import userDataAccess from "../repository/userDataAccess";
+import { UserRecord } from "firebase-admin/auth";
+import RegisterRequest from "../models/auth/RegisterRequest";
 
 class AuthService {
   private _firebaseAuth = FirebaseAdminSingleton.getFirebaseAuth();
 
   constructor() {}
 
-  public async register(register: RegisterRequest): Promise<string> {
+  public async register(register: IRegisterRequest): Promise<string> {
+    let user: {
+      register: IRegisterRequest;
+      customeToken: string;
+    };
     try {
-      const user = await this._firebaseRegister(register);
-
-      await userDataAccess.createUser(register);
-
+      this._firebaseAuth
+        .getUserByEmail(register.email)
+        .then(async (userRecord: UserRecord) => {
+          const registerReq: IRegisterRequest =
+            RegisterRequest.fromUserContext(userRecord);
+          await userDataAccess.createUser(registerReq);
+        })
+        .catch(async () => {
+          user = await this._firebaseRegister(register); //{ customeToken: "dsds" };
+          await userDataAccess.createUser(register);
+        });
       return user!.customeToken;
     } catch (e: any) {
       throw e;
     }
   }
 
-  private async _firebaseRegister(register: RegisterRequest) {
+  private async _firebaseRegister(register: IRegisterRequest) {
     try {
       const userRecord = await this._firebaseAuth.createUser({
         displayName: register.display_name,
