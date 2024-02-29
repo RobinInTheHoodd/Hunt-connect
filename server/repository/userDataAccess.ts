@@ -1,11 +1,11 @@
 import pool from "../db/pgPool";
-import RegisterRequest from "../models/auth/registerRequest";
+import IRegisterRequest from "../models/auth/RegisterRequest";
 import { DatabaseError } from "../middleware/errorPostgresMiddleware";
 
 class UserDataAccess {
   constructor() {}
 
-  public async createUser(user: RegisterRequest): Promise<any> {
+  public async createUser(user: IRegisterRequest): Promise<any> {
     const sql =
       "INSERT INTO udb.USERS " +
       "(" +
