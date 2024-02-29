@@ -1,7 +1,7 @@
 import { format } from "path";
 import app from "../../server";
 import request from "supertest";
-import RegisterRequest from "../../models/auth/registerRequest";
+import IRegisterRequest from "../../models/auth/RegisterRequest";
 import { FirebaseError } from "../../middleware/errorFirebaseMiddleware";
 import AuthController from "../../controllers/authController";
 import authService from "../../services/authService";
@@ -12,7 +12,7 @@ import router from "../../routes/authRoutes";
 
 let state: string;
 let server: any;
-let userToCreate: RegisterRequest;
+let userToCreate: IRegisterRequest;
 let error: any = {
   name: "FirebaseError",
   message: "Une erreur de firebase s'est produite",
@@ -58,10 +58,11 @@ describe("AuthController", () => {
       role: 1,
       hut_name: "Test Hut",
       hut_number: "1",
+      toJson: () => {},
     };
   });
 
-  describe("/auth/register", () => {
+  describe("/auth/registerFirebase", () => {
     describe("postgres error", () => {
       beforeEach(() => {
         error = {

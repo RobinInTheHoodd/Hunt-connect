@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../../server";
-import RegisterRequest from "../../models/auth/registerRequest";
+import IRegisterRequest from "../../models/auth/RegisterRequest";
 import userDataAccess from "../../repository/userDataAccess";
 import e from "express";
 import AuthService from "../../services/authService";
@@ -18,7 +18,7 @@ let dynamicError: DatabaseError = {
   detail: "",
 };
 
-let userToCreate: RegisterRequest;
+let userToCreate: IRegisterRequest;
 
 jest.mock("pg", () => {
   return {
@@ -82,6 +82,7 @@ describe("Service Authentication", () => {
         role: 1,
         hut_name: "Test Hut",
         hut_number: "1",
+        toJson: () => {},
       };
     };
     const getSqlValue = () => {

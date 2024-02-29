@@ -1,13 +1,17 @@
 import app from "../../server";
-import RegisterRequest from "../../models/auth/registerRequest";
+import IRegisterRequest from "../../models/auth/RegisterRequest";
 import AuthService from "../../services/authService";
-import { DatabaseError } from "../../middleware/errorPostgresMiddleware";
 import { FirebaseAdminSingleton } from "../../config/firebaseConfig";
 import { FirebaseError } from "../../middleware/errorFirebaseMiddleware";
+import { rejects } from "assert";
+import { UserRecord } from "firebase-admin/auth";
+import userDataAccess from "../../repository/userDataAccess";
+import RegisterRequest from "../../models/auth/RegisterRequest";
 
-let userToCreate: RegisterRequest;
+let userToCreate: IRegisterRequest;
 let state: string;
 let stateToken: string;
+let stateGetEmail: string;
 let server: any;
 let firebaseError: FirebaseError = {
   name: "FirebaseError",
@@ -15,6 +19,24 @@ let firebaseError: FirebaseError = {
   errorType: "firebase",
   code: "",
   detail: "",
+};
+
+const userRecord: UserRecord = {
+  uid: "uuid-test",
+  email: "test@example.com",
+  emailVerified: true,
+  displayName: "Test User",
+  photoURL: "https://example.com/photo.jpg",
+  phoneNumber: "+11234567890",
+  disabled: false,
+  metadata: {
+    creationTime: "2021-01-01T00:00:00Z",
+    lastSignInTime: "2021-02-01T00:00:00Z",
+    toJSON: () => ({}),
+  },
+  providerData: [],
+
+  toJSON: () => ({}),
 };
 
 jest.mock("../../repository/userDataAccess", () => {
@@ -51,9 +73,15 @@ jest.mock("../../config/firebaseConfig", () => ({
                 code: firebaseError.code,
                 message: firebaseError.detail,
               });
-            } else {
-              return Promise.resolve("un-token-simulé");
-            }
+            } else return Promise.resolve("un-token-simulé");
+          }),
+          getUserByEmail: jest.fn().mockImplementation(async () => {
+            if (stateGetEmail == "rejected") {
+              return Promise.reject({
+                code: firebaseError.code,
+                message: firebaseError.detail,
+              });
+            } else return Promise.resolve(userRecord);
           }),
         };
       }),
@@ -96,6 +124,7 @@ describe("Service Authentication", () => {
         role: 1,
         hut_name: "Test Hut",
         hut_number: "1",
+        toJson: () => {},
       };
     };
     describe("createUser", () => {
@@ -204,10 +233,11 @@ describe("Service Authentication", () => {
       it("should return a userRecord with uid", async () => {
         state = "resolve";
         stateToken = "resolve";
+        stateGetEmail = "reject";
 
         const serviceResponse = await AuthService.register(userToCreate);
 
-        expect(serviceResponse).toMatch("un-token-simulé");
+        expect(serviceResponse).toBe("un-token-simulé");
         expect(_firebase.createUser).toHaveBeenCalled();
       });
     });
