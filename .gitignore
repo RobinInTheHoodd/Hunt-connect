@@ -38,3 +38,11 @@ server/.env*
 
 # typescript
 Hunt/*.tsbuildinfo
+
+# config Firebase
+server/config/firebase-admin-key.json
+
+
+# ide
+.idea/
+.vscode/
