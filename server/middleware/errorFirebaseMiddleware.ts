@@ -16,8 +16,7 @@ const errorFirebaseMiddleware = (
     switch (err.code) {
       case "auth/email-already-exists":
         return res.status(409).json({
-          message:
-            "Cette adresse e-mail est déjà utilisée par un autre compte.",
+          message: "Cette adresse e-mail est déjà utilisée.",
           field: "email",
         });
       case "auth/invalid-uid":
