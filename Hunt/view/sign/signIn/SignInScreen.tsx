@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
   Text,
   View,
-  TextInput,
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
@@ -11,46 +9,76 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faGoogle,
   faApple,
-  faInstagram,
-  faTwitter,
   faFacebookF,
 } from "@fortawesome/free-brands-svg-icons";
 
-import {
-  faEnvelope,
-  faEye,
-  faEyeSlash,
-  faL,
-  faLock,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faL, faLock } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignInStyle from "./SignInStyle";
 import InputText from "../../../components/Input/InputText";
+import { IAuthContext, useAuth } from "../../../utils/context/authContext";
+import { ISignUpForm } from "../../../model/SignUpForm";
+import { ApiError } from "../../../model/ApiError";
+import { FirebaseError } from "../../../utils/firebaseError";
+import { utils } from "@react-native-firebase/app";
 
-export default function SignInScreen() {
+export default function SignInScreen({ navigation }: any) {
+  const {
+    googleLogin,
+    facebookLogin,
+    signOut,
+    currentUser,
+    login,
+  }: IAuthContext = useAuth();
+
   const { height, width } = useWindowDimensions();
   const styles = SignInStyle(width, height);
+  const [shouldLogin, setShouldLogin] = useState(false);
 
-  const [signForm, setSignForm] = useState<SignInForm>({
-    email: "",
-    password: "",
+  const [signForm, setSignForm] = useState<ISignUpForm>({
+    email: "robin@gmail.com",
+    emailTouched: false,
+    emailError: "",
+    isEmailValid: true,
+
+    password: "Robin88-",
+    passwordTouched: false,
+    passwordError: "",
+    isPasswordValid: true,
+    hiddePassword: true,
+
+    isValidForm: true,
   });
 
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [isPasswordValid, setIsPasswordValid] = useState(false);
+  useEffect(() => {
+    if (shouldLogin) {
+      doLogin();
+    }
+  }, [signForm, shouldLogin, currentUser]);
 
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
+  const doLogin = async () => {
+    try {
+      await login(signForm.email, signForm.password);
+      setShouldLogin(false);
+    } catch (e: any) {
+      let updateSignForm: any;
+      setShouldLogin(false);
+      setSignForm((prevForm) => ({
+        ...prevForm,
+        isValidForm: false,
+      }));
 
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  const [hidePassword, setHidePassword] = useState(true);
-
-  const validateEmail = () => {
-    setEmailError(isEmailValid ? "" : "Adresse email invalide");
-    setPasswordError(isEmailValid ? "" : "password invalide");
+      if (e.code) {
+        updateSignForm = UtilsSign.ErrorForm(signForm, e.code);
+      } else {
+        console.log("Autre error");
+      }
+      setSignForm((prevForm) => ({
+        ...prevForm,
+        ...updateSignForm,
+      }));
+    }
   };
 
   return (
@@ -71,16 +99,18 @@ export default function SignInScreen() {
             tagName={"Email"}
             value={signForm.email}
             onChangeText={(value) => {
-              setSignForm({ ...signForm, email: value });
-              if (!emailTouched) setEmailTouched(true);
-              setIsEmailValid(UtilsSign.validateEmail(value));
+              let updateForm = UtilsSign.validateEmail(signForm, value);
+              setSignForm({
+                ...signForm,
+                ...updateForm,
+              });
             }}
-            onBlur={() => signForm.email == "" && setEmailTouched(false)}
+            onBlur={() => {}}
             placeholder="Email"
             iconName={faEnvelope}
-            isTouched={emailTouched}
-            isValid={isEmailValid}
-            errorMessage={emailError}
+            isTouched={signForm.emailTouched}
+            isValid={signForm.isEmailValid}
+            errorMessage={signForm.emailError}
             require={true}
             isPassword={false}
           />
@@ -89,20 +119,27 @@ export default function SignInScreen() {
             tagName={"Password"}
             value={signForm.password}
             onChangeText={(value) => {
-              setSignForm({ ...signForm, password: value });
-              if (!passwordTouched) setPasswordTouched(true);
-              setIsPasswordValid(UtilsSign.validateEmail(value));
+              let updateForm = UtilsSign.validatePassword(signForm, value);
+              setSignForm({
+                ...signForm,
+                ...updateForm,
+              });
             }}
-            onBlur={() => signForm.password == "" && setPasswordTouched(false)}
+            onBlur={() => {}}
             placeholder="Password"
             iconName={faLock}
-            isTouched={passwordTouched}
-            isValid={isPasswordValid}
-            errorMessage={passwordError}
+            isTouched={signForm.passwordTouched}
+            isValid={signForm.isPasswordValid}
+            errorMessage={signForm.passwordError}
             require={true}
             isPassword={true}
-            setHidePassword={() => setHidePassword(!hidePassword)}
-            hiddePassword={hidePassword}
+            setHidePassword={() =>
+              setSignForm({
+                ...signForm,
+                hiddePassword: !signForm.hiddePassword,
+              })
+            }
+            hiddePassword={signForm.hiddePassword}
           />
 
           <TouchableOpacity style={styles.forgotPassword}>
@@ -111,7 +148,12 @@ export default function SignInScreen() {
 
           <TouchableOpacity
             style={styles.signInButton}
-            onPress={() => validateEmail()}
+            onPress={() => {
+              let isValidForm = UtilsSign.validateForm(signForm);
+              console.log(isValidForm);
+              console.log(signForm);
+              setShouldLogin(isValidForm);
+            }}
           >
             <LinearGradient
               colors={["#556b2f", "#8b4513"]}
@@ -134,7 +176,10 @@ export default function SignInScreen() {
                 end={{ x: 1, y: 0.5 }}
                 style={styles.iconButton}
               >
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => googleLogin()}
+                >
                   <FontAwesomeIcon icon={faGoogle} size={40} color="#ffffff" />
                 </TouchableOpacity>
               </LinearGradient>
@@ -145,7 +190,10 @@ export default function SignInScreen() {
                 end={{ x: 1, y: 0.5 }}
                 style={styles.iconButton}
               >
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => console.log(currentUser)}
+                >
                   <FontAwesomeIcon icon={faApple} size={40} color="#ffffff" />
                 </TouchableOpacity>
               </LinearGradient>
@@ -156,7 +204,10 @@ export default function SignInScreen() {
                 end={{ x: 1, y: 0.5 }}
                 style={styles.iconButton}
               >
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => facebookLogin()}
+                >
                   <FontAwesomeIcon
                     icon={faFacebookF}
                     size={40}
@@ -169,7 +220,8 @@ export default function SignInScreen() {
 
           <View style={styles.signUpContainer}>
             <Text style={styles.textNormal}>Vous n'avez pas de compte ?</Text>
-            <TouchableOpacity onPress={() => console.log("touch")}>
+
+            <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
               <Text style={styles.textSignUp}>S'inscrire</Text>
             </TouchableOpacity>
           </View>

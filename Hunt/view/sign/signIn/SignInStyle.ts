@@ -31,7 +31,7 @@ const SignInStyle = (width: number, height: number) =>
       paddingTop: "10%",
       flex: 1,
       width: "100%",
-      padding: "10%",
+      padding: "8%",
     },
     forgotPassword: {
       alignSelf: "flex-end",
