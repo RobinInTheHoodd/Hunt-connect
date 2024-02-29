@@ -17,18 +17,20 @@ class AuthService {
       customeToken: string;
     };
     try {
-      this._firebaseAuth
+      await this._firebaseAuth
         .getUserByEmail(register.email)
         .then(async (userRecord: UserRecord) => {
           const registerReq: IRegisterRequest =
             RegisterRequest.fromUserContext(userRecord);
           await userDataAccess.createUser(registerReq);
+          user.customeToken = "";
+          user.register = registerReq;
         })
         .catch(async () => {
           user = await this._firebaseRegister(register); //{ customeToken: "dsds" };
           await userDataAccess.createUser(register);
         });
-      return user!.customeToken;
+      return user!.customeToken!;
     } catch (e: any) {
       throw e;
     }
