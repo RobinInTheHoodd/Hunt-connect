@@ -29,8 +29,7 @@ export default function AuthProvider({
   async function googleLogin(): Promise<any> {
     try {
       GoogleSignin.configure({
-        webClientId:
-          "811814541175-a1m3scn0j132t5174v88a7598tv8vdqc.apps.googleusercontent.com",
+        webClientId: "",
         forceCodeForRefreshToken: true,
         offlineAccess: true,
       });
@@ -39,7 +38,9 @@ export default function AuthProvider({
         .then((user) => {
           return auth.GoogleAuthProvider.credential(user.idToken);
         })
-        .catch(() => {});
+        .catch((e: any) => {
+          throw e;
+        });
 
       let user: FirebaseAuthTypes.UserCredential =
         await auth().signInWithCredential(googleCredential);

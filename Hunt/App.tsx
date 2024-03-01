@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import SignInScreen from "./view/sign/signIn/SignInScreen";
 import SignUpScreen from "./view/sign/signUp/SignUpScreen";
-import { AuthProvider } from "./utils/context/authContext";
+import AuthProvider from "./utils/provider/authProvider";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { registerRootComponent } from "expo";
