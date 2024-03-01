@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import {
   StyleSheet,
   View,
@@ -9,15 +10,10 @@ import {
   Image,
   useWindowDimensions,
 } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
-  faCheckCircle,
   faEnvelope,
-  faEyeSlash,
   faHashtag,
-  faL,
   faLock,
-  faPhone,
   faPortrait,
   faTent,
 } from "@fortawesome/free-solid-svg-icons";
@@ -28,59 +24,17 @@ import { ScrollView } from "react-native-gesture-handler";
 import InputText from "../../../components/Input/InputText";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignUpStyle from "./SignUpStyle";
-
-import axios from "../../../config/axiosConfig";
 import { authService } from "../../../service/authService";
-import * as SecureStore from "expo-secure-store";
 import { useAuth } from "../../../utils/context/authContext";
 import { ApiError } from "../../../model/ApiError";
-import { ISignUpForm } from "../../../model/SignUpForm";
+import { ISignUpForm, SignUpForm } from "../../../model/SignUpForm";
 import { AxiosError } from "axios";
+import { ISignUpModel, SignUpModel } from "../../../model/SignUpModel";
 
-export default function SignUpScreen({ navigation }: any) {
+export default function SignUpScreen({ navigation, route }: any) {
   const { height, width } = useWindowDimensions();
   const styles = SignUpStyle(width, height);
-  const [signForm, setSignForm] = useState<ISignUpForm>({
-    fullName: "Robin Mazouni",
-    fullNameTouched: false,
-    fullNameError: "",
-    isFullNameValid: true,
-
-    email: "robin@gmail.com",
-    emailTouched: false,
-    emailError: "",
-    isEmailValid: true,
-
-    phone: "8822093819",
-    phoneTouched: false,
-    phoneError: "",
-    isPhoneValid: true,
-
-    password: "Robin88-",
-    passwordTouched: false,
-    passwordError: "",
-    isPasswordValid: true,
-    hiddePassword: true,
-
-    confirmPassword: "Robin88-",
-    confirmPasswordTouched: false,
-    confirmPasswordError: "",
-    isConfirmPasswordValid: true,
-    hiddeConfirmPassword: true,
-
-    hutName: "Hut name",
-    hutNameTouched: false,
-    hutNameError: "",
-    isHutNameValid: true,
-
-    hutNumber: "1235467",
-    hutNumberTouched: false,
-    hutNumberError: "",
-    isHutNumberValid: true,
-
-    isOwner: false,
-    isValidForm: false,
-  });
+  const [signForm, setSignForm] = useState<ISignUpForm>(new SignUpForm());
 
   const [image, setImage] = useState("");
   const { login } = useAuth();
@@ -100,46 +54,41 @@ export default function SignUpScreen({ navigation }: any) {
   };
 
   const register = async () => {
-    console.log("VALID");
-    const resgisterRequest: ISignUpModel = {
-      display_name: signForm.fullName!,
-      email: signForm.email,
-      password: signForm.password,
-      phone: "+1" + signForm.phone,
-      role: 1,
-      hut_name: signForm.hutName,
-      hut_number: signForm.hutNumber,
-    };
+    const resgisterRequest: ISignUpModel = SignUpModel.fromSignUpForm(signForm);
 
     try {
-      await authService.userRegisterFirebase(resgisterRequest);
-
-      login(signForm.email, signForm.password);
+      await authService.userRegister(resgisterRequest);
+      login(signForm.email!, signForm.password!);
     } catch (e: any) {
-      const error: ApiError = {
-        field: e.response.data.field,
-        message: e.response.data.message,
-      };
-
-      if (error.field) {
-        const formFieldName = UtilsSign.mapApiFieldToForm(error.field);
-        const formFieldErrorName = formFieldName + "Error";
-        console.log(error);
-        console.log(formFieldName);
-        console.log(formFieldErrorName);
-
-        console.log(error.message);
-        if (formFieldName) {
-          setSignForm((prevForm) => ({
-            ...prevForm,
-            [formFieldErrorName]: error.message,
-          }));
-        }
-      } else {
-        let errorr: AxiosError = e;
-        console.log(error);
-      }
+      errorRegister(e);
     }
+  };
+
+  const errorRegister = (e: any) => {
+    const error: ApiError = {
+      field: e.response.data.field,
+      message: e.response.data.message,
+    };
+
+    if (error.field) {
+      const formFieldName = UtilsSign.mapApiFieldToForm(error.field);
+      const formFieldErrorName = formFieldName + "Error";
+      if (formFieldName) {
+        setSignForm((prevForm) => ({
+          ...prevForm,
+          [formFieldErrorName]: error.message,
+        }));
+      }
+    } else {
+      // TODO cas générale non connu
+    }
+  };
+
+  const checkInputForm = () => {
+    let checkForm = UtilsSign.checkForm(signForm);
+    let isValidForm = UtilsSign.validateForm(checkForm);
+    setSignForm(checkForm);
+    setShouldRegister(isValidForm);
   };
 
   useEffect(() => {
@@ -147,11 +96,17 @@ export default function SignUpScreen({ navigation }: any) {
       const doRegistration = async () => {
         await register();
         setShouldRegister(false);
-        console.log("Registration finished");
       };
       doRegistration();
     }
   }, [signForm, shouldRegister]);
+
+  useEffect(() => {
+    const { signForm } = route.params || false;
+    if (signForm) {
+      setSignForm(signForm);
+    }
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -200,9 +155,9 @@ export default function SignUpScreen({ navigation }: any) {
               onBlur={() => {}}
               placeholder="example@gmail.com"
               iconName={faEnvelope}
-              isTouched={signForm.emailTouched}
-              isValid={signForm.isEmailValid}
-              errorMessage={signForm.emailError}
+              isTouched={signForm.emailTouched!}
+              isValid={signForm.isEmailValid!}
+              errorMessage={signForm.emailError!}
               require={true}
               isPassword={false}
             />
@@ -248,9 +203,9 @@ export default function SignUpScreen({ navigation }: any) {
               onBlur={() => {}}
               placeholder="mot de passe"
               iconName={faLock}
-              isTouched={signForm.passwordTouched}
-              isValid={signForm.isPasswordValid}
-              errorMessage={signForm.passwordError}
+              isTouched={signForm.passwordTouched!}
+              isValid={signForm.isPasswordValid!}
+              errorMessage={signForm.passwordError!}
               require={true}
               isPassword={true}
               hiddePassword={signForm.hiddePassword}
@@ -365,8 +320,7 @@ export default function SignUpScreen({ navigation }: any) {
             <TouchableOpacity
               style={styles.button}
               onPress={async () => {
-                let isValidForm = UtilsSign.validateForm(signForm);
-                setShouldRegister(isValidForm);
+                checkInputForm();
               }}
             >
               <LinearGradient
