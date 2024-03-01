@@ -7,7 +7,11 @@ import { AxiosError } from "axios";
 import { ISignUpForm, SignUpForm } from "../../model/SignUpForm";
 import { AuthContext } from "../context/authContext";
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export default function AuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [currentUser, setCurrentUser] = useState<UserContext>(
     new UserContext()
   );
@@ -26,14 +30,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       GoogleSignin.configure({
         webClientId:
-          Constants.manifest2?.extra.EXPO_PUBLIC_API_URL_GOOGLE_WEB_ID,
+          "811814541175-a1m3scn0j132t5174v88a7598tv8vdqc.apps.googleusercontent.com",
         forceCodeForRefreshToken: true,
         offlineAccess: true,
       });
 
-      const googleCredential = await GoogleSignin.signIn().then((user) => {
-        return auth.GoogleAuthProvider.credential(user.idToken);
-      });
+      const googleCredential = await GoogleSignin.signIn()
+        .then((user) => {
+          return auth.GoogleAuthProvider.credential(user.idToken);
+        })
+        .catch(() => {});
 
       let user: FirebaseAuthTypes.UserCredential =
         await auth().signInWithCredential(googleCredential);
@@ -42,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { isNew: true, signUpForm: SignUpForm.fromUserCredential(user) };
       else return { isNew: false, signUpForm: new SignUpForm() };
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
 
