@@ -29,6 +29,7 @@ interface inputTextField {
   isPassword: boolean;
   setHidePassword?: () => void;
   hiddePassword?: boolean;
+  disable?: boolean;
 }
 
 const InputText = ({
@@ -45,6 +46,7 @@ const InputText = ({
   isPassword,
   setHidePassword,
   hiddePassword,
+  disable,
 }: inputTextField) => {
   const { width, height } = useWindowDimensions();
   const styles = InputTextStyle(width, height);
@@ -73,6 +75,7 @@ const InputText = ({
           placeholder={placeholder}
           style={styles.input}
           secureTextEntry={hiddePassword!}
+          editable={disable}
         />
         {isPassword && (
           <TouchableOpacity onPress={setHidePassword}>
