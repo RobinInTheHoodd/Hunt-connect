@@ -37,7 +37,7 @@ export default function SignUpScreen({ navigation, route }: any) {
   const [signForm, setSignForm] = useState<ISignUpForm>(new SignUpForm());
 
   const [image, setImage] = useState("");
-  const { login } = useAuth();
+  const { login, signOut } = useAuth();
   const [shouldRegister, setShouldRegister] = useState(false);
 
   const pickImage = async () => {
@@ -160,6 +160,7 @@ export default function SignUpScreen({ navigation, route }: any) {
               errorMessage={signForm.emailError!}
               require={true}
               isPassword={false}
+              disable={signForm.emailDisable}
             />
 
             <InputText
@@ -180,72 +181,69 @@ export default function SignUpScreen({ navigation, route }: any) {
               errorMessage={signForm.phoneError!}
               require={true}
               isPassword={false}
+              disable={signForm.phoneDisable}
             />
 
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            ></View>
+            {signForm.passwordDisable && (
+              <InputText
+                tagName={"Mot de passe"}
+                value={signForm.password}
+                onChangeText={(value) => {
+                  let updateForm = UtilsSign.validatePassword(signForm, value);
+                  setSignForm({
+                    ...signForm,
+                    ...updateForm,
+                  });
+                }}
+                onBlur={() => {}}
+                placeholder="mot de passe"
+                iconName={faLock}
+                isTouched={signForm.passwordTouched!}
+                isValid={signForm.isPasswordValid!}
+                errorMessage={signForm.passwordError!}
+                require={true}
+                isPassword={true}
+                hiddePassword={signForm.hiddePassword}
+                setHidePassword={() =>
+                  setSignForm({
+                    ...signForm,
+                    hiddePassword: !signForm.hiddePassword,
+                  })
+                }
+              />
+            )}
 
-            <InputText
-              tagName={"Mot de passe"}
-              value={signForm.password}
-              onChangeText={(value) => {
-                let updateForm = UtilsSign.validatePassword(signForm, value);
-                setSignForm({
-                  ...signForm,
-                  ...updateForm,
-                });
-              }}
-              onBlur={() => {}}
-              placeholder="mot de passe"
-              iconName={faLock}
-              isTouched={signForm.passwordTouched!}
-              isValid={signForm.isPasswordValid!}
-              errorMessage={signForm.passwordError!}
-              require={true}
-              isPassword={true}
-              hiddePassword={signForm.hiddePassword}
-              setHidePassword={() =>
-                setSignForm({
-                  ...signForm,
-                  hiddePassword: !signForm.hiddePassword,
-                })
-              }
-            />
-
-            <InputText
-              tagName={"Confirmation mot de passe"}
-              value={signForm.confirmPassword}
-              onChangeText={(value) => {
-                let updateForm = UtilsSign.validateConfirmPassword(
-                  signForm,
-                  value
-                );
-                setSignForm({
-                  ...signForm,
-                  ...updateForm,
-                });
-              }}
-              onBlur={() => {}}
-              placeholder="mot de passe"
-              iconName={faLock}
-              isTouched={signForm.confirmPasswordTouched!}
-              isValid={signForm.isConfirmPasswordValid!}
-              errorMessage={signForm.confirmPasswordError!}
-              require={true}
-              isPassword={true}
-              hiddePassword={signForm.hiddeConfirmPassword}
-              setHidePassword={() =>
-                setSignForm({
-                  ...signForm,
-                  hiddeConfirmPassword: !signForm.hiddeConfirmPassword,
-                })
-              }
-            />
+            {signForm.confirmPasswordDisable && (
+              <InputText
+                tagName={"Confirmation mot de passe"}
+                value={signForm.confirmPassword}
+                onChangeText={(value) => {
+                  let updateForm = UtilsSign.validateConfirmPassword(
+                    signForm,
+                    value
+                  );
+                  setSignForm({
+                    ...signForm,
+                    ...updateForm,
+                  });
+                }}
+                onBlur={() => {}}
+                placeholder="mot de passe"
+                iconName={faLock}
+                isTouched={signForm.confirmPasswordTouched!}
+                isValid={signForm.isConfirmPasswordValid!}
+                errorMessage={signForm.confirmPasswordError!}
+                require={true}
+                isPassword={true}
+                hiddePassword={signForm.hiddeConfirmPassword}
+                setHidePassword={() =>
+                  setSignForm({
+                    ...signForm,
+                    hiddeConfirmPassword: !signForm.hiddeConfirmPassword,
+                  })
+                }
+              />
+            )}
 
             <View style={styles.switchContainer}>
               <Text>Propriétaire d'une hutte ?</Text>
@@ -334,8 +332,15 @@ export default function SignUpScreen({ navigation, route }: any) {
             </TouchableOpacity>
 
             <View style={styles.footerContainer}>
-              <Text style={styles.footerText}>Vous n'avez pas de compte ?</Text>
-              <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
+              <Text style={styles.footerText}>Vous avez un compte ?</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  if (signForm.UUID) {
+                    signOut();
+                  }
+                  navigation.navigate("SignIn");
+                }}
+              >
                 <Text style={styles.signUpText}>Se connecter</Text>
               </TouchableOpacity>
             </View>

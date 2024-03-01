@@ -37,12 +37,14 @@ export default function SignInScreen({ navigation }: any) {
 
   const signInGoogle = async () => {
     let user: any;
-    user = await googleLogin();
-    if (user.isNew) {
-      navigation.navigate("SignUp", {
-        signForm: user.signUpForm,
-      });
-    }
+    try {
+      user = await googleLogin();
+      if (user.isNew) {
+        navigation.navigate("SignUp", {
+          signForm: user.signUpForm,
+        });
+      }
+    } catch (e: any) {}
     // TODO REDIRECT HOME
   };
 
