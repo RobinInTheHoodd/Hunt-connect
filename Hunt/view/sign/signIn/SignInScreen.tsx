@@ -11,45 +11,23 @@ import {
   faApple,
   faFacebookF,
 } from "@fortawesome/free-brands-svg-icons";
-
 import { faEnvelope, faL, faLock } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignInStyle from "./SignInStyle";
 import InputText from "../../../components/Input/InputText";
 import { IAuthContext, useAuth } from "../../../utils/context/authContext";
-import { ISignUpForm } from "../../../model/SignUpForm";
-import { ApiError } from "../../../model/ApiError";
-import { FirebaseError } from "../../../utils/firebaseError";
-import { utils } from "@react-native-firebase/app";
+import { ISignUpForm, SignUpForm } from "../../../model/SignUpForm";
 
 export default function SignInScreen({ navigation }: any) {
-  const {
-    googleLogin,
-    facebookLogin,
-    signOut,
-    currentUser,
-    login,
-  }: IAuthContext = useAuth();
+  const { googleLogin, facebookLogin, currentUser, login }: IAuthContext =
+    useAuth();
 
   const { height, width } = useWindowDimensions();
   const styles = SignInStyle(width, height);
   const [shouldLogin, setShouldLogin] = useState(false);
 
-  const [signForm, setSignForm] = useState<ISignUpForm>({
-    email: "robin@gmail.com",
-    emailTouched: false,
-    emailError: "",
-    isEmailValid: true,
-
-    password: "Robin88-",
-    passwordTouched: false,
-    passwordError: "",
-    isPasswordValid: true,
-    hiddePassword: true,
-
-    isValidForm: true,
-  });
+  const [signForm, setSignForm] = useState<ISignUpForm>(new SignUpForm());
 
   useEffect(() => {
     if (shouldLogin) {
@@ -57,28 +35,50 @@ export default function SignInScreen({ navigation }: any) {
     }
   }, [signForm, shouldLogin, currentUser]);
 
+  const signInGoogle = async () => {
+    let user: any;
+    user = await googleLogin();
+    if (user.isNew) {
+      navigation.navigate("SignUp", {
+        signForm: user.signUpForm,
+      });
+    }
+    // TODO REDIRECT HOME
+  };
+
+  const signInFacebook = async () => {
+    const user = await facebookLogin();
+    if (user.isNew)
+      navigation.navigate("SignUp", {
+        signForm: user.signUpForm,
+      });
+    // TODO REDIRECT HOME
+  };
+
   const doLogin = async () => {
     try {
-      await login(signForm.email, signForm.password);
+      await login(signForm.email!, signForm.password!);
       setShouldLogin(false);
     } catch (e: any) {
-      let updateSignForm: any;
       setShouldLogin(false);
-      setSignForm((prevForm) => ({
-        ...prevForm,
-        isValidForm: false,
-      }));
-
-      if (e.code) {
-        updateSignForm = UtilsSign.ErrorForm(signForm, e.code);
-      } else {
-        console.log("Autre error");
-      }
-      setSignForm((prevForm) => ({
-        ...prevForm,
-        ...updateSignForm,
-      }));
+      errorLogin(e);
     }
+  };
+
+  const errorLogin = async (e: any) => {
+    let updateSignForm: any;
+
+    if (e.code) {
+      updateSignForm = UtilsSign.ErrorForm(signForm, e.code);
+    } else {
+      console.log("Autre error");
+    }
+
+    setSignForm((prevForm) => ({
+      ...prevForm,
+      isValidForm: false,
+      ...updateSignForm,
+    }));
   };
 
   return (
@@ -108,9 +108,9 @@ export default function SignInScreen({ navigation }: any) {
             onBlur={() => {}}
             placeholder="Email"
             iconName={faEnvelope}
-            isTouched={signForm.emailTouched}
-            isValid={signForm.isEmailValid}
-            errorMessage={signForm.emailError}
+            isTouched={signForm.emailTouched!}
+            isValid={signForm.isEmailValid!}
+            errorMessage={signForm.emailError!}
             require={true}
             isPassword={false}
           />
@@ -128,9 +128,9 @@ export default function SignInScreen({ navigation }: any) {
             onBlur={() => {}}
             placeholder="Password"
             iconName={faLock}
-            isTouched={signForm.passwordTouched}
-            isValid={signForm.isPasswordValid}
-            errorMessage={signForm.passwordError}
+            isTouched={signForm.passwordTouched!}
+            isValid={signForm.isPasswordValid!}
+            errorMessage={signForm.passwordError!}
             require={true}
             isPassword={true}
             setHidePassword={() =>
@@ -178,7 +178,9 @@ export default function SignInScreen({ navigation }: any) {
               >
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => googleLogin()}
+                  onPress={async () => {
+                    await signInGoogle();
+                  }}
                 >
                   <FontAwesomeIcon icon={faGoogle} size={40} color="#ffffff" />
                 </TouchableOpacity>
@@ -206,7 +208,9 @@ export default function SignInScreen({ navigation }: any) {
               >
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => facebookLogin()}
+                  onPress={async () => {
+                    await signInFacebook();
+                  }}
                 >
                   <FontAwesomeIcon
                     icon={faFacebookF}
