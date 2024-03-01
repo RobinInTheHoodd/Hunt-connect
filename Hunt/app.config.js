@@ -39,8 +39,8 @@ export default {
       [
         "react-native-fbsdk-next",
         {
-          appID: process.env.FACEBOOK_APP_ID,
-          clientToken: process.env.FACEBOOK_CLIENT_TOKEN,
+          appID: "",
+          clientToken: "",
           displayName: "Hunt",
         },
       ],
