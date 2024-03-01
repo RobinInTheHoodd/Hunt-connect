@@ -217,9 +217,26 @@ export class UtilsSign {
     }
   }
 
+  static checkForm(signForm: ISignUpForm): ISignUpForm {
+    signForm = this.validateEmail(signForm, signForm.email!);
+    signForm = this.validateName(signForm, signForm.fullName!);
+    signForm = this.validatePhone(signForm, signForm.phone!);
+    signForm = this.validatePassword(signForm, signForm.password!);
+    signForm = this.validateConfirmPassword(
+      signForm,
+      signForm.confirmPassword!
+    );
+    signForm = this.validateHutName(signForm, signForm.hutName!);
+    signForm = this.validateHutNumber(signForm, signForm.hutNumber!);
+
+    return {
+      ...signForm,
+    };
+  }
+
   static validateForm(signForm: ISignUpForm): boolean {
     const areEmailAndPasswordValid =
-      signForm.isEmailValid && signForm.isPasswordValid;
+      signForm.isEmailValid! && signForm.isPasswordValid!;
 
     const areOtherFieldsValid = [
       signForm.isFullNameValid,
