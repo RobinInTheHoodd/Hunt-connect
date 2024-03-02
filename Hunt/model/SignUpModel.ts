@@ -55,6 +55,7 @@ export class SignUpModel implements ISignUpModel {
       display_name: signUpForm.fullName,
       email: signUpForm.email,
       phone: signUpForm.phone,
+      password: signUpForm.password || "",
       role: 1, // TODO need an update (ask user)
       hut_name: signUpForm.hutName || "",
       hut_number: signUpForm.hutNumber || "",
