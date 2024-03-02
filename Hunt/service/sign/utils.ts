@@ -234,6 +234,12 @@ export class UtilsSign {
     };
   }
 
+  static validateSignInForm(signForm: ISignUpForm) {
+    const areEmailAndPasswordValid =
+      signForm.isEmailValid! && signForm.isPasswordValid!;
+    return areEmailAndPasswordValid;
+  }
+
   static validateForm(signForm: ISignUpForm): boolean {
     const areEmailAndPasswordValid =
       signForm.isEmailValid! && signForm.isPasswordValid!;
@@ -256,6 +262,7 @@ export class UtilsSign {
     [FirebaseError.INVALID_EMAIL]: "email",
     [FirebaseError.USER_DISABLED]: "email",
     [FirebaseError.USER_DELETED]: "email",
+    [FirebaseError.NEED_CONFIRMATION]: "email",
     [FirebaseError.TOO_MANY_ATTEMPTS_TRY_LATER]: "password",
     user_role: "isOwner",
     password: "password",
@@ -326,6 +333,8 @@ export class UtilsSign {
       "Le mot de passe que vous avez saisi est incorrect.",
     [FirebaseError.INVALID_PHONE_NUMBER]: "phone",
     [FirebaseError.MISSING_PHONE_NUMBER]: "phone",
+    [FirebaseError.NEED_CONFIRMATION]:
+      "Cette adresse e-mail est déjà utilisée par un autre service.",
   };
 
   static mapApiErrorToForm = (apiFieldError: string): keyof any | null => {
