@@ -27,26 +27,30 @@ class AuthService {
       throw e;
     }
   }
-
   private async _firebaseRegister(register: IRegisterRequest) {
     let registerReq: IRegisterRequest = register;
     let customeToken: string;
+
     try {
-      this._firebaseAuth
+      await this._firebaseAuth
         .getUserByEmail(register.email)
         .then(async (userRecord: UserRecord) => {
           registerReq = RegisterRequest.fromUserContext(userRecord);
         })
         .catch(async () => {
-          const userRecord = await this._firebaseAuth.createUser({
-            displayName: register.display_name,
-            email: register.email,
-            emailVerified: false,
-            password: register.password,
-            phoneNumber: register.phone,
-            disabled: false,
-          });
-          registerReq.UUID = userRecord.uid;
+          try {
+            const userRecord = await this._firebaseAuth.createUser({
+              displayName: register.display_name,
+              email: register.email,
+              emailVerified: false,
+              password: register.password,
+              phoneNumber: "+1" + register.phone,
+              disabled: false,
+            });
+            registerReq.UUID = userRecord.uid;
+          } catch (error) {
+            throw error;
+          }
         });
       customeToken = await this._firebaseAuth.createCustomToken(
         registerReq.UUID!

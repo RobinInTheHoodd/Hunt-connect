@@ -51,7 +51,7 @@ export default class RegisterRequest implements IRegisterRequest {
 
   static fromUserContext(userRecord: UserRecord): RegisterRequest {
     return new RegisterRequest({
-      UUID: userRecord.uid,
+      UUID: userRecord.uid || "",
       display_name: userRecord.displayName! || "",
       email: userRecord.email! || "",
       phone: userRecord.phoneNumber || "",
