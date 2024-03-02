@@ -11,3 +11,6 @@ notre application vise à fournir une plateforme interactive pour une chasse
 responsable et respectueuse de l'environnement, en offrant des outils avancés
 pour optimiser chaque session et promouvoir une communauté active et
 informée.
+
+![image](https://github.com/RobinInTheHoodd/Hunt-connect/assets/58086948/a59a9e95-50dd-4e41-ae26-295ea8b3d03c)
+
