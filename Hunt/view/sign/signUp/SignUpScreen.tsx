@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import {
-  StyleSheet,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Switch,
   Image,
@@ -24,20 +22,18 @@ import { ScrollView } from "react-native-gesture-handler";
 import InputText from "../../../components/Input/InputText";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignUpStyle from "./SignUpStyle";
-import { authService } from "../../../service/authService";
-import { useAuth } from "../../../utils/context/authContext";
 import { ApiError } from "../../../model/ApiError";
 import { ISignUpForm, SignUpForm } from "../../../model/SignUpForm";
-import { AxiosError } from "axios";
-import { ISignUpModel, SignUpModel } from "../../../model/SignUpModel";
+import AuthService from "../../../service/authService";
 
 export default function SignUpScreen({ navigation, route }: any) {
   const { height, width } = useWindowDimensions();
   const styles = SignUpStyle(width, height);
   const [signForm, setSignForm] = useState<ISignUpForm>(new SignUpForm());
 
+  const authService = new AuthService();
+
   const [image, setImage] = useState("");
-  const { login, signOut } = useAuth();
   const [shouldRegister, setShouldRegister] = useState(false);
 
   const pickImage = async () => {
@@ -53,13 +49,11 @@ export default function SignUpScreen({ navigation, route }: any) {
     }
   };
 
-  const register = async () => {
-    const resgisterRequest: ISignUpModel = SignUpModel.fromSignUpForm(signForm);
-
+  const doRegister = async () => {
     try {
-      await authService.userRegister(resgisterRequest);
-      login(signForm.email!, signForm.password!);
+      await authService.register(signForm);
     } catch (e: any) {
+      console.log(e);
       errorRegister(e);
     }
   };
@@ -94,7 +88,7 @@ export default function SignUpScreen({ navigation, route }: any) {
   useEffect(() => {
     if (shouldRegister) {
       const doRegistration = async () => {
-        await register();
+        await doRegister();
         setShouldRegister(false);
       };
       doRegistration();
@@ -335,9 +329,6 @@ export default function SignUpScreen({ navigation, route }: any) {
               <Text style={styles.footerText}>Vous avez un compte ?</Text>
               <TouchableOpacity
                 onPress={() => {
-                  if (signForm.UUID) {
-                    signOut();
-                  }
                   navigation.navigate("SignIn");
                 }}
               >

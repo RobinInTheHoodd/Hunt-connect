@@ -16,51 +16,49 @@ import { LinearGradient } from "expo-linear-gradient";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignInStyle from "./SignInStyle";
 import InputText from "../../../components/Input/InputText";
-import { IAuthContext, useAuth } from "../../../utils/context/authContext";
 import { ISignUpForm, SignUpForm } from "../../../model/SignUpForm";
+import { ApiError } from "../../../model/ApiError";
+import AuthService from "../../../service/authService";
+import { Utils } from "@react-native-firebase/app";
 
-export default function SignInScreen({ navigation }: any) {
-  const { googleLogin, facebookLogin, currentUser, login }: IAuthContext =
-    useAuth();
-
+export default function SignInScreen({ navigation, route }: any) {
   const { height, width } = useWindowDimensions();
   const styles = SignInStyle(width, height);
-  const [shouldLogin, setShouldLogin] = useState(false);
 
+  const authService = new AuthService();
+  const [shouldLogin, setShouldLogin] = useState(false);
   const [signForm, setSignForm] = useState<ISignUpForm>(new SignUpForm());
 
   useEffect(() => {
     if (shouldLogin) {
       doLogin();
+      setShouldLogin(false);
     }
-  }, [signForm, shouldLogin, currentUser]);
+  }, [shouldLogin]);
+
+  useEffect(() => {
+    setSignForm(new SignUpForm());
+  }, [route.params]);
 
   const signInGoogle = async () => {
-    let user: any;
     try {
-      user = await googleLogin();
-      if (user.isNew) {
-        navigation.navigate("SignUp", {
-          signForm: user.signUpForm,
-        });
-      }
-    } catch (e: any) {}
-    // TODO REDIRECT HOME
+      await authService.googleLogin(navigation);
+    } catch (e: any) {
+      errorLogin(e);
+    }
   };
 
   const signInFacebook = async () => {
-    const user = await facebookLogin();
-    if (user.isNew)
-      navigation.navigate("SignUp", {
-        signForm: user.signUpForm,
-      });
-    // TODO REDIRECT HOME
+    try {
+      await authService.facebookLogin(navigation);
+    } catch (e: any) {
+      errorLogin(e);
+    }
   };
 
   const doLogin = async () => {
     try {
-      await login(signForm.email!, signForm.password!);
-      setShouldLogin(false);
+      await authService.login(signForm.email!, signForm.password!);
     } catch (e: any) {
       setShouldLogin(false);
       errorLogin(e);
@@ -69,7 +67,7 @@ export default function SignInScreen({ navigation }: any) {
 
   const errorLogin = async (e: any) => {
     let updateSignForm: any;
-
+    console.log(e);
     if (e.code) {
       updateSignForm = UtilsSign.ErrorForm(signForm, e.code);
     } else {
@@ -151,10 +149,12 @@ export default function SignInScreen({ navigation }: any) {
           <TouchableOpacity
             style={styles.signInButton}
             onPress={() => {
-              let isValidForm = UtilsSign.validateForm(signForm);
-              console.log(isValidForm);
-              console.log(signForm);
-              setShouldLogin(isValidForm);
+              let isValidForm = UtilsSign.validateSignInForm(signForm);
+              if (isValidForm) {
+                doLogin();
+              } else {
+                setSignForm(UtilsSign.checkForm(signForm));
+              }
             }}
           >
             <LinearGradient
@@ -196,7 +196,7 @@ export default function SignInScreen({ navigation }: any) {
               >
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => console.log(currentUser)}
+                  onPress={() => console.log("facebook")}
                 >
                   <FontAwesomeIcon icon={faApple} size={40} color="#ffffff" />
                 </TouchableOpacity>
