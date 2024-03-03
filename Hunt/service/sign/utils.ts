@@ -1,3 +1,4 @@
+import { faL } from "@fortawesome/free-solid-svg-icons";
 import { ISignUpForm } from "../../model/SignUpForm";
 import { FirebaseError } from "../../utils/firebaseError";
 
@@ -23,7 +24,6 @@ export class UtilsSign {
         emailTouched: true,
       };
     } catch (e: any) {
-      console.log(e);
       return {
         ...signForm,
         isValidForm: UtilsSign.validateForm(signForm),
@@ -204,8 +204,6 @@ export class UtilsSign {
         hutNumberTouched: true,
       };
     } catch (e: any) {
-      console.log(e);
-
       return {
         ...signForm,
         isValidForm: UtilsSign.validateForm(signForm),
