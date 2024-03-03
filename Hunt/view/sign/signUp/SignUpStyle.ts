@@ -20,12 +20,12 @@ const SignUpStyle = (width: number, height: number) =>
       fontWeight: "bold",
     },
     whiteBackgroundContainer: {
+      flex: 1,
       backgroundColor: "white",
       borderTopLeftRadius: width * 0.07,
       borderTopRightRadius: width * 0.07,
       marginTop: height * 0.05,
       paddingTop: "10%",
-      height: height,
       width: "100%",
       padding: "8%",
     },
