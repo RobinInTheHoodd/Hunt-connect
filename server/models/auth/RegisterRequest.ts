@@ -6,6 +6,7 @@ export declare class IRegisterRequest {
   email: string;
   phone?: string;
   password?: string;
+  cguAccepted?: number;
   role: number;
   hut_name?: string;
   hut_number?: string;
@@ -19,6 +20,7 @@ export default class RegisterRequest implements IRegisterRequest {
   email: string;
   phone?: string;
   password?: string;
+  cguAccepted?: number;
   role: number;
   hut_name?: string;
   hut_number?: string;
@@ -32,6 +34,7 @@ export default class RegisterRequest implements IRegisterRequest {
     phone,
     password,
     role,
+    cguAccepted,
     hut_name,
     hut_number,
     create_at,
@@ -43,6 +46,7 @@ export default class RegisterRequest implements IRegisterRequest {
     this.phone = phone;
     this.password = password;
     this.role = role;
+    this.cguAccepted = cguAccepted;
     this.hut_name = hut_name;
     this.hut_number = hut_number;
     this.create_at = create_at;
@@ -55,7 +59,6 @@ export default class RegisterRequest implements IRegisterRequest {
       display_name: userRecord.displayName! || "",
       email: userRecord.email! || "",
       phone: userRecord.phoneNumber || "",
-
       role: 1, // TOD need an update (ask user)
     });
   }

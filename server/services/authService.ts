@@ -27,16 +27,14 @@ class AuthService {
       throw e;
     }
   }
+
   private async _firebaseRegister(register: IRegisterRequest) {
     let registerReq: IRegisterRequest = register;
-    let customeToken: string;
+    let customeToken: string = "";
 
     try {
       await this._firebaseAuth
         .getUserByEmail(register.email)
-        .then(async (userRecord: UserRecord) => {
-          registerReq = RegisterRequest.fromUserContext(userRecord);
-        })
         .catch(async () => {
           try {
             const userRecord = await this._firebaseAuth.createUser({
@@ -51,10 +49,13 @@ class AuthService {
           } catch (error) {
             throw error;
           }
+        })
+        .finally(async () => {
+          customeToken = await this._firebaseAuth.createCustomToken(
+            registerReq.UUID!
+          );
         });
-      customeToken = await this._firebaseAuth.createCustomToken(
-        registerReq.UUID!
-      );
+
       return { register, customeToken };
     } catch (err: any) {
       const firebaseError: FirebaseError = {

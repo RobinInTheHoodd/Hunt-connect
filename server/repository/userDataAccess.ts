@@ -11,11 +11,11 @@ class UserDataAccess {
       "(" +
       "user_id,           display_name,   email," +
       "email_verified,    phone,          user_role," +
-      "hut_name,          hut_number" +
+      "is_cgu_accepted,   hut_name,       hut_number" +
       ") " +
       "VALUES" +
       "(" +
-      "$1, $2, $3, $4, $5, $6, $7, $8" +
+      "$1, $2, $3, $4, $5, $6, $7, $8, $9" +
       ");";
 
     const values = [
@@ -25,6 +25,7 @@ class UserDataAccess {
       0,
       user.phone,
       user.role,
+      true,
       user.hut_name,
       user.hut_number,
     ];
