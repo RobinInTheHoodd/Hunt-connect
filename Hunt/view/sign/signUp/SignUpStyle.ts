@@ -87,6 +87,14 @@ const SignUpStyle = (width: number, height: number) =>
       width: width * 0.9,
       height: height * 0.3,
     },
+    checkboxIcon: {
+      marginRight: width * 0.02,
+      color: "#6D3358",
+    },
+    checkboxLabel: {
+      fontSize: width * 0.04,
+      color: "#6D3358",
+    },
   });
 
 export default SignUpStyle;

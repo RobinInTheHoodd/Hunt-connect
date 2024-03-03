@@ -14,17 +14,21 @@ import {
   faLock,
   faPortrait,
   faTent,
+  faSquare,
+  faCheckSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import { ScrollView } from "react-native-gesture-handler";
 import InputText from "../../../components/Input/InputText";
+import CguComponent from "../../../components/Input/CguComponent";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignUpStyle from "./SignUpStyle";
 import { ApiError } from "../../../model/ApiError";
 import { ISignUpForm, SignUpForm } from "../../../model/SignUpForm";
 import AuthService from "../../../service/authService";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 export default function SignUpScreen({ navigation, route }: any) {
   const { height, width } = useWindowDimensions();
@@ -242,8 +246,11 @@ export default function SignUpScreen({ navigation, route }: any) {
             <View style={styles.switchContainer}>
               <Text>Propriétaire d'une hutte ?</Text>
               <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={signForm.isOwner ? "#f5dd4b" : "#f4f3f4"}
+                trackColor={{
+                  false: "#767577",
+                  true: "#556b2f",
+                }}
+                thumbColor={signForm.isOwner ? "#8b4513" : "#f4f3f4"}
                 onValueChange={() =>
                   setSignForm({ ...signForm, isOwner: !signForm.isOwner })
                 }
@@ -308,6 +315,36 @@ export default function SignUpScreen({ navigation, route }: any) {
                 )}
               </>
             )}
+            {/**
+             
+            <View style={styles.switchContainer}>
+              <Text style={styles.checkboxLabel}>J'accepte les CGU</Text>
+              <Switch
+                trackColor={{
+                  false: "#767577",
+                  true: "#556b2f",
+                }}
+                thumbColor={
+                  signForm.isCguAccepted
+                    ? "#8b4513"
+                    : signForm.errorCgu
+                    ? "#ff2701"
+                    : "#f4f3f4"
+                }
+                onValueChange={() =>
+                  setSignForm({
+                    ...signForm,
+                    isCguAccepted: !signForm.isCguAccepted,
+                  })
+                }
+                value={signForm.isCguAccepted}
+              />
+            </View>
+             */}
+
+            <View style={{ marginTop: "5%" }}>
+              <CguComponent />
+            </View>
 
             <TouchableOpacity
               style={styles.button}
