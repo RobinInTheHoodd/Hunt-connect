@@ -38,6 +38,7 @@ class HuntingSessionService {
       for (const duckPosition of huntSession.duckTeams!)
         await duckTeamsDataAccess.create(duckPosition, client, huntSessionID);
 
+      return huntSessionID;
       await client.query("COMMIT");
     } catch (e: any) {
       await client.query("ROLLBACK");

@@ -19,9 +19,9 @@ class HuntSessionController {
       const huntSessionReq: IHuntingSessionModel = req.body;
 
       huntSessionReq.hutID = 1;
-      await huntingSessionService.create(huntSessionReq);
+      const huntSessionID = await huntingSessionService.create(huntSessionReq);
 
-      res.status(200);
+      res.status(200).send({ id: huntSessionID });
     } catch (e) {
       next(e);
     }
@@ -49,6 +49,8 @@ class HuntSessionController {
   ) {
     try {
       const { huntID } = req.params;
+
+      console.log(huntID);
 
       await huntingSessionService.finishSession(parseInt(huntID));
 
