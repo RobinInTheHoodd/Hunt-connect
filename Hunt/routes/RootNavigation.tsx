@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { useAppSelector } from "../redux/hook";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../view/home/HomeScreen";
-import WeatherScreen from "../view/home/WeatherCard";
+import WeatherScreen from "../components/WeatherCard";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faDove, faLocation } from "@fortawesome/free-solid-svg-icons";
 
