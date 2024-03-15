@@ -6,7 +6,7 @@ export declare class IRegisterRequest {
   email: string;
   phone?: string;
   password?: string;
-  cguAccepted?: number;
+  cguAccepted?: boolean;
   role: number;
   hut_name?: string;
   hut_number?: string;
@@ -20,7 +20,7 @@ export default class RegisterRequest implements IRegisterRequest {
   email: string;
   phone?: string;
   password?: string;
-  cguAccepted?: number;
+  cguAccepted?: boolean;
   role: number;
   hut_name?: string;
   hut_number?: string;
