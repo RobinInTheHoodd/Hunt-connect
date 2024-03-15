@@ -3,7 +3,7 @@ export interface IParticipantModel {
   displayName: string;
 }
 
-interface IGuestModel {
+export interface IGuestModel {
   ID: string;
   displayName: string;
   displayNameTouched: boolean;
@@ -11,7 +11,7 @@ interface IGuestModel {
   isDisplayNameValid: boolean;
 }
 
-export interface IParticipantFormModel {
+interface IParticipantFormModel {
   participants: IParticipantModel[];
   guest: IGuestModel[];
 }
