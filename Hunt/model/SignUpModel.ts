@@ -1,4 +1,4 @@
-import { ISignUpForm } from "./SignUpForm";
+import { ISignUpForm } from "./form/SignUpForm";
 
 export declare interface ISignUpModel {
   UUID?: string;
