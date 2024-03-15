@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import HuntingSessionService from "../../service/huntingSessionService";
 import { IHuntingSessionModel } from "../../model/HuntingSession";
-import WeatherCard from "../home/WeatherCard";
+import WeatherCard from "../../components/WeatherCard";
 import AddindHuntingSession from "../../components/AddingHuntingSession";
 import { useAppSelector } from "../../redux/hook";
 import { useFocusEffect } from "@react-navigation/native";
