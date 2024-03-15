@@ -6,7 +6,7 @@ import WeatherInfoModel, {
 export const weatherController = {
   async getWeather(location: string): Promise<WeatherInfoModel> {
     const apiRes: AxiosResponse = await axios.get(
-      "https://api.weatherapi.com/v1/current.json?key&q=" +
+      "https://api.weatherapi.com/v1/current.json?key=9868117782b04e19b07152925240803&q=" +
         location +
         "&aqi=no&lang=fr"
     );
