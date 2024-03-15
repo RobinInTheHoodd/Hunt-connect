@@ -1,9 +1,10 @@
 import { Router } from "express";
 
 import authRoutes from "./authRoutes";
+import huntSessionRoutes from "./huntSessionRoutes";
 
 const router = Router();
 
 router.use("/auth", authRoutes);
-
+router.use("/hunt/session", huntSessionRoutes);
 export default router;
