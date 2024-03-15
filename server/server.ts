@@ -4,6 +4,7 @@ import verifyTokenMiddleware from "./middleware/authMiddleware";
 import router from "./routes/index";
 import errorPostgresMiddleware from "./middleware/errorPostgresMiddleware";
 import errorFirebaseMiddleware from "./middleware/errorFirebaseMiddleware";
+import requestBodyValidationMiddleware from "./middleware/requestBodyValidationMiddleware";
 
 require("dotenv").config();
 
@@ -13,12 +14,13 @@ const PORT = process.env.SERVER_PORT;
 
 app.use(bodyParser.json());
 
-app.use(verifyTokenMiddleware);
+//app.use(verifyTokenMiddleware);
 
 app.use(router);
 
 app.use(errorPostgresMiddleware);
 app.use(errorFirebaseMiddleware);
+app.use(requestBodyValidationMiddleware);
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
