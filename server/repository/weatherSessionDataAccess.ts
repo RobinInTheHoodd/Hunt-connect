@@ -47,8 +47,10 @@ class WeatherDataAccess {
 
   public async getByHuntinSessionsID(id: number): Promise<IWeatherInfoModel> {
     try {
-      const sql = "SELECT * FROM udb.hunting_session_weather";
-      const res = await pool.query(sql);
+      const sql =
+        "SELECT * FROM udb.hunting_session_weather WHERE hunting_session_id = $1 ";
+      const value = [id];
+      const res = await pool.query(sql, value);
 
       return WeatherInfoModel.fromQuery(res.rows[0]);
     } catch (e: any) {

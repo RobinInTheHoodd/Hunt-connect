@@ -11,6 +11,7 @@ export interface IHuntingSessionModel {
   weather?: IWeatherInfoModel;
   participants?: IHuntingParticipanModel[];
   duckTeams?: IDuckTeamsModel[];
+  isFinish: boolean;
 }
 
 export default class HuntingSessionModel implements IHuntingSessionModel {
@@ -22,12 +23,14 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
   weather?: IWeatherInfoModel;
   participants?: IHuntingParticipanModel[];
   duckTeams?: IDuckTeamsModel[];
+  isFinish: boolean;
 
   constructor(
     hutID: number,
     creatorID: string,
     fromDate: Date,
     toDate: Date,
+    isFinish: boolean,
     weather?: IWeatherInfoModel,
     participants?: IHuntingParticipanModel[],
     id?: number,
@@ -41,6 +44,7 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
     this.weather = weather;
     this.participants = participants;
     this.duckTeams = duckTeams;
+    this.isFinish = isFinish;
   }
 
   public static fromQuery(huntSession: any): IHuntingSessionModel {
@@ -49,6 +53,7 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
       huntSession.creator_id,
       huntSession.from_date,
       huntSession.to_date,
+      huntSession.is_finish,
       undefined,
       undefined,
       huntSession.id,

@@ -18,17 +18,18 @@ class HuntingSessionDataAccess {
       "INSERT INTO udb.Hunting_Session " +
       "(" +
       "hut_id,      creator_id," +
-      "from_date,   to_date" +
+      "from_date,   to_date, is_finish" +
       ") " +
       "VALUES" +
       "(" +
-      "$1, $2, $3, $4" +
+      "$1, $2, $3, $4, $5" +
       ") RETURNING id;";
     const values = [
       huntSession.hutID,
       huntSession.creatorID,
       huntSession.fromDate,
       huntSession.toDate,
+      huntSession.isFinish,
     ];
     try {
       const res = await client.query(sql, values);
@@ -80,19 +81,20 @@ class HuntingSessionDataAccess {
 
   public async getCurrentByUserId(
     userID: string
-  ): Promise<IHuntingSessionModel> {
+  ): Promise<IHuntingSessionModel | void> {
     try {
       const query =
         "SELECT hs.* FROM udb.hunting_session as hs " +
         "INNER JOIN udb.hunting_session_participant as hsp " +
         "ON hsp.hunting_session_id = hs.id " +
         "WHERE (hs.creator_id = $1 OR hsp.participant_id = $1) " +
-        "AND CURRENT_DATE BETWEEN hs.from_date AND hs.to_date;";
+        "AND CURRENT_DATE BETWEEN hs.from_date AND hs.to_date " +
+        "AND hs.is_finish = false ; ";
       const value = [userID];
+
       const res = await pool.query(query, value);
 
-      if (res.rowCount == 0) throw "Aucune donné";
-
+      if (res.rowCount == 0) return;
       return HuntingSessionModel.fromQuery(res.rows[0]);
     } catch (e: any) {
       const errorDatabase: DatabaseError = {
@@ -127,6 +129,28 @@ class HuntingSessionDataAccess {
         errorType: "postgres",
         code: e.code,
         detail: e.detail,
+      };
+      throw errorDatabase;
+    }
+  }
+
+  public async finishSession(huntSessionID: number) {
+    const sql =
+      "UPDATE udb.Hunting_Session " +
+      "SET is_finish = true " +
+      "WHERE id = $1 ";
+    const values = [huntSessionID];
+    try {
+      await pool.query(sql, values);
+      console.log("FINISh");
+      return;
+    } catch (err: any) {
+      const errorDatabase: DatabaseError = {
+        name: "DatabaseError",
+        message: "Une erreur de base de données s'est produite",
+        errorType: "postgres",
+        code: err.code,
+        detail: err.detail,
       };
       throw errorDatabase;
     }

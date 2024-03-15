@@ -15,7 +15,9 @@ class HuntSessionController {
       if (validation.length != 0) {
         throw validation[0];
       }
+
       const huntSessionReq: IHuntingSessionModel = req.body;
+
       huntSessionReq.hutID = 1;
       await huntingSessionService.create(huntSessionReq);
 
@@ -34,6 +36,23 @@ class HuntSessionController {
       );
 
       res.status(200).send(huntSession);
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
+
+  public async finishHuntingSession(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { huntID } = req.params;
+
+      await huntingSessionService.finishSession(parseInt(huntID));
+
+      res.status(200).send();
     } catch (e) {
       console.log(e);
       next(e);

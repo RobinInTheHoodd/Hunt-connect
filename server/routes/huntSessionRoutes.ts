@@ -23,4 +23,5 @@ router.post(
 );
 router.get("/getCurrent/:userID", huntSessionController.getCurrent);
 
+router.get("/finish/:huntID", huntSessionController.finishHuntingSession);
 export default router;

@@ -96,7 +96,7 @@ export default class WeatherInfoModel implements IWeatherInfoModel {
       "weather.name": {
         custom: {
           options: (value: any) => {
-            if (value == undefined || value == null) true;
+            if (value == undefined || value == null || value == "") true;
             else {
               if (typeof value !== "string")
                 throw new Error("Le nom doit être une chaîne de charactère");

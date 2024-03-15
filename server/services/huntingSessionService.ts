@@ -22,7 +22,6 @@ class HuntingSessionService {
         client
       );
 
-      console.log("HUT CREATE");
       for (const participant of huntSession.participants!)
         await huntingSessionDataAccess.addParticipant(
           huntSessionID,
@@ -42,30 +41,42 @@ class HuntingSessionService {
       await client.query("COMMIT");
     } catch (e: any) {
       await client.query("ROLLBACK");
-      client.release();
       throw e;
     } finally {
       client.release();
     }
   }
 
+  public async finishSession(huntSessionID: number) {
+    try {
+      await huntingSessionDataAccess.finishSession(huntSessionID);
+      return;
+    } catch (e: any) {
+      throw e;
+    }
+  }
+
   public async getCurrentByUserId(userID: string) {
     try {
-      const huntSession: IHuntingSessionModel =
+      const huntSession: IHuntingSessionModel | void =
         await huntingSessionDataAccess.getCurrentByUserId(userID);
+
+      if (huntSession == undefined) return;
 
       const participants: IHuntingParticipanModel[] =
         await huntingSessionDataAccess.getParticipantByHuntingSessionID(
-          huntSession.id!
+          huntSession!.id!
         );
-      const weather: IWeatherInfoModel =
-        await weatherDataAccess.getByHuntinSessionsID(huntSession.id!);
-      const duckTeams: IDuckTeamsModel[] =
-        await duckTeamsDataAccess.getByHuntSessionID(huntSession.id!);
 
-      huntSession.duckTeams = duckTeams;
-      huntSession.participants = participants;
-      huntSession.weather = weather;
+      console.log(huntSession.id);
+      const weather: IWeatherInfoModel =
+        await weatherDataAccess.getByHuntinSessionsID(huntSession!.id!);
+      const duckTeams: IDuckTeamsModel[] =
+        await duckTeamsDataAccess.getByHuntSessionID(huntSession!.id!);
+
+      huntSession!.duckTeams = duckTeams;
+      huntSession!.participants = participants;
+      huntSession!.weather = weather;
 
       return huntSession;
     } catch (e: any) {
