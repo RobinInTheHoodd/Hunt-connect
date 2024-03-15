@@ -55,11 +55,11 @@ describe("Service Authentication", () => {
       "(" +
       "user_id,           display_name,   email," +
       "email_verified,    phone,          user_role," +
-      "hut_name,          hut_number" +
+      "is_cgu_accepted,   hut_name,       hut_number" +
       ") " +
       "VALUES" +
       "(" +
-      "$1, $2, $3, $4, $5, $6, $7, $8" +
+      "$1, $2, $3, $4, $5, $6, $7, $8, $9" +
       ");";
 
     let sqlValue: any[];
@@ -80,6 +80,7 @@ describe("Service Authentication", () => {
         email: "test@example.com",
         phone: "+11234567890",
         role: 1,
+        cguAccepted: true,
         hut_name: "Test Hut",
         hut_number: "1",
       };
@@ -92,6 +93,7 @@ describe("Service Authentication", () => {
         0,
         userToCreate.phone,
         userToCreate.role,
+        userToCreate.cguAccepted,
         userToCreate.hut_name,
         userToCreate.hut_number,
       ];
