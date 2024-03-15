@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   useWindowDimensions,
+  StyleSheet,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -16,7 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignInStyle from "./SignInStyle";
 import InputText from "../../../components/Input/InputText";
-import { ISignUpForm, SignUpForm } from "../../../model/SignUpForm";
+import { ISignUpForm, SignUpForm } from "../../../model/form/SignUpForm";
 import { ApiError } from "../../../model/ApiError";
 import AuthService from "../../../service/authService";
 import { Utils } from "@react-native-firebase/app";
@@ -26,6 +27,7 @@ export default function SignInScreen({ navigation, route }: any) {
   const styles = SignInStyle(width, height);
 
   const authService = new AuthService();
+
   const [shouldLogin, setShouldLogin] = useState(false);
   const [signForm, setSignForm] = useState<ISignUpForm>(new SignUpForm());
 
@@ -37,8 +39,9 @@ export default function SignInScreen({ navigation, route }: any) {
   }, [shouldLogin]);
 
   useEffect(() => {
+    console.log("SIGNIN");
     setSignForm(new SignUpForm());
-  }, [route.params]);
+  }, [route?.params]);
 
   const signInGoogle = async () => {
     try {
@@ -113,6 +116,7 @@ export default function SignInScreen({ navigation, route }: any) {
             errorMessage={signForm.emailError!}
             require={true}
             isPassword={false}
+            styles={InputTextStyle(width, height)}
           />
 
           <InputText
@@ -140,6 +144,7 @@ export default function SignInScreen({ navigation, route }: any) {
               })
             }
             hiddePassword={signForm.hiddePassword}
+            styles={InputTextStyle(width, height)}
           />
 
           <TouchableOpacity style={styles.forgotPassword}>
@@ -236,3 +241,37 @@ export default function SignInScreen({ navigation, route }: any) {
     </View>
   );
 }
+
+const InputTextStyle = (width: number, height: number) =>
+  StyleSheet.create({
+    inputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderBottomWidth: 1,
+      borderBottomColor: "#ccc",
+      marginBottom: height * 0.01,
+    },
+    invalidInput: {
+      borderBottomColor: "red",
+    },
+    validInput: {
+      borderBottomColor: "green",
+    },
+    inputTag: {
+      color: "green",
+      fontWeight: "bold",
+      fontSize: width * 0.04,
+    },
+    input: {
+      flex: 1,
+      paddingVertical: height * 0.01,
+      paddingHorizontal: width * 0.02,
+    },
+    icon: {
+      marginRight: 10,
+    },
+    errorMessage: {
+      color: "red",
+      fontSize: 14,
+    },
+  });

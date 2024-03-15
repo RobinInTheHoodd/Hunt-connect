@@ -7,6 +7,7 @@ import {
   Switch,
   Image,
   useWindowDimensions,
+  StyleSheet,
 } from "react-native";
 import {
   faEnvelope,
@@ -26,7 +27,7 @@ import CguComponent from "../../../components/Input/CguComponent";
 import { UtilsSign } from "../../../service/sign/utils";
 import SignUpStyle from "./SignUpStyle";
 import { ApiError } from "../../../model/ApiError";
-import { ISignUpForm, SignUpForm } from "../../../model/SignUpForm";
+import { ISignUpForm, SignUpForm } from "../../../model/form/SignUpForm";
 import AuthService from "../../../service/authService";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -101,7 +102,7 @@ export default function SignUpScreen({ navigation, route }: any) {
   }, [signForm, shouldRegister]);
 
   useEffect(() => {
-    const { signForm } = route.params || false;
+    const { signForm } = route?.params || false;
     if (signForm) {
       setSignForm(signForm);
     }
@@ -144,6 +145,7 @@ export default function SignUpScreen({ navigation, route }: any) {
                 errorMessage={signForm.fullNameError!}
                 require={true}
                 isPassword={false}
+                styles={InputTextStyle(width, height)}
               />
 
               <InputText
@@ -165,6 +167,7 @@ export default function SignUpScreen({ navigation, route }: any) {
                 require={true}
                 isPassword={false}
                 disable={signForm.emailDisable}
+                styles={InputTextStyle(width, height)}
               />
 
               <InputText
@@ -186,6 +189,7 @@ export default function SignUpScreen({ navigation, route }: any) {
                 require={true}
                 isPassword={false}
                 disable={signForm.phoneDisable}
+                styles={InputTextStyle(width, height)}
               />
 
               {signForm.passwordDisable && (
@@ -217,6 +221,7 @@ export default function SignUpScreen({ navigation, route }: any) {
                       hiddePassword: !signForm.hiddePassword,
                     })
                   }
+                  styles={InputTextStyle(width, height)}
                 />
               )}
 
@@ -249,6 +254,7 @@ export default function SignUpScreen({ navigation, route }: any) {
                       hiddeConfirmPassword: !signForm.hiddeConfirmPassword,
                     })
                   }
+                  styles={InputTextStyle(width, height)}
                 />
               )}
 
@@ -290,6 +296,7 @@ export default function SignUpScreen({ navigation, route }: any) {
                     errorMessage={signForm.hutNameError!}
                     require={true}
                     isPassword={false}
+                    styles={InputTextStyle(width, height)}
                   />
 
                   <InputText
@@ -313,6 +320,7 @@ export default function SignUpScreen({ navigation, route }: any) {
                     errorMessage={signForm.hutNumberError!}
                     require={true}
                     isPassword={false}
+                    styles={InputTextStyle(width, height)}
                   />
                   {/*
                   
@@ -367,3 +375,37 @@ export default function SignUpScreen({ navigation, route }: any) {
     </GestureHandlerRootView>
   );
 }
+
+const InputTextStyle = (width: number, height: number) =>
+  StyleSheet.create({
+    inputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderBottomWidth: 1,
+      borderBottomColor: "#ccc",
+      marginBottom: height * 0.01,
+    },
+    invalidInput: {
+      borderBottomColor: "red",
+    },
+    validInput: {
+      borderBottomColor: "green",
+    },
+    inputTag: {
+      color: "green",
+      fontWeight: "bold",
+      fontSize: width * 0.04,
+    },
+    input: {
+      flex: 1,
+      paddingVertical: height * 0.01,
+      paddingHorizontal: width * 0.02,
+    },
+    icon: {
+      marginRight: 10,
+    },
+    errorMessage: {
+      color: "red",
+      fontSize: 14,
+    },
+  });
