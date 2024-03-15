@@ -1,7 +1,6 @@
 export default {
   expo: {
     name: "Hunt",
-    slug: "Hunt",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -11,10 +10,21 @@ export default {
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
+    slug: "Hunt",
+    updates: {
+      url: "https://u.expo.dev/7e82308f-19ad-4c67-911c-6d2c46adf1dd",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
+    },
     assetBundlePatterns: ["**/*"],
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.ios.huntconnect",
+      googleServicesFile: "/home/robin/Downloads/g_service.json", //process.env.GOOGLE_SERVICES_JSON,
+      config: {
+        googleMapsApiKey: "AIzaSyDamYRarsYON1ClmgzMYVrwOhTFwqHw4CY",
+      },
     },
     android: {
       adaptiveIcon: {
@@ -24,11 +34,16 @@ export default {
       package: "com.android.huntconnect",
       permissions: ["android.permission.RECORD_AUDIO"],
       googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+      config: {
+        googleMaps: {
+          apiKey: "",
+        },
+      },
     },
     web: {
       favicon: "./assets/favicon.png",
     },
-    scheme: "HuntConnect",
+    scheme: ["Huntconnect"],
     plugins: [
       "expo-image-picker",
       "expo-secure-store",
@@ -44,7 +59,18 @@ export default {
           displayName: "Hunt",
         },
       ],
+      [
+        "expo-location",
+        {
+          locationAlwaysAndWhenInUsePermission:
+            "Allow Hunt Connect to use your location.",
+          isAndroidForegroundServiceEnabled: true,
+        },
+      ],
     ],
+    experiments: {
+      typedRoutes: true,
+    },
     extra: {
       eas: {
         projectId: "7e82308f-19ad-4c67-911c-6d2c46adf1dd",

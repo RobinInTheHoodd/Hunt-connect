@@ -1,10 +1,13 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { registerRootComponent } from "expo";
-import RootNavigation from "./routes/RootNavigation";
 import store from "./redux/store";
 import { Provider } from "react-redux";
+import RootNavigation from "./routes/RootNavigation";
+import { registerRootComponent } from "expo";
+import Home from "./view/home/HomeScreen";
+
+import AddindHuntingSession from "./components/AddingHuntingSession";
+import LottieView from "lottie-react-native";
+import MapView from "react-native-maps";
+import HuntingSessionScreen from "./view/huntingSession/HuntingSessionScreen";
 
 export default function App() {
   return (
@@ -13,4 +16,5 @@ export default function App() {
     </Provider>
   );
 }
+
 registerRootComponent(App);
