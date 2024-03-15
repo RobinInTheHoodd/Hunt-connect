@@ -4,7 +4,7 @@ import { UserContext } from "../model/UserContext";
 import { LoginManager, AccessToken } from "react-native-fbsdk-next";
 import { useAppDispatch } from "../redux/hook";
 import { setIsNew, signIn, signOut } from "../redux/reducers/userSlice";
-import { ISignUpForm, SignUpForm } from "../model/SignUpForm";
+import { ISignUpForm, SignUpForm } from "../model/form/SignUpForm";
 import { AppDispatch } from "../redux/store";
 import { ISignUpModel, SignUpModel } from "../model/SignUpModel";
 import { authController } from "./authController";

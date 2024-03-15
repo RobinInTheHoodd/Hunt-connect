@@ -1,5 +1,5 @@
 import { faL } from "@fortawesome/free-solid-svg-icons";
-import { ISignUpForm } from "../../model/SignUpForm";
+import { ISignUpForm } from "../../model/form/SignUpForm";
 import { FirebaseError } from "../../utils/firebaseError";
 
 export class UtilsSign {
