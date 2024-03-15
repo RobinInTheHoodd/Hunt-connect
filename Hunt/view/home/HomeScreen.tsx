@@ -195,25 +195,25 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     margin: 10,
     paddingVertical: 10,
-    alignItems: "center", // Assurez-vous que les enfants sont centrés verticalement
+    alignItems: "center",
   },
   tabButton: {
-    flex: 1, // Prend 1/4 de l'espace disponible
-    justifyContent: "center", // Centrer le texte verticalement
-    alignItems: "center", // Centrer le texte horizontalement
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 5,
     marginHorizontal: 10,
   },
   filterPeriod: {
-    flex: 2, // Prend 2/4 (la moitié) de l'espace disponible
+    flex: 2,
     fontSize: 16,
     color: "#000",
-    textAlign: "center", // Assurez-vous que le texte est centré
+    textAlign: "center",
   },
   filterButton: {
-    flex: 1, // Prend 1/4 de l'espace disponible
-    justifyContent: "center", // Centrer l'icône verticalement
-    alignItems: "center", // Centrer l'icône horizontalement
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   tabText: {
     fontSize: 12,

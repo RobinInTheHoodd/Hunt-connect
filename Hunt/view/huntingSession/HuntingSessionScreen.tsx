@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import HuntingSessionService from "../../service/huntingSessionService";
 import { IHuntingSessionModel } from "../../model/HuntingSession";
-import WeatherCard from "../../components/WeatherCard";
+import HuntingSessionInfo from "../../components/HuntingSessionInfo";
 import AddindHuntingSession from "../../components/AddingHuntingSession";
 import { useAppSelector } from "../../redux/hook";
 import { useFocusEffect } from "@react-navigation/native";
@@ -36,7 +36,10 @@ export default function HuntingSessionScreen({ navigation }: any) {
       ) : (
         <>
           {huntSession ? (
-            <WeatherCard HuntSession={huntSession} navigation={navigation} />
+            <HuntingSessionInfo
+              HuntSession={huntSession}
+              navigation={navigation}
+            />
           ) : (
             <AddindHuntingSession SetHunting={setHuntSession} />
           )}
