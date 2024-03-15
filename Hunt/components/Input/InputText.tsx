@@ -30,6 +30,10 @@ interface inputTextField {
   setHidePassword?: () => void;
   hiddePassword?: boolean;
   disable?: boolean;
+  styles: any;
+  isIconRight?: boolean;
+  setIconRight?: () => void;
+  IconRight?: IconDefinition;
 }
 
 const InputText = ({
@@ -47,9 +51,13 @@ const InputText = ({
   setHidePassword,
   hiddePassword,
   disable,
+  styles,
+  isIconRight,
+  setIconRight,
+  IconRight,
 }: inputTextField) => {
   const { width, height } = useWindowDimensions();
-  const styles = InputTextStyle(width, height);
+  //const styles = InputTextStyle(width, height);
 
   return (
     <>
@@ -77,6 +85,11 @@ const InputText = ({
           secureTextEntry={hiddePassword!}
           editable={disable}
         />
+        {isIconRight && (
+          <TouchableOpacity onPress={setIconRight}>
+            <FontAwesomeIcon icon={IconRight!} size={20}></FontAwesomeIcon>
+          </TouchableOpacity>
+        )}
         {isPassword && (
           <TouchableOpacity onPress={setHidePassword}>
             <FontAwesomeIcon
@@ -100,37 +113,3 @@ const InputText = ({
 };
 
 export default InputText;
-
-const InputTextStyle = (width: number, height: number) =>
-  StyleSheet.create({
-    inputContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      borderBottomWidth: 1,
-      borderBottomColor: "#ccc",
-      marginBottom: height * 0.01,
-    },
-    invalidInput: {
-      borderBottomColor: "red",
-    },
-    validInput: {
-      borderBottomColor: "green",
-    },
-    inputTag: {
-      color: "green",
-      fontWeight: "bold",
-      fontSize: width * 0.04,
-    },
-    input: {
-      flex: 1,
-      paddingVertical: height * 0.01,
-      paddingHorizontal: width * 0.02,
-    },
-    icon: {
-      marginRight: 10,
-    },
-    errorMessage: {
-      color: "red",
-      fontSize: 14,
-    },
-  });
