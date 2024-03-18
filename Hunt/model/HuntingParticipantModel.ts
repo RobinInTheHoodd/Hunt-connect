@@ -1,4 +1,7 @@
-import { IParticipantFormModel } from "./ParticipantFormModel";
+import {
+  IParticipantFormModel,
+  IParticipantModel,
+} from "./ParticipantFormModel";
 
 export interface IHuntingParticipanModel {
   userID: string | undefined;
@@ -25,6 +28,7 @@ export default class HuntingParticipantModel
 
   public static fromFormModel(participantForm: IParticipantFormModel) {
     let participants: IHuntingParticipanModel[] = [];
+
     participantForm.participants.forEach((participant) =>
       participants.push(
         new HuntingParticipantModel(
@@ -40,6 +44,21 @@ export default class HuntingParticipantModel
         new HuntingParticipantModel(guest.displayName, "guest", undefined)
       )
     );
+
+    return participants;
+  }
+
+  public static fromParticipantModel(participantForm: any[]) {
+    let participants: IHuntingParticipanModel[] = [];
+    participantForm.forEach((value) => {
+      let participant: IHuntingParticipanModel = {
+        displayName: value.display_name,
+        userID: value.user_id,
+        role: "Chasseur",
+      };
+      participants.push(participant);
+      value.display_name, value.user_id;
+    });
 
     return participants;
   }

@@ -201,6 +201,9 @@ export class WeatherFormModel implements IWeatherFormModel {
     let errorMessage = "";
 
     try {
+      console.log(typeof value);
+      if (typeof value != "number" && value !== "")
+        throw "Le taux d'humidité ne contient que des chiffres";
       if (value == null) throw "Le taux d'humidité est obligatoire";
       if (value > maxLenght) throw "Le taux d'humidité maximum autorisé : 100%";
       if (value < minLenght) throw "Le taux d'humiditéminimum autorisé : 1";
