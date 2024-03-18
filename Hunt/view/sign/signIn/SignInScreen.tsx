@@ -25,6 +25,7 @@ import { Utils } from "@react-native-firebase/app";
 export default function SignInScreen({ navigation, route }: any) {
   const { height, width } = useWindowDimensions();
   const styles = SignInStyle(width, height);
+  const [isLoading, setIsLoading] = useState(false);
 
   const authService = new AuthService();
 
@@ -45,7 +46,9 @@ export default function SignInScreen({ navigation, route }: any) {
 
   const signInGoogle = async () => {
     try {
+      setIsLoading(true);
       await authService.googleLogin(navigation);
+      setIsLoading(false);
     } catch (e: any) {
       errorLogin(e);
     }
@@ -53,7 +56,9 @@ export default function SignInScreen({ navigation, route }: any) {
 
   const signInFacebook = async () => {
     try {
+      setIsLoading(true);
       await authService.facebookLogin(navigation);
+      setIsLoading(false);
     } catch (e: any) {
       errorLogin(e);
     }
@@ -61,7 +66,9 @@ export default function SignInScreen({ navigation, route }: any) {
 
   const doLogin = async () => {
     try {
+      setIsLoading(true);
       await authService.login(signForm.email!, signForm.password!);
+      setIsLoading(false);
     } catch (e: any) {
       setShouldLogin(false);
       errorLogin(e);
@@ -69,6 +76,7 @@ export default function SignInScreen({ navigation, route }: any) {
   };
 
   const errorLogin = async (e: any) => {
+    setIsLoading(false);
     let updateSignForm: any;
     console.log(e);
     if (e.code) {
