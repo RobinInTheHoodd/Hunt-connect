@@ -21,7 +21,7 @@ export default class HuntingSessionService {
     creatorID: string,
     weatherForm: IWeatherFormModel,
     duckTeams: IDuckTeamsModel[],
-    participantsForm: IParticipantFormModel
+    participantsForm: IHuntingParticipanModel[]
   ) {
     try {
       let toDate = new Date();
@@ -30,8 +30,6 @@ export default class HuntingSessionService {
       const weather: IWeatherInfoModel =
         WeatherInfoModel.fromWeatherForm(weatherForm);
 
-      const participants: IHuntingParticipanModel[] =
-        HuntingParticipantModel.fromFormModel(participantsForm);
       const huntSession = new HuntingSessionModel(
         undefined,
         undefined,
@@ -40,7 +38,7 @@ export default class HuntingSessionService {
         toDate,
         false,
         weather,
-        participants,
+        participantsForm,
         duckTeams
       );
       const result = await HuntingSessionController.saveHuntSession(

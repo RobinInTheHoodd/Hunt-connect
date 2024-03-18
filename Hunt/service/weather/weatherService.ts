@@ -11,6 +11,7 @@ export default class WeatherService {
   ): Promise<WeatherInfoModel> {
     try {
       const location = latitude + "," + longitude;
+
       const weatherData: WeatherInfoModel = await weatherController.getWeather(
         location
       );
