@@ -11,6 +11,7 @@ import {
   useWindowDimensions,
   Text,
   TouchableOpacity,
+  KeyboardTypeOptions,
 } from "react-native";
 import { UtilsSign } from "../../service/sign/utils";
 import { StyleSheet } from "react-native";
@@ -34,6 +35,7 @@ interface inputTextField {
   isIconRight?: boolean;
   setIconRight?: () => void;
   IconRight?: IconDefinition;
+  keyboard?: KeyboardTypeOptions | undefined;
 }
 
 const InputText = ({
@@ -55,16 +57,19 @@ const InputText = ({
   isIconRight,
   setIconRight,
   IconRight,
+  keyboard,
 }: inputTextField) => {
   const { width, height } = useWindowDimensions();
   //const styles = InputTextStyle(width, height);
 
   return (
-    <>
-      <Text style={styles.inputTag}>
-        {tagName}
-        {require && <Text style={{ color: "red" }}> *</Text>}
-      </Text>
+    <View style={styles.container}>
+      {tagName && (
+        <Text style={styles.inputTag}>
+          {tagName}
+          {require && <Text style={{ color: "red" }}> *</Text>}
+        </Text>
+      )}
 
       <View
         style={[
@@ -84,6 +89,7 @@ const InputText = ({
           style={styles.input}
           secureTextEntry={hiddePassword!}
           editable={disable}
+          keyboardType={keyboard != undefined ? keyboard : "default"}
         />
         {isIconRight && (
           <TouchableOpacity onPress={setIconRight}>
@@ -108,7 +114,7 @@ const InputText = ({
       >
         {errorMessage !== "" && errorMessage}
       </Text>
-    </>
+    </View>
   );
 };
 
