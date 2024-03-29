@@ -8,24 +8,13 @@ import WeatherInfoModel from "../models/WeatherModel";
 import HuntingSessionModel from "../models/HuntingSessionModel";
 import DuckTeamsModel from "../models/DuckTeamsModel";
 import HuntingParticipantModel from "../models/HuntingPariticpantModel";
-import observationRoutes from "./observationRoutes";
+import observationController from "../controllers/observationController";
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
-router.post(
-  "/add",
-  checkSchema({
-    ...WeatherInfoModel.getValidation(),
-    ...DuckTeamsModel.getValidation(),
-    ...HuntingParticipantModel.validateBody(),
-    ...HuntingSessionModel.getValidation(),
-  }),
-  huntSessionController.addController
-);
-router.get("/getCurrent/:userID", huntSessionController.getCurrent);
-
-router.get("/finish/:huntID", huntSessionController.finishHuntingSession);
-
-router.use("/:huntID", observationRoutes);
+router.post("/observation/create", observationController.create);
+router.post("/observation/update", observationController.update);
+router.post("/observation/delete", observationController.deletePosition);
+router.get("/observations", observationController.getObservations);
 
 export default router;
