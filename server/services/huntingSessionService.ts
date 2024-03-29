@@ -16,31 +16,27 @@ class HuntingSessionService {
 
     try {
       await client.query("BEGIN");
-
       const huntSessionID = await huntingSessionDataAccess.create(
         huntSession,
         client
       );
-
       for (const participant of huntSession.participants!)
         await huntingSessionDataAccess.addParticipant(
           huntSessionID,
           participant,
           client
         );
-
       await weatherDataAccess.createWeather(
         huntSessionID,
         huntSession.weather!,
         client
       );
-
       for (const duckPosition of huntSession.duckTeams!)
         await duckTeamsDataAccess.create(duckPosition, client, huntSessionID);
-
-      return huntSessionID;
       await client.query("COMMIT");
+      return huntSessionID;
     } catch (e: any) {
+      console.log(e);
       await client.query("ROLLBACK");
       throw e;
     } finally {
@@ -61,15 +57,11 @@ class HuntingSessionService {
     try {
       const huntSession: IHuntingSessionModel | void =
         await huntingSessionDataAccess.getCurrentByUserId(userID);
-
       if (huntSession == undefined) return;
-
       const participants: IHuntingParticipanModel[] =
         await huntingSessionDataAccess.getParticipantByHuntingSessionID(
           huntSession!.id!
         );
-
-      console.log(huntSession.id);
       const weather: IWeatherInfoModel =
         await weatherDataAccess.getByHuntinSessionsID(huntSession!.id!);
       const duckTeams: IDuckTeamsModel[] =
