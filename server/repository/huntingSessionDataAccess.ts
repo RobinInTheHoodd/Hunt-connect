@@ -28,7 +28,7 @@ class HuntingSessionDataAccess {
       huntSession.hutID,
       huntSession.creatorID,
       huntSession.fromDate,
-      huntSession.toDate,
+      null,
       huntSession.isFinish,
     ];
     try {
@@ -62,7 +62,7 @@ class HuntingSessionDataAccess {
       "$1, $2, $3" +
       ");";
     const participantId =
-      participant.userID != undefined ? participant.userID : null;
+      participant.role != "Invité" ? participant.userID : null;
     const values = [participantId, participant.displayName, huntSessionid];
     try {
       const res = await client.query(sql, values);
@@ -88,8 +88,7 @@ class HuntingSessionDataAccess {
         "INNER JOIN udb.hunting_session_participant as hsp " +
         "ON hsp.hunting_session_id = hs.id " +
         "WHERE (hs.creator_id = $1 OR hsp.participant_id = $1) " +
-        "AND CURRENT_DATE BETWEEN hs.from_date AND hs.to_date " +
-        "AND hs.is_finish = false ; ";
+        "AND hs.is_finish = false ;";
       const value = [userID];
 
       const res = await pool.query(query, value);
@@ -135,14 +134,15 @@ class HuntingSessionDataAccess {
   }
 
   public async finishSession(huntSessionID: number) {
-    const sql =
-      "UPDATE udb.Hunting_Session " +
-      "SET is_finish = true " +
-      "WHERE id = $1 ";
+    const sql = `
+                  UPDATE udb.Hunting_Session 
+                  SET is_finish = true,
+                      to_date = CURRENT_DATE
+                  WHERE id = $1
+                `;
     const values = [huntSessionID];
     try {
       await pool.query(sql, values);
-      console.log("FINISh");
       return;
     } catch (err: any) {
       const errorDatabase: DatabaseError = {
