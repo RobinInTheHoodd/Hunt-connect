@@ -5,11 +5,6 @@ import HuntingParticipantModel, {
 import HuntingSessionModel, {
   IHuntingSessionModel,
 } from "../model/HuntingSession";
-import {
-  IParticipantFormModel,
-  IParticipantModel,
-  ParticipantFormModel,
-} from "../model/ParticipantFormModel";
 import WeatherInfoModel, { IWeatherInfoModel } from "../model/WeatherModel";
 
 import { IWeatherFormModel } from "../model/form/WeatherFormModel";
@@ -63,7 +58,7 @@ export default class HuntingSessionService {
   async getCurrentHuntingSession(userID: string) {
     try {
       const res = await HuntingSessionController.getCurrentHuntSession(userID);
-      console.log(res.data);
+
       const huntSession: IHuntingSessionModel = res.data;
       return huntSession;
     } catch (e: any) {
