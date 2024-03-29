@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faDove, faLocation } from "@fortawesome/free-solid-svg-icons";
 import { useLoadingVisibility } from "../utils/LoadingVisibilityContext";
 import HuntingScreen from "../view/huntingSession/HuntingScreen";
+import ObservationScreen from "../view/huntingSession/ObservationScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -17,9 +18,7 @@ const Tab = createBottomTabNavigator();
 export default function RootNavigation() {
   const user = useAppSelector((state) => state.users);
   const { isLoadingVisible, setLoadingVisible } = useLoadingVisibility();
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -32,42 +31,45 @@ export default function RootNavigation() {
             <Stack.Screen name="SignUp" component={SignUpScreen} />
           </>
         ) : (
-          <Stack.Screen name="Dashboard">
-            {() => (
-              <Tab.Navigator
-                initialRouteName="Home"
-                screenOptions={({ route }) => ({
-                  headerShown: false,
-                  tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
+          <>
+            <Stack.Screen name="Dashboard">
+              {() => (
+                <Tab.Navigator
+                  initialRouteName="Home"
+                  screenOptions={({ route }) => ({
+                    headerShown: false,
+                    tabBarIcon: ({ focused, color, size }) => {
+                      let iconName;
 
-                    return (
-                      <FontAwesomeIcon
-                        icon={faDove}
-                        size={size}
-                        color={color}
-                      />
-                    );
-                  },
-                  tabBarActiveTintColor: "tomato",
-                  tabBarInactiveTintColor: "gray",
-                })}
-              >
-                <Tab.Screen name="Home" component={HomeScreen} />
-                <Tab.Screen
-                  name="Session de chasse"
-                  component={HuntingScreen}
-                  listeners={{
-                    tabPress: (e) => {
-                      setLoadingVisible(true);
+                      return (
+                        <FontAwesomeIcon
+                          icon={faDove}
+                          size={size}
+                          color={color}
+                        />
+                      );
                     },
-                  }}
-                  options={{ tabBarStyle: { display: "none" } }}
-                />
-                <Tab.Screen name="Settings" component={HomeScreen} />
-              </Tab.Navigator>
-            )}
-          </Stack.Screen>
+                    tabBarActiveTintColor: "tomato",
+                    tabBarInactiveTintColor: "gray",
+                  })}
+                >
+                  <Tab.Screen name="Home" component={HomeScreen} />
+                  <Tab.Screen
+                    name="Session de chasse"
+                    component={HuntingScreen}
+                    listeners={{
+                      tabPress: (e) => {
+                        setLoadingVisible(true);
+                      },
+                    }}
+                    options={{ tabBarStyle: { display: "none" } }}
+                  />
+                  <Tab.Screen name="Settings" component={HomeScreen} />
+                </Tab.Navigator>
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="Observation" component={ObservationScreen} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
