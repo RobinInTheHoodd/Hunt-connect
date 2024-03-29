@@ -71,12 +71,8 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
             now.setDate(now.getDate() - 1);
 
             if (isNaN(date.getTime())) {
-              console.log("FFFFFFF");
               throw new Error("La date de commencement fournie est invalide.");
             } else if (date < now) {
-              console.log(date);
-              console.log(now);
-              console.log("XXXXXXXXX");
               throw new Error(
                 "La date de commencement doit être dans le futur."
               );
