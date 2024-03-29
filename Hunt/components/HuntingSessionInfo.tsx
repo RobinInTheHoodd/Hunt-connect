@@ -33,9 +33,19 @@ import WeatherInfoModel from "../model/WeatherModel";
 import WeatherCardInfo from "./WeatherCardInfo";
 import { IHuntingSessionModel } from "../model/HuntingSession";
 import { IHuntingParticipanModel } from "../model/HuntingParticipantModel";
-import ImagePlotting from "./ImagePlotting";
+
 import { IDuckTeamsModel } from "../model/DuckTeamsModel";
 import { HuntingSessionController } from "../service/huntingSessionContrller";
+import DuckTeamFormMap from "./duckTeams/DuckTeamFormMap";
+import DuckTeamFormContent from "./duckTeams/DuckTeamFormContent";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchObservations,
+  selectObservations,
+} from "../redux/reducers/observationSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hook";
+import { RootState } from "../redux/store";
+import ObservationModel from "../model/form/ObservationModel";
 
 const HuntingSessionInfo = ({ navigation, HuntSession }: any) => {
   const finishHuntingSession = async () => {
@@ -54,7 +64,10 @@ const HuntingSessionInfo = ({ navigation, HuntSession }: any) => {
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <Header navigation={navigation} name={HuntSession.weather!.name} />
           <WeatherCardInfo weather={HuntSession.weather!} />
-          <HunterNightInfo navigation={navigation} />
+          <HunterNightInfo
+            navigation={navigation}
+            huntingID={HuntSession.id!}
+          />
           <HunterInfo huntParticipant={HuntSession.participants} />
           <DetailRows ducksTeam={HuntSession.duckTeams!} />
 
@@ -112,43 +125,97 @@ const DetailRows = ({ ducksTeam }: any) => {
   const [team, setTeam] = useState<IDuckTeamsModel[]>(ducksTeam);
   useEffect(() => {});
   return (
-    <View style={[styles.cardContainer]}>
+    <View style={[styles.cardContainer, { height: 400 }]}>
       {/* <Image
         source={require("../../../assets/images/maps.png")}
         style={[styles.backgroundImage, { opacity: 1 }]}
       /> */}
       <Text style={styles.detailValue}>Plan d'attelage</Text>
 
-      <ImagePlotting form={team} setForm={setTeam} />
+      <DuckTeamFormContent form={team} setForm={setTeam} />
     </View>
   );
 };
 
-const HunterNightInfo = ({ navigation }: any) => {
+const HunterNightInfo = ({ navigation, huntingID }: any) => {
+  const dispatch = useAppDispatch();
+  const { entities, loading, error } = useAppSelector(selectObservations);
+
+  useEffect(() => {
+    dispatch(fetchObservations(huntingID));
+  }, [dispatch, huntingID]);
+
+  const totalKill = () => {
+    let total: number = 0;
+    entities.forEach((observation: ObservationModel) => {
+      total += observation.quantityKill;
+    });
+    return total.toString();
+  };
+
+  const specimenDom = () => {
+    const specimenCounts = entities.reduce(
+      (
+        acc: Record<
+          string,
+          {
+            count: number;
+            totalViews: number;
+          }
+        >,
+        observation: any
+      ) => {
+        const { specimen, quantityView } = observation;
+        if (!acc[specimen]) {
+          acc[specimen] = { count: 0, totalViews: 0 };
+        }
+        acc[specimen].count += 1;
+        acc[specimen].totalViews += quantityView;
+
+        return acc;
+      },
+      {}
+    );
+    let dominantSpecimen = "";
+    let maxTotalViews = 0;
+    for (const [specimen, data] of Object.entries(specimenCounts)) {
+      if (data.totalViews > maxTotalViews) {
+        maxTotalViews = data.totalViews;
+        dominantSpecimen = specimen;
+      }
+    }
+    return dominantSpecimen;
+  };
+
+  if (loading === "pending") {
+    return <Text>Chargement...</Text>;
+  }
+
+  if (error) {
+    return <Text>Erreur : {error}</Text>;
+  }
+
   return (
-    <View
-      //onPress={() => navigation.navigate("Chasse")}
-      style={styles.cardContainer}
-    >
+    <View style={styles.cardContainer}>
       <View style={styles.row}>
-        {/* Total d'espèce tué */}
         <View style={[styles.halfCardContainer]}>
           <Text style={styles.feelsLikeText}>Espèces abattues</Text>
           <View>
-            <Text style={styles.detailValue}>0</Text>
+            <Text style={styles.detailValue}>{totalKill()}</Text>
           </View>
         </View>
-        {/* Top espèce tué */}
 
         <View style={[styles.halfCardContainer]}>
           <Text style={styles.feelsLikeText}>Espèce Dominante</Text>
           <View>
-            <Text style={styles.detailValue}>/</Text>
+            <Text style={styles.detailValue}>{specimenDom()}</Text>
           </View>
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate("Chasse")}
+        onPress={() =>
+          navigation.navigate("Observation", { huntingID: huntingID })
+        }
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -210,7 +277,6 @@ const HunterInfo = ({ huntParticipant }: any) => {
       </TouchableOpacity>
       */}
 
-      {/* TODO  Modal pour ajouter un nouveau chasseur */}
       <Modal
         animationType="slide"
         transparent={true}
