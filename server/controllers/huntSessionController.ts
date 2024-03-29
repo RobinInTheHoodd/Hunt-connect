@@ -23,6 +23,7 @@ class HuntSessionController {
 
       res.status(200).send({ id: huntSessionID });
     } catch (e) {
+      console.log(e);
       next(e);
     }
   }
@@ -30,11 +31,9 @@ class HuntSessionController {
   public async getCurrent(req: Request, res: Response, next: NextFunction) {
     try {
       const { userID } = req.params;
-
       const huntSession = await huntingSessionService.getCurrentByUserId(
         userID
       );
-
       res.status(200).send(huntSession);
     } catch (e) {
       console.log(e);
@@ -49,11 +48,7 @@ class HuntSessionController {
   ) {
     try {
       const { huntID } = req.params;
-
-      console.log(huntID);
-
       await huntingSessionService.finishSession(parseInt(huntID));
-
       res.status(200).send();
     } catch (e) {
       console.log(e);
