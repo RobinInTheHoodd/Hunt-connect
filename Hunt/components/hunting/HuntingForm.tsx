@@ -33,11 +33,13 @@ interface IHuntingFormProps {
   setHuntSession: React.Dispatch<
     React.SetStateAction<IHuntingSessionModel | undefined>
   >;
+  setCancelForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function HuntingForm({
   huntSession,
   setHuntSession,
+  setCancelForm,
 }: IHuntingFormProps) {
   const user = useAppSelector((state) => state.users);
   const hutService = new HuntingSessionService();
@@ -65,18 +67,12 @@ export default function HuntingForm({
     }
     if (nextIndex >= carouselData.length) {
       try {
-        console.log("HUNT------------------------------------------");
         const huntsession = await huntingSessionService.saveHuntingSession(
           user.UIID,
           weather,
           duckTeam,
           participants
         );
-        console.log(weather);
-        console.log(duckTeam);
-        console.log(participants);
-        console.log(huntSession);
-        console.log("FIN------------------------------------------");
         setHuntSession(huntsession);
       } catch (e: any) {
         console.log(e);
@@ -93,7 +89,7 @@ export default function HuntingForm({
     let prevIndex = activeIndex - 1;
 
     if (prevIndex < 0) {
-      return;
+      setCancelForm(false);
     }
     setActiveIndex(prevIndex);
     carouselRef.current?.prev();

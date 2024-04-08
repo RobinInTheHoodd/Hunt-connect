@@ -2,18 +2,15 @@ import { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 
 import Animated, {
-  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 const HuntingFormPagination = ({ totalCount, activeIndex }: any) => {
-  // Création d'un tableau pour stocker les valeurs animées de chaque dot
   const widthValues = Array.from({ length: totalCount }).map(() =>
     useSharedValue(styles.paginationDot.width)
   );
 
-  // Mise à jour de la largeur du dot actif lorsque l'index change
   useEffect(() => {
     widthValues.forEach((widthValue, index) => {
       widthValue.value = withTiming(

@@ -47,7 +47,6 @@ export default function HuntingFormCaroussel({
       data={carouselData}
       loop={false}
       width={width}
-      //        height={850}
       autoPlay={false}
       enabled={false}
       renderItem={({ index }) => (
