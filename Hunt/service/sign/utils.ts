@@ -94,6 +94,34 @@ export class UtilsSign {
     }
   }
 
+  static validatePostalCode(signForm: ISignUpForm, value: string): ISignUpForm {
+    let postalCode = value;
+
+    try {
+      if (postalCode == "") throw "Le numéro de téléphone est obligatoire.";
+      if (postalCode.length < 7)
+        throw "Le numéro doit contenir plus de 7 caractères";
+
+      return {
+        ...signForm,
+        isValidForm: UtilsSign.validateForm(signForm),
+        postalLocation: value,
+        postalLocationError: "",
+        isPostalLocationValid: true,
+        postalLocationTouched: true,
+      };
+    } catch (e: any) {
+      return {
+        ...signForm,
+        isValidForm: UtilsSign.validateForm(signForm),
+        postalLocation: value,
+        postalLocationError: e,
+        isPostalLocationValid: false,
+        postalLocationTouched: true,
+      };
+    }
+  }
+
   static validatePassword(signForm: ISignUpForm, value: string): ISignUpForm {
     const regex = /^(?=.*\d)(?=.*[A-Z])(?=.*\W).{8,20}$/;
 
