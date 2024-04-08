@@ -7,8 +7,15 @@ export default class ObservationService {
   async addObservation(observationForm: ObservationForm, userID: string) {
     try {
       const model = ObservationModel.fromForm(observationForm);
+      model.specimenPosition.map((value) => {
+        value.errorMessage = undefined;
+        value.isValid = undefined;
+      });
+
       model.hunterId = userID;
+
       const res = await ObservationController.addObservation(model);
+
       return model;
     } catch (e) {
       console.log(e);
@@ -25,7 +32,7 @@ export default class ObservationService {
       );
       return observations;
     } catch (e) {
-      console.log(e);
+      throw e;
     }
   }
 
@@ -44,6 +51,7 @@ export default class ObservationService {
     try {
       await ObservationController.deleteObservations(observationId, huntingId);
     } catch (e) {
+      throw e;
       console.log(e);
     }
   }

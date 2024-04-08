@@ -29,6 +29,7 @@ export const ObservationController = {
   },
 
   async deleteObservations(observationId: number, huntingId: number) {
+    console.log(observationId);
     return await axios.post(
       "http://10.0.0.228:3000/hunt/session/" +
         huntingId +
