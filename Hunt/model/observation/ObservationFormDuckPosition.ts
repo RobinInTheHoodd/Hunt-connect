@@ -6,8 +6,8 @@ export interface IObservationFormDuckPosition {
   longitude: number | undefined;
   quantity: number | undefined;
   isKill: boolean | undefined;
-  errorMessage: string;
-  isValid: boolean;
+  errorMessage: string | undefined;
+  isValid: boolean | undefined;
 }
 
 export default class ObservationFormDuckPosition
@@ -18,8 +18,8 @@ export default class ObservationFormDuckPosition
   longitude: number | undefined;
   quantity: number | undefined;
   isKill: boolean | undefined;
-  errorMessage: string;
-  isValid: boolean;
+  errorMessage: string | undefined;
+  isValid: boolean | undefined;
 
   constructor(
     id: number | undefined,

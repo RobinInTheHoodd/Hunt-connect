@@ -91,12 +91,14 @@ export default class ObservationForm implements IObservationForm {
         ...rs,
         id: form.id,
         isValid: true,
+        huntingId: form.huntingId,
       };
     } else {
       return {
         ...rs,
         id: form.id,
         isValid: false,
+        huntingId: form.huntingId,
       };
     }
   }
