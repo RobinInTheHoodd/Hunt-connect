@@ -1,12 +1,14 @@
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { StyleSheet, Text } from "react-native";
 
 import { View } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Callout, Marker } from "react-native-maps";
 
 import { IDuckTeamsModel } from "../../model/DuckTeamsModel";
+import SkeletonExpo from "moti/build/skeleton/expo";
+import React from "react";
 
 const initialRegion = {
   latitude: 50.69693758264165,
@@ -32,7 +34,7 @@ interface IDuckTeamFormMapProps {
   setSelectedMarkerId: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
-export default function DuckTeamFormMap({
+function DuckTeamFormMap({
   form,
   setForm,
   setModalVisible,
@@ -49,7 +51,7 @@ export default function DuckTeamFormMap({
 
   const [region, setRegion] = useState(initialRegion);
   const mapRef = useRef<MapView>(null);
-  const setBoundaries = () => {
+  const setBoundaries = useCallback(() => {
     const northEast = {
       latitude: initialRegion.latitude + initialRegion.latitudeDelta / 2,
       longitude: initialRegion.longitude + initialRegion.longitudeDelta / 2,
@@ -62,7 +64,7 @@ export default function DuckTeamFormMap({
     if (mapRef.current) {
       mapRef.current.setMapBoundaries(northEast, southWest);
     }
-  };
+  }, [initialRegion]);
 
   const onRegionChangeComplete = (newRegion: any) => {
     if (
@@ -98,46 +100,44 @@ export default function DuckTeamFormMap({
       paddingAdjustmentBehavior="automatic"
       mapPadding={mapPadding}
     >
-      <>
-        {form.map((marker, index) => (
-          <Marker
-            key={`marker_${index}`}
-            coordinate={{
-              latitude: marker.latitude,
-              longitude: marker.longitude,
-            }}
-            tappable={false}
-            draggable={true}
-            onPress={(event) => {
-              if (isDeleteMarker) {
-                setForm((currentMarkers) =>
-                  currentMarkers.filter((marker) => marker.id !== index + 1)
-                );
-                setSelectedMarkerId(null);
-              } else selectMarker(index + 1);
-            }}
-          >
-            {marker.type === "Vivant" ? (
-              <FontAwesomeIcon icon={faCircle} color="green" size={20} />
-            ) : (
-              <FontAwesomeIcon icon={faCircle} color="grey" size={20} />
-            )}
+      {form.map((marker, index) => (
+        <Marker
+          key={`marker_${index}`}
+          coordinate={{
+            latitude: marker.latitude,
+            longitude: marker.longitude,
+          }}
+          tappable={false}
+          draggable={true}
+          onPress={(event) => {
+            if (isDeleteMarker) {
+              setForm((currentMarkers) =>
+                currentMarkers.filter((marker) => marker.id !== index + 1)
+              );
+              setSelectedMarkerId(null);
+            } else selectMarker(index + 1);
+          }}
+        >
+          {marker.type === "Vivant" ? (
+            <FontAwesomeIcon icon={faCircle} color="green" size={20} />
+          ) : (
+            <FontAwesomeIcon icon={faCircle} color="grey" size={20} />
+          )}
 
-            <Callout>
-              <View style={styles.calloutView}>
-                <Text style={styles.calloutText}>
-                  Espèce: {marker.specimen}
-                </Text>
-                <Text style={styles.calloutText}>Sexe: {marker.sex}</Text>
-                <Text style={styles.calloutText}>Statut: {marker.type}</Text>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
-      </>
+          <Callout>
+            <View style={styles.calloutView}>
+              <Text style={styles.calloutText}>Espèce: {marker.specimen}</Text>
+              <Text style={styles.calloutText}>Sexe: {marker.sex}</Text>
+              <Text style={styles.calloutText}>Statut: {marker.type}</Text>
+            </View>
+          </Callout>
+        </Marker>
+      ))}
     </MapView>
   );
 }
+
+export default React.memo(DuckTeamFormMap);
 
 const styles = StyleSheet.create({
   calloutView: {

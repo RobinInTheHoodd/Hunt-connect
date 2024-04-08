@@ -2,6 +2,7 @@ import { faCrow, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { IDuckTeamsModel } from "../../model/DuckTeamsModel";
+import React from "react";
 
 interface IDuckTeamFormButtonProps {
   setForm: React.Dispatch<React.SetStateAction<IDuckTeamsModel[]>>;
@@ -13,7 +14,7 @@ interface IDuckTeamFormButtonProps {
   selectedMarkerId: number | null;
 }
 
-export default function DuckTeamFormButton({
+function DuckTeamFormButton({
   isDeleteMarker,
   isAddingMarker,
   setIsAddingMarker,
@@ -58,6 +59,8 @@ export default function DuckTeamFormButton({
     </>
   );
 }
+
+export default React.memo(DuckTeamFormButton);
 
 const styles = StyleSheet.create({
   trashCanIcon: {

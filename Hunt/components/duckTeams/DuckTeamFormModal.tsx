@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal, View, Button, Platform, Text, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import React from "react";
 
 const SexeStatutModal: React.FC<{
   visible: boolean;
@@ -67,7 +68,7 @@ const SexeStatutModal: React.FC<{
   );
 };
 
-export default SexeStatutModal;
+export default React.memo(SexeStatutModal);
 
 const stylesModal = StyleSheet.create({
   centeredView: {
