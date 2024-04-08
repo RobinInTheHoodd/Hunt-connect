@@ -3,7 +3,7 @@ import SignUpScreen from "../view/sign/signUp/SignUpScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
-import { useAppSelector } from "../redux/hook";
+import { useAppDispatch, useAppSelector } from "../redux/hook";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../view/home/HomeScreen";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -11,13 +11,21 @@ import { faDove, faLocation } from "@fortawesome/free-solid-svg-icons";
 import { useLoadingVisibility } from "../utils/LoadingVisibilityContext";
 import HuntingScreen from "../view/huntingSession/HuntingScreen";
 import ObservationScreen from "../view/huntingSession/ObservationScreen";
+import { useHuntSession } from "../redux/middleware/huntSessionMiddleware";
+import MigTrackingScreen from "../view/liveTracking/MigTracking";
+import { useMigTracking } from "../redux/middleware/migTrackingMiddleware";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function RootNavigation() {
   const user = useAppSelector((state) => state.users);
+
   const { isLoadingVisible, setLoadingVisible } = useLoadingVisibility();
+  const dispatch = useAppDispatch();
+
+  useHuntSession(user);
+  useMigTracking(user);
 
   return (
     <NavigationContainer>
@@ -64,7 +72,11 @@ export default function RootNavigation() {
                     }}
                     options={{ tabBarStyle: { display: "none" } }}
                   />
-                  <Tab.Screen name="Settings" component={HomeScreen} />
+                  <Tab.Screen
+                    name="Live Tracking"
+                    component={MigTrackingScreen}
+                    options={{ tabBarStyle: { display: "none" } }}
+                  />
                 </Tab.Navigator>
               )}
             </Stack.Screen>
