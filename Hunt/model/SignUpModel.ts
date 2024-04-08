@@ -11,6 +11,7 @@ export declare interface ISignUpModel {
   hut_number?: string;
   create_at?: Date;
   last_update?: Date;
+  postalLocation?: string;
 }
 
 export class SignUpModel implements ISignUpModel {
@@ -24,6 +25,7 @@ export class SignUpModel implements ISignUpModel {
   hut_number?: string;
   create_at?: Date;
   last_update?: Date;
+  postalLocation?: string;
 
   constructor({
     UUID,
@@ -36,6 +38,7 @@ export class SignUpModel implements ISignUpModel {
     hut_number,
     create_at,
     last_update,
+    postalLocation,
   }: ISignUpModel) {
     this.UUID = UUID;
     this.display_name = display_name;
@@ -47,6 +50,7 @@ export class SignUpModel implements ISignUpModel {
     this.hut_number = hut_number;
     this.create_at = create_at;
     this.last_update = last_update;
+    this.postalLocation = postalLocation;
   }
 
   static fromSignUpForm(signUpForm: ISignUpForm): ISignUpModel {
@@ -59,6 +63,7 @@ export class SignUpModel implements ISignUpModel {
       role: 1, // TODO need an update (ask user)
       hut_name: signUpForm.hutName || "",
       hut_number: signUpForm.hutNumber || "",
+      postalLocation: signUpForm.postalLocation || "",
     });
   }
 }
