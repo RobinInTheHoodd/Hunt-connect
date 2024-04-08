@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./reducers/userSlice";
-import observationReducer from "./reducers/observationSlice";
+import huntSessionReducer from "./reducers/huntSessionSlice";
+import migTrackingReducer from "./reducers/migTrackingSlice";
 
 const store = configureStore({
   reducer: {
     users: userReducer,
-    observations: observationReducer,
+    huntSession: huntSessionReducer,
+    migTracking: migTrackingReducer,
   },
 });
 
