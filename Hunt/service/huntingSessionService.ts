@@ -59,10 +59,41 @@ export default class HuntingSessionService {
     try {
       const res = await HuntingSessionController.getCurrentHuntSession(userID);
 
-      const huntSession: IHuntingSessionModel = res.data;
+      const huntSession: IHuntingSessionModel =
+        res.data == "" ? undefined : res.data;
       return huntSession;
     } catch (e: any) {
       console.log(e);
+    }
+  }
+
+  async getByID(huntingID: number) {
+    try {
+      const res = await HuntingSessionController.getByID(huntingID);
+
+      const huntSession: IHuntingSessionModel = res.data;
+      return huntSession;
+    } catch (e: any) {
+      throw e;
+    }
+  }
+
+  async getHistoryHuntingSession(userID: string) {
+    try {
+      const res = await HuntingSessionController.getHistoryHuntSession(userID);
+      let huntSession: { id: number; fromDate: Date }[] = [];
+
+      res.data.map((value: any) => {
+        huntSession.push({
+          id: value.huntingId,
+          fromDate: new Date(value.fromDate),
+        });
+      });
+
+      return huntSession;
+    } catch (e: any) {
+      console.log(e);
+      throw e;
     }
   }
 }

@@ -15,10 +15,22 @@ export const HuntingSessionController = {
     );
   },
 
+  async getByID(huntingID: number) {
+    return await axios.get(
+      "http://10.0.0.228:3000/hunt/session/get/" + huntingID
+    );
+  },
+
   async finishHuntSession(huntSessionID: number) {
     console.log(typeof huntSessionID);
     return await axios.get(
       "http://10.0.0.228:3000/hunt/session/finish/" + huntSessionID
+    );
+  },
+
+  async getHistoryHuntSession(userID: string) {
+    return await axios.get(
+      "http://10.0.0.228:3000/hunt/session/getHistory/" + userID
     );
   },
 };
