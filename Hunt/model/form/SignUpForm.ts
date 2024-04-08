@@ -45,6 +45,11 @@ export interface ISignUpForm {
   hutNumberError?: string;
   isHutNumberValid?: boolean;
 
+  postalLocation?: string;
+  postalLocationTouched?: boolean;
+  postalLocationError?: string;
+  isPostalLocationValid?: boolean;
+
   isOwner?: boolean;
   isValidForm: boolean;
 }
@@ -85,6 +90,10 @@ export class SignUpForm implements ISignUpForm {
   hutNumberTouched: boolean;
   hutNumberError: string;
   isHutNumberValid: boolean;
+  postalLocation?: string;
+  postalLocationTouched?: boolean;
+  postalLocationError?: string;
+  isPostalLocationValid?: boolean;
   isOwner: boolean;
   isValidForm: boolean;
 
@@ -96,7 +105,8 @@ export class SignUpForm implements ISignUpForm {
     password?: string,
     confirmPassword?: string,
     hutName?: string,
-    hutNumber?: string
+    hutNumber?: string,
+    postalLocation?: string
   ) {
     this.UUID = UUID || "";
     this.fullName = fullName || "";
@@ -133,6 +143,10 @@ export class SignUpForm implements ISignUpForm {
     this.hutNumberTouched = this.hutNumber != "" ? true : false;
     this.hutNumberError = "";
     this.isHutNumberValid = this.hutNumber != "" ? true : false;
+    this.postalLocation = postalLocation || "";
+    this.postalLocationTouched = this.postalLocation != "" ? true : false;
+    this.postalLocationError = "";
+    this.isPostalLocationValid = this.postalLocation != "" ? true : false;
     this.isOwner = false;
     this.isValidForm = false;
   }
