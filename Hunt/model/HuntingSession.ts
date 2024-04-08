@@ -1,6 +1,7 @@
 import { IDuckTeamsModel } from "./DuckTeamsModel";
 import { IHuntingParticipanModel } from "./HuntingParticipantModel";
 import { IWeatherInfoModel } from "./WeatherModel";
+import ObservationModel from "./form/ObservationModel";
 
 export interface IHuntingSessionModel {
   id: number | undefined;
@@ -12,6 +13,7 @@ export interface IHuntingSessionModel {
   weather?: IWeatherInfoModel;
   participants?: IHuntingParticipanModel[];
   duckTeams?: IDuckTeamsModel[];
+  observations?: ObservationModel[];
 }
 
 export default class HuntingSessionModel implements IHuntingSessionModel {
@@ -24,6 +26,7 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
   weather?: IWeatherInfoModel;
   participants?: IHuntingParticipanModel[];
   duckTeams?: IDuckTeamsModel[];
+  observations?: ObservationModel[];
 
   constructor(
     id: number | undefined,
@@ -34,7 +37,8 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
     isFinish: boolean,
     weather?: IWeatherInfoModel,
     participants?: IHuntingParticipanModel[],
-    duckTeams?: IDuckTeamsModel[]
+    duckTeams?: IDuckTeamsModel[],
+    observations?: ObservationModel[]
   ) {
     this.id = id;
     this.hutID = hutID;
@@ -45,5 +49,6 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
     this.weather = weather;
     this.participants = participants;
     this.duckTeams = duckTeams;
+    this.observations = observations;
   }
 }
