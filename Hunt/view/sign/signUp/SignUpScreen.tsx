@@ -192,6 +192,30 @@ export default function SignUpScreen({ navigation, route }: any) {
                 styles={InputTextStyle(width, height)}
               />
 
+              <InputText
+                tagName={"Code postal"}
+                value={signForm.postalLocation}
+                onChangeText={(value) => {
+                  let updateForm = UtilsSign.validatePostalCode(
+                    signForm,
+                    value
+                  );
+                  setSignForm({
+                    ...signForm,
+                    ...updateForm,
+                  });
+                }}
+                onBlur={() => {}}
+                placeholder="ABA ABA"
+                iconName={faLock}
+                isTouched={signForm.postalLocationTouched!}
+                isValid={signForm.isPostalLocationValid!}
+                errorMessage={signForm.postalLocationError!}
+                require={true}
+                isPassword={false}
+                styles={InputTextStyle(width, height)}
+              />
+
               {signForm.passwordDisable && (
                 <InputText
                   tagName={"Mot de passe"}
