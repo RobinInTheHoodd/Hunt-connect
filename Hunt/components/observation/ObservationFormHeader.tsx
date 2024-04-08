@@ -28,7 +28,6 @@ export default function ObservationFormHeader() {
           borderColor: "white",
           paddingVertical: 2,
           paddingHorizontal: 10,
-          marginLeft: 10,
         }}
       >
         <FontAwesomeIcon icon={faArrowLeft} color="black" size={30} />
@@ -44,7 +43,7 @@ export default function ObservationFormHeader() {
         <Text
           style={{
             fontFamily: "Droid Sans Mono",
-            fontSize: 27,
+            fontSize: 32,
             fontStyle: "italic",
             fontWeight: "bold",
             color: "#34651e",

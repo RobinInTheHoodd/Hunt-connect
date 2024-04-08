@@ -5,15 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { IParticipantModel } from "../../model/ParticipantFormModel";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ObservationFormModal from "./ObservationFormModal";
 
 import { ScrollView } from "react-native-gesture-handler";
-import ObservationModel, {
-  IObservationModel,
-} from "../../model/form/ObservationModel";
+import ObservationModel from "../../model/form/ObservationModel";
 
 import ObservationFormDuckPosition from "../../model/observation/ObservationFormDuckPosition";
 import ObservationFormMap from "./ObservationFormMap";
@@ -27,11 +24,6 @@ import {
 import ObservationForm from "../../model/observation/ObservationForm";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import ObservationService from "../../service/observationService";
-import {
-  removeObservation,
-  selectObservations,
-  updateObservation,
-} from "../../redux/reducers/observationSlice";
 
 interface IObservationFormContentProps {
   huntingID: number;
@@ -52,12 +44,15 @@ export default function ObservationFormContent({
     new ObservationForm(undefined, user!.UIID, huntingID)
   );
 
-  let mergedArray: ObservationFormDuckPosition[] = observations.reduce(
-    (accumulator: ObservationFormDuckPosition[], current) => {
-      return accumulator.concat(current.specimenPosition);
-    },
-    []
-  );
+  let mergedArray = useMemo(() => {
+    if (observations === undefined) return;
+    return observations.reduce(
+      (accumulator: ObservationFormDuckPosition[], current) => {
+        return accumulator.concat(current.specimenPosition);
+      },
+      []
+    );
+  }, [observations]);
 
   return (
     <ScrollView
@@ -131,70 +126,76 @@ export default function ObservationFormContent({
         </View>
 
         <ScrollView style={{ height: 200 }}>
-          {observations.map((row: ObservationModel, index) => (
-            <View
-              key={Math.random()}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-              }}
-            >
-              <Text key={Math.random()} style={{ flex: 1 }}>
-                {row.specimen}
-              </Text>
-              <Text key={Math.random()} style={{ flex: 1 }}>
-                {row.quantityView}/{row.quantityKill}
-              </Text>
-              <Text key={Math.random()} style={{ flex: 1 }}>
-                {row.isInPose == true ? "En pose" : "En vol"}
-              </Text>
+          {observations && (
+            <>
+              {observations.map((row: ObservationModel, index) => (
+                <View
+                  key={Math.random()}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingHorizontal: 10,
+                    paddingVertical: 5,
+                  }}
+                >
+                  <Text key={Math.random()} style={{ flex: 1 }}>
+                    {row.specimen}
+                  </Text>
+                  <Text key={Math.random()} style={{ flex: 1 }}>
+                    {row.quantityView}/{row.quantityKill}
+                  </Text>
+                  <Text key={Math.random()} style={{ flex: 1 }}>
+                    {row.isInPose == true ? "En pose" : "En vol"}
+                  </Text>
 
-              <TouchableOpacity
-                key={Math.random()}
-                style={{
-                  flex: 0.5,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={() => {
-                  const form: ObservationForm = ObservationModel.toForm(row);
-                  setObservationForm(form);
-                  setIsVisibile(true);
-                }}
-              >
-                <FontAwesomeIcon
-                  key={Math.random()}
-                  icon={faPencil}
-                  size={20}
-                  color="black"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                key={Math.random()}
-                style={{
-                  flex: 0.5,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={async () => {
-                  await observationService.deleteObservation(
-                    row.id!,
-                    row.huntingSession
-                  );
-                  dispatch(removeObservation(row.id!));
-                }}
-              >
-                <FontAwesomeIcon
-                  key={Math.random()}
-                  icon={faTrash}
-                  size={20}
-                  color="black"
-                />
-              </TouchableOpacity>
-            </View>
-          ))}
+                  <TouchableOpacity
+                    key={Math.random()}
+                    style={{
+                      flex: 0.5,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onPress={() => {
+                      const form: ObservationForm =
+                        ObservationModel.toForm(row);
+                      setObservationForm(form);
+                      setIsVisibile(true);
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      key={Math.random()}
+                      icon={faPencil}
+                      size={20}
+                      color="black"
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    key={Math.random()}
+                    style={{
+                      flex: 0.5,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onPress={async () => {
+                      try {
+                        await observationService.deleteObservation(
+                          row.id!,
+                          row.huntingSession
+                        );
+                      } catch (e) {}
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      key={Math.random()}
+                      icon={faTrash}
+                      size={20}
+                      color="black"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </>
+          )}
         </ScrollView>
 
         <Text style={[styles.headerRow, { marginTop: 10, marginBottom: 5 }]}>

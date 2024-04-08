@@ -163,34 +163,12 @@ export default function ({
                 onPress={async () => {
                   const rs = ObservationForm.isValide(observationForm);
                   setObservationForm(rs);
-                  let model: ObservationModel;
                   if (rs.isValid) {
-                    model = ObservationModel.fromForm(rs);
-                    model.hunterId = user.UIID;
                     try {
                       if (typeof rs.id !== "undefined") {
                         const res = await observationService.updateObservations(
                           rs,
                           user.UIID
-                        );
-                        dispatch(
-                          updateObservation({
-                            ...res!,
-                            killDate:
-                              res!.killDate instanceof Date
-                                ? res!.killDate.toISOString()
-                                : res!.killDate,
-                            viewDate:
-                              res!.viewDate instanceof Date
-                                ? res!.viewDate.toISOString()
-                                : res!.viewDate,
-                            specimenPosition: res!.specimenPosition.map(
-                              (pos) => ({
-                                ...pos,
-                                // Assurez-vous que les dates ici sont également converties si nécessaire
-                              })
-                            ),
-                          })
                         );
                       } else {
                         const res: ObservationModel | undefined =
@@ -198,25 +176,6 @@ export default function ({
                             rs,
                             user.UIID
                           );
-                        dispatch(
-                          addObservation({
-                            ...res!,
-                            killDate:
-                              res!.killDate instanceof Date
-                                ? res!.killDate.toISOString()
-                                : res!.killDate,
-                            viewDate:
-                              res!.viewDate instanceof Date
-                                ? res!.viewDate.toISOString()
-                                : res!.viewDate,
-                            specimenPosition: res!.specimenPosition.map(
-                              (pos) => ({
-                                ...pos,
-                                // Assurez-vous que les dates ici sont également converties si nécessaire
-                              })
-                            ),
-                          })
-                        );
                       }
                     } catch (e) {}
                     onClose();

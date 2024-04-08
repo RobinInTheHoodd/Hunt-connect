@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Callout, Marker } from "react-native-maps";
 import ObservationFormDuckPosition from "../../model/observation/ObservationFormDuckPosition";
+import { mapJSON } from "./modal/ObservationFormModalMap";
 
 const initialRegion = {
   latitude: 50.69693758264165,
@@ -13,7 +14,7 @@ const initialRegion = {
 };
 
 interface IObservationFormMapProps {
-  form: ObservationFormDuckPosition[];
+  form: any;
 }
 
 export default function ObservationFormMap({ form }: IObservationFormMapProps) {
@@ -51,43 +52,46 @@ export default function ObservationFormMap({ form }: IObservationFormMapProps) {
       onRegionChangeComplete={onRegionChangeComplete}
       scrollEnabled={true}
       zoomEnabled={true}
-      style={{ width: "100%", height: "100%" }}
+      style={[{ width: "100%", height: "100%" }]}
       toolbarEnabled={false}
       moveOnMarkerPress={false}
       provider={PROVIDER_GOOGLE}
       onMapReady={setBoundaries}
       paddingAdjustmentBehavior="automatic"
       mapPadding={mapPadding}
+      customMapStyle={mapJSON}
     >
-      <>
-        {form.map((marker, index) => (
-          <Marker
-            key={`marker_${index}`}
-            coordinate={{
-              latitude: marker.latitude!,
-              longitude: marker.longitude!,
-            }}
-            tappable={true}
-            onPress={(event: any) => {}}
-          >
-            {marker.isKill == true ? (
-              <FontAwesomeIcon icon={faCircle} color="red" size={20} />
-            ) : (
-              <FontAwesomeIcon icon={faCircle} color="green" size={20} />
-            )}
-            <Callout>
-              <View style={styles.calloutView}>
-                <Text style={styles.calloutText}>
-                  Quantité: {marker.quantity}
-                </Text>
-                <Text style={styles.calloutText}>
-                  Statut: {marker.isKill == true ? " Tué " : " Vue "}
-                </Text>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
-      </>
+      {form && (
+        <>
+          {form.map((marker: any, index: any) => (
+            <Marker
+              key={`marker_${index}`}
+              coordinate={{
+                latitude: marker.latitude!,
+                longitude: marker.longitude!,
+              }}
+              tappable={true}
+              onPress={(event: any) => {}}
+            >
+              {marker.isKill == true ? (
+                <FontAwesomeIcon icon={faCircle} color="red" size={20} />
+              ) : (
+                <FontAwesomeIcon icon={faCircle} color="green" size={20} />
+              )}
+              <Callout>
+                <View style={styles.calloutView}>
+                  <Text style={styles.calloutText}>
+                    Quantité: {marker.quantity}
+                  </Text>
+                  <Text style={styles.calloutText}>
+                    Statut: {marker.isKill == true ? " Tué " : " Vue "}
+                  </Text>
+                </View>
+              </Callout>
+            </Marker>
+          ))}
+        </>
+      )}
     </MapView>
   );
 }
