@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { IHuntingParticipanModel } from "../models/HuntingPariticpantModel";
+import { IHuntingParticipanModel } from "../models/huntingParticipant/HuntingPariticpantModel";
 import hutService from "../services/hutService";
 class HutController {
   constructor() {}

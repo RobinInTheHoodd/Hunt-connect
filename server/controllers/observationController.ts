@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import ObservationModel, {
   IObservationModel,
-} from "../models/ObservationModel";
+} from "../models/observation/ObservationModel";
 import observationService from "../services/observationService";
 
 class ObservationController {
@@ -10,6 +10,7 @@ class ObservationController {
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
       const observationReq: IObservationModel = req.body;
+
       await observationService.create(observationReq);
       res.status(200).send();
     } catch (e) {
@@ -19,8 +20,9 @@ class ObservationController {
 
   public async update(req: Request, res: Response, next: NextFunction) {
     try {
+      const { huntID } = req.params;
       const observationReq: IObservationModel = req.body;
-      await observationService.update(observationReq);
+      await observationService.update(observationReq, parseInt(huntID));
       res.status(200).send();
     } catch (e) {
       next(e);
@@ -29,9 +31,12 @@ class ObservationController {
 
   public async deletePosition(req: Request, res: Response, next: NextFunction) {
     try {
-      let { id } = req.body;
-      id = parseInt(id);
-      await observationService.deleteObservation(id);
+      const { id } = req.body;
+      const { huntID } = req.params;
+      await observationService.deleteObservation(
+        parseInt(id),
+        parseInt(huntID)
+      );
       res.status(200).send();
     } catch (e) {
       next(e);
