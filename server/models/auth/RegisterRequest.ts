@@ -12,6 +12,7 @@ export declare class IRegisterRequest {
   hut_number?: string;
   create_at?: Date;
   last_update?: Date;
+  postalLocation?: string;
 }
 
 export default class RegisterRequest implements IRegisterRequest {
@@ -26,6 +27,7 @@ export default class RegisterRequest implements IRegisterRequest {
   hut_number?: string;
   create_at?: Date;
   last_update?: Date;
+  postalLocation?: string;
 
   constructor({
     UUID,
@@ -39,6 +41,7 @@ export default class RegisterRequest implements IRegisterRequest {
     hut_number,
     create_at,
     last_update,
+    postalLocation,
   }: IRegisterRequest) {
     this.UUID = UUID;
     this.display_name = display_name;
@@ -51,6 +54,7 @@ export default class RegisterRequest implements IRegisterRequest {
     this.hut_number = hut_number;
     this.create_at = create_at;
     this.last_update = last_update;
+    this.postalLocation = postalLocation;
   }
 
   static fromUserContext(userRecord: UserRecord): RegisterRequest {

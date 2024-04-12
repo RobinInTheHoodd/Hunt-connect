@@ -1,6 +1,6 @@
-import { IDuckTeamsModel } from "./DuckTeamsModel";
-import { IHuntingParticipanModel } from "./HuntingPariticpantModel";
-import { IWeatherInfoModel } from "./WeatherModel";
+import { IDuckTeamsModel } from "../duckTeams/DuckTeamsModel";
+import { IHuntingParticipanModel } from "../huntingParticipant/HuntingPariticpantModel";
+import { IWeatherInfoModel } from "../weather/WeatherModel";
 
 export interface IHuntingSessionModel {
   id?: number;

@@ -1,5 +1,5 @@
 import { spec } from "node:test/reporters";
-import ObservationDuckPositionModel from "./ObservationDuckPositionModel";
+import ObservationDuckPositionModel from "../observationDuck/ObservationDuckPositionModel";
 
 export interface IObservationModel {
   id: number | undefined;
