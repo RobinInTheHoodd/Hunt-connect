@@ -1,26 +1,25 @@
 import pool from "../db/pgPool";
 import { DatabaseError } from "../middleware/errorPostgresMiddleware";
 import { DatabaseError as PG, PoolClient } from "pg";
-import { IObservationModel } from "../models/ObservationModel";
+import { IObservationModel } from "../models/observation/ObservationModel";
 import ObservationDuckPositionModel, {
   IObservationDuckPositionModel,
-} from "../models/ObservationDuckPositionModel";
+} from "../models/observationDuck/ObservationDuckPositionModel";
 
 class ObservationDataAccess {
   constructor() {}
+
   public async create(
     observation: IObservationModel,
     poolClient: PoolClient
   ): Promise<number> {
-    const sql = `
-      INSERT INTO udb.hunting_observation 
-      VALUES
-      (
-      DEFAULT,
-      $1, $2, $3,
-      $4, $5, $6,
-      $7, $8, $9
-      ) RETURNING id;`;
+    console.log(JSON.stringify(observation, null, 2));
+    const sql = "INSERT INTO udb.hunting_observation VALUES ( ";
+    "DEFAULT, " +
+      "$1, $2, $3, " +
+      "$4, $5, $6, " +
+      "$7, $8, $9 " +
+      ") RETURNING id;";
     const values = [
       observation.hunterId,
       observation.huntingSession,
@@ -52,17 +51,17 @@ class ObservationDataAccess {
     observation: IObservationModel,
     poolClient: PoolClient
   ): Promise<number> {
-    const sql = `
-      UPDATE udb.hunting_observation
-      SET hunter_id = $1,
-          specimen = $2,
-          is_in_flight = $3,
-          is_in_pose = $4,
-          view_date = $5,
-          kill_date = $6,
-          quantity_kill = $7,
-          quantity_view = $8
-      WHERE id = $9;`;
+    const sql =
+      "UPDATE udb.hunting_observation " +
+      "SET hunter_id = $1, " +
+      "specimen = $2, " +
+      "is_in_flight = $3, " +
+      "is_in_pose = $4, " +
+      "view_date = $5, " +
+      "kill_date = $6, " +
+      "quantity_kill = $7, " +
+      "quantity_view = $8 " +
+      "WHERE id = $9;";
 
     const values = [
       observation.hunterId,
@@ -104,6 +103,7 @@ class ObservationDataAccess {
     try {
       await poolClient.query(sql, values);
     } catch (err: any) {
+      console.log(err, null, 2);
       const errr: PG = err;
       const errorDatabase: DatabaseError = {
         name: "DatabaseError",
@@ -143,7 +143,7 @@ class ObservationDataAccess {
     huntingId: number,
     duckPostion: IObservationDuckPositionModel,
     poolClient: PoolClient
-  ): Promise<void> {
+  ): Promise<any> {
     const sql = `
       INSERT INTO udb.observation_duck_position 
       VALUES 
@@ -151,7 +151,7 @@ class ObservationDataAccess {
       DEFAULT, $1,
       POINT($2,$3), 
       $4, $5
-      );`;
+      )RETURNING id;`;
     const values = [
       huntingId,
       duckPostion.longitude,
@@ -161,6 +161,7 @@ class ObservationDataAccess {
     ];
     try {
       const res = await poolClient.query(sql, values);
+      return res.rows[0].id;
     } catch (err: any) {
       const errorDatabase: DatabaseError = {
         name: "DatabaseError",
@@ -213,10 +214,13 @@ class ObservationDataAccess {
       DELETE FROM udb.observation_duck_position
       WHERE observation_id = $1;
     `;
+    console.log(positionId);
     const values = [positionId];
     try {
       await poolClient.query(sql, values);
     } catch (err: any) {
+      console.log("POSITION");
+      console.log(JSON.stringify(err, null, 2));
       const errorDatabase: DatabaseError = {
         name: "DatabaseError",
         message: "Une erreur de base de données s'est produite",

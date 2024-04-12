@@ -1,12 +1,14 @@
 import { PoolClient } from "pg";
 import pool from "../db/pgPool";
 import { DatabaseError } from "../middleware/errorPostgresMiddleware";
-import WeatherInfoModel, { IWeatherInfoModel } from "../models/WeatherModel";
+import WeatherInfoModel, {
+  IWeatherInfoModel,
+} from "../models/weather/WeatherModel";
 
 class WeatherDataAccess {
   constructor() {}
 
-  public async createWeather(
+  public async create(
     huntID: number,
     weather: IWeatherInfoModel,
     client: PoolClient
@@ -20,7 +22,7 @@ class WeatherDataAccess {
       "VALUES" +
       "(" +
       "$1, $2, $3, $4, $5, $6" +
-      ");";
+      ") RETURNING id;";
 
     const values = [
       huntID,
@@ -32,7 +34,7 @@ class WeatherDataAccess {
     ];
     try {
       const res = await client.query(sql, values);
-      return;
+      return res.rows[0];
     } catch (err: any) {
       const errorDatabase: DatabaseError = {
         name: "DatabaseError",
@@ -51,7 +53,6 @@ class WeatherDataAccess {
         "SELECT * FROM udb.hunting_session_weather WHERE hunting_session_id = $1 ";
       const value = [id];
       const res = await pool.query(sql, value);
-
       return WeatherInfoModel.fromQuery(res.rows[0]);
     } catch (e: any) {
       const errorDatabase: DatabaseError = {

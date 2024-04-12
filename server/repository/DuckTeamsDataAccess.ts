@@ -1,7 +1,9 @@
 import { PoolClient } from "pg";
 import pool from "../db/pgPool";
 import { DatabaseError } from "../middleware/errorPostgresMiddleware";
-import DuckTeamsModel, { IDuckTeamsModel } from "../models/DuckTeamsModel";
+import DuckTeamsModel, {
+  IDuckTeamsModel,
+} from "../models/duckTeams/DuckTeamsModel";
 
 class DuckTeamsDataAccess {
   constructor() {}
@@ -13,14 +15,14 @@ class DuckTeamsDataAccess {
   ): Promise<any> {
     const sql =
       "INSERT INTO udb.Hunting_Session_Duck_Teams " +
-      "(" +
-      "hunting_session_id,      duck_position," +
-      "specimen,                sex,         duck_type" +
+      "( " +
+      "hunting_session_id, duck_position, " +
+      "specimen, sex, duck_type " +
       ") " +
-      "VALUES" +
-      "(" +
-      "$1, POINT($2,$3), $4, $5, $6" +
-      ");";
+      "VALUES " +
+      "( " +
+      "$1, POINT($2,$3), $4, $5, $6 " +
+      ") RETURNING id; ";
     const values = [
       huntID,
       duckTeam.longitude,
@@ -31,7 +33,7 @@ class DuckTeamsDataAccess {
     ];
     try {
       const res = await client.query(sql, values);
-      return;
+      return res.rows[0];
     } catch (err: any) {
       const errorDatabase: DatabaseError = {
         name: "DatabaseError",
