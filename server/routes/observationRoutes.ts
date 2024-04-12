@@ -4,10 +4,10 @@ import AuthController from "../controllers/authController";
 import huntSessionController from "../controllers/huntSessionController";
 
 import { checkSchema, query } from "express-validator";
-import WeatherInfoModel from "../models/WeatherModel";
-import HuntingSessionModel from "../models/HuntingSessionModel";
-import DuckTeamsModel from "../models/DuckTeamsModel";
-import HuntingParticipantModel from "../models/HuntingPariticpantModel";
+import WeatherInfoModel from "../models/weather/WeatherModel";
+import HuntingSessionModel from "../models/huntingSession/HuntingSessionModel";
+import DuckTeamsModel from "../models/duckTeams/DuckTeamsModel";
+import HuntingParticipantModel from "../models/huntingParticipant/HuntingPariticpantModel";
 import observationController from "../controllers/observationController";
 
 const router = Router({ mergeParams: true });

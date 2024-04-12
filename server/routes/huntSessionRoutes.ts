@@ -4,13 +4,13 @@ import AuthController from "../controllers/authController";
 import huntSessionController from "../controllers/huntSessionController";
 
 import { checkSchema, query } from "express-validator";
-import WeatherInfoModel from "../models/WeatherModel";
-import HuntingSessionModel from "../models/HuntingSessionModel";
-import DuckTeamsModel from "../models/DuckTeamsModel";
-import HuntingParticipantModel from "../models/HuntingPariticpantModel";
+import WeatherInfoModel from "../models/weather/WeatherModel";
+import HuntingSessionModel from "../models/huntingSession/HuntingSessionModel";
+import DuckTeamsModel from "../models/duckTeams/DuckTeamsModel";
+import HuntingParticipantModel from "../models/huntingParticipant/HuntingPariticpantModel";
 import observationRoutes from "./observationRoutes";
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 router.post(
   "/add",
@@ -23,8 +23,10 @@ router.post(
   huntSessionController.addController
 );
 router.get("/getCurrent/:userID", huntSessionController.getCurrent);
-
+router.get("/get/:huntingID", huntSessionController.getById);
 router.get("/finish/:huntID", huntSessionController.finishHuntingSession);
+
+router.get("/getHistory/:userID", huntSessionController.getHistoryByUserId);
 
 router.use("/:huntID", observationRoutes);
 
