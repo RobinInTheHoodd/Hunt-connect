@@ -1,4 +1,4 @@
-import { IHuntingParticipanModel } from "../models/HuntingPariticpantModel";
+import { IHuntingParticipanModel } from "../models/huntingParticipant/HuntingPariticpantModel";
 import hutDataAccess from "../repository/hutDataAccess";
 
 class HutService {

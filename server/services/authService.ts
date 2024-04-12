@@ -5,6 +5,7 @@ import { FirebaseError } from "../middleware/errorFirebaseMiddleware";
 import userDataAccess from "../repository/userDataAccess";
 import { UserRecord } from "firebase-admin/auth";
 import RegisterRequest from "../models/auth/RegisterRequest";
+import hutDataAccess from "../repository/hutDataAccess";
 
 class AuthService {
   private _firebaseAuth = FirebaseAdminSingleton.getFirebaseAuth();
@@ -22,6 +23,9 @@ class AuthService {
         this._firebaseAuth.deleteUser(user.register.UUID!);
         throw e;
       });
+      if (register.hut_name != "") {
+        hutDataAccess.create(register);
+      }
       return user!.customeToken!;
     } catch (e: any) {
       throw e;
