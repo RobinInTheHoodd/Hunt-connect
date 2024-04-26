@@ -1,21 +1,18 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserContext } from "../../model/UserContext";
-import { AppDispatch, RootState } from "../store";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { State } from "react-native-gesture-handler";
+import { RootState } from "../store";
 
-const initialState = new UserContext();
+const initialState = JSON.stringify(new UserContext());
 
 export const userSlice = createSlice({
   name: "user",
-  initialState: initialState,
+  initialState: JSON.parse(initialState),
   reducers: {
-    signIn: (state, action: PayloadAction<string>) => {
+    signIn: (state, action: PayloadAction<any>) => {
       return JSON.parse(action.payload);
     },
     signOut: (state) => {
-      console.log(state);
-      let userContext = new UserContext().toJson();
+      let userContext = JSON.stringify(new UserContext());
       return JSON.parse(userContext);
     },
     setIsNew: (state, action: PayloadAction<string>) => {

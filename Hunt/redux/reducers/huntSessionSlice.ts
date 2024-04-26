@@ -1,8 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { firebase } from "@react-native-firebase/database";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { RootState } from "../store";
-import ObservationModel from "../../model/form/ObservationModel";
-import ObservationService from "../../service/observationService";
+
 import HuntingSessionModel from "../../model/HuntingSession";
 
 const initialState: HuntingSessionModel | null = null;
@@ -12,9 +11,9 @@ export const huntSessionSlice = createSlice({
   initialState,
   reducers: {
     addHuntSession: (state, action: PayloadAction<any>) => {
-      return action.payload;
+      return JSON.parse(action.payload);
     },
-    removeHuntSession: (state, action: PayloadAction<any>) => {
+    removeHuntSession: (state: any) => {
       return null;
     },
     updateHuntSession: (state, action: PayloadAction<any>) => {

@@ -1,47 +1,47 @@
 import { firebase } from "@react-native-firebase/database";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../hook";
 
-import { useSelector } from "react-redux";
-import { UserContext } from "../../model/UserContext";
 import {
   addHuntSession,
   removeHuntSession,
-  updateHuntSession,
 } from "../reducers/huntSessionSlice";
-import HuntingSessionModel from "../../model/HuntingSession";
+import HutModel from "../../model/HutModel";
 
-export const useHuntSession = (user: UserContext) => {
+export const useHuntSession = () => {
   const dispatch = useAppDispatch();
+  const hut: HutModel = useAppSelector((state) => state.hut!);
+
+  const handleHuntSession = useCallback(
+    (huntSessionID: any) => {
+      const sessionRef = firebase
+        .database()
+        .ref(`/huntSessions/${huntSessionID}`);
+
+      const onValueChange = (snapshot: any) => {
+        if (snapshot.exists()) {
+          const sessionData = snapshot.val();
+          if (!sessionData.isFinish) {
+            dispatch(addHuntSession(JSON.stringify(sessionData)));
+            return;
+          }
+        }
+      };
+
+      sessionRef.on("value", onValueChange);
+      return () => {
+        sessionRef.off("value", onValueChange);
+        dispatch(removeHuntSession());
+      };
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    if (!user?.UIID) return;
-
-    const huntSessionsRef = firebase.database().ref("/huntSessions");
-
-    const userHuntSessionsQuery = huntSessionsRef
-      .orderByChild("creatorID")
-      .equalTo(user.UIID);
-
-    const onValueChange = (snapshot: any) => {
-      let huntSessions: any = null;
-
-      snapshot.forEach((childSnapshot: any) => {
-        const session = childSnapshot.val();
-
-        if (!session.isFinish) {
-          huntSessions = session;
-        } else huntSessions = null;
-      });
-      const hunt: HuntingSessionModel = huntSessions;
-
-      dispatch(addHuntSession(hunt));
-    };
-
-    userHuntSessionsQuery.on("value", onValueChange);
-
-    return () => {
-      userHuntSessionsQuery.off("value", onValueChange);
-    };
-  }, [user?.UIID, dispatch]);
+    if (!hut || !hut.huntSession) {
+      dispatch(removeHuntSession());
+      return;
+    }
+    hut.huntSession.forEach(handleHuntSession);
+  }, [hut, dispatch]);
 };
