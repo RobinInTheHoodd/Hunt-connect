@@ -1,16 +1,7 @@
 import { useState, useEffect } from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  View,
-  StyleSheet,
-  Text,
-  Image,
-} from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { View, StyleSheet, Text, Image } from "react-native";
 import WeatherInfoModel, { IWeatherInfoModel } from "../model/WeatherModel";
 import WeatherService from "../service/weather/weatherService";
-import * as Location from "expo-location";
 import { faWind, faDroplet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
@@ -61,7 +52,9 @@ const WeatherCardInfo = ({ navigation, weather }: any) => {
       </Text>
       <Text style={styles.weatherDescription}>{weather.conditionText}</Text>
       <View style={[styles.row, { marginBottom: 0 }]}>
-        <Text style={styles.temperatureText}>{weather.tempC + "°"}</Text>
+        <Text style={styles.temperatureText}>
+          {weather.tempC == undefined ? 5 : weather.tempC + "°"}
+        </Text>
       </View>
 
       <View style={[styles.row, { marginTop: 5 }]}>
@@ -91,6 +84,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     width: 350,
+
+    borderWidth: 1,
+    borderBottomWidth: 3,
+    borderRightWidth: 3,
 
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },

@@ -2,37 +2,36 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, LogBox } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { HuntingSessionController } from "../service/huntingSessionContrller";
-import { useAppSelector } from "../redux/hook";
+import { useAppDispatch, useAppSelector } from "../redux/hook";
 import HuntingSessionService from "../service/huntingSessionService";
 import HuntingWeatherCard from "./hunting/screen/HuntingWeatherCard";
 import HuntingObservation from "./hunting/screen/HuntingObservation";
 import HuntingParticipant from "./hunting/screen/HuntingParticipant";
 import HuntingMap from "./hunting/screen/HuntingMap";
 import { Skeleton } from "moti/skeleton";
-import ObservationService from "../service/observationService";
 import SkeletonExpo from "moti/build/skeleton/expo";
+import {
+  setLoadingFalse,
+  setLoadingTrue,
+} from "../redux/reducers/loadingSlice";
+import { removeHuntSession } from "../redux/reducers/huntSessionSlice";
 
-const HuntingSessionInfo = ({
-  navigation,
-  HuntSession,
-  header,
-  isLoading,
-}: any) => {
-  const user = useAppSelector((state) => state.users);
-
-  const huntingSessionService = new HuntingSessionService();
-  const observationService = new ObservationService();
+const HuntingSessionInfo = ({ navigation, HuntSession, header }: any) => {
+  const observations = useAppSelector((state) => state.observation);
+  const dispatch = useAppDispatch();
+  const isLoading = useAppSelector((state) => state.isLoading);
 
   const finishHuntingSession = async () => {
     try {
+      dispatch(setLoadingTrue());
       await HuntingSessionController.finishHuntSession(HuntSession.id);
-      navigation.goBack();
+      dispatch(removeHuntSession());
+      setTimeout(() => dispatch(setLoadingFalse()), 1000);
     } catch (e) {
       console.log(e);
     }
   };
 
-  LogBox.ignoreAllLogs();
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <SkeletonExpo.Group show={isLoading}>
@@ -40,20 +39,36 @@ const HuntingSessionInfo = ({
 
         <HuntingWeatherCard huntinSession={HuntSession} />
 
-        <HuntingObservation navigation={navigation} huntSession={HuntSession} />
+        <HuntingObservation
+          navigation={navigation}
+          huntSession={HuntSession}
+          observations={observations}
+        />
 
         <HuntingParticipant
-          huntParticipant={HuntSession ? HuntSession.participants : undefined}
+          huntParticipant={
+            HuntSession
+              ? HuntSession.participants
+                ? HuntSession.participants
+                : []
+              : undefined
+          }
           isLoading={isLoading}
         />
 
         <HuntingMap
-          ducksTeam={HuntSession ? HuntSession.duckTeams! : undefined}
+          ducksTeam={
+            HuntSession
+              ? HuntSession.duckTeams!
+                ? HuntSession.duckTeams!
+                : []
+              : undefined
+          }
           isFinish={HuntSession ? HuntSession.isFinish : true}
         />
       </SkeletonExpo.Group>
 
-      {HuntSession && !HuntSession.isFinish && (
+      {!isLoading && HuntSession && !HuntSession.isFinish && (
         <View
           style={[
             styles.cardContainer,

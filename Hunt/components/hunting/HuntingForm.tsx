@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { IDuckTeamsModel } from "../../model/DuckTeamsModel";
-import { useAppSelector } from "../../redux/hook";
+import { useAppDispatch, useAppSelector } from "../../redux/hook";
 import HuntingSessionService from "../../service/huntingSessionService";
 import { WeatherFormModel } from "../../model/form/WeatherFormModel";
 import { ParticipantFormModel } from "../../model/ParticipantFormModel";
@@ -27,6 +27,11 @@ import HuntingFormPagination from "./HuntingFormPagination";
 import HuntingParticipantModel, {
   IHuntingParticipanModel,
 } from "../../model/HuntingParticipantModel";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import HutHunterModel, { IHutHunterModel } from "../../model/HutHunterModel";
+import { UserContext } from "../../model/UserContext";
+import HutModel from "../../model/HutModel";
+import { setLoadingTrue } from "../../redux/reducers/loadingSlice";
 
 interface IHuntingFormProps {
   huntSession: IHuntingSessionModel | undefined;
@@ -34,21 +39,21 @@ interface IHuntingFormProps {
     React.SetStateAction<IHuntingSessionModel | undefined>
   >;
   setCancelForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function HuntingForm({
-  huntSession,
-  setHuntSession,
-  setCancelForm,
-}: IHuntingFormProps) {
-  const user = useAppSelector((state) => state.users);
+export default function HuntingForm({ navigation }: any) {
+  const [huntSession, setHuntSession] = useState<any>();
+  const route = useRoute<RouteProp<{ params: any }, "params">>();
+  console.log("ROUTE" + JSON.stringify(route.params));
+  const user: UserContext = useAppSelector((state) => state.users);
+  const hut: HutModel = useAppSelector((state) => state.hut!);
   const hutService = new HuntingSessionService();
   const { height } = useWindowDimensions();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [weather, setWeather] = useState(new WeatherFormModel());
-  const [participants, setParticipants] = useState<IHuntingParticipanModel[]>(
-    []
-  );
+  const [participants, setParticipants] = useState<IHutHunterModel[]>([]);
+  const dispatch = useAppDispatch();
   const [duckTeam, setDuckTeam] = useState<IDuckTeamsModel[]>([]);
 
   const footerPosition = useRef(new Animated.Value(0)).current;
@@ -58,7 +63,19 @@ export default function HuntingForm({
   const carouselData = [0, 1, 2];
   let carouselRef = useRef(null);
 
-  useEffect(() => {}, [huntSession]);
+  useEffect(() => {
+    console.log("FETCHHHHHHHHH", hut);
+    if (hut == undefined || hut.hunter == undefined || hut.hunter.length == 0)
+      return;
+
+    let authorizeDay = hut.hunter.find(
+      (value) => (value.hunterID = user.UIID)
+    )?.authorizeDay;
+
+    setParticipants([
+      new HutHunterModel(user.UIID, authorizeDay, user.displayName, user.email),
+    ]);
+  }, []);
 
   const goToNextSlide = async () => {
     let nextIndex = activeIndex + 1;
@@ -67,13 +84,17 @@ export default function HuntingForm({
     }
     if (nextIndex >= carouselData.length) {
       try {
+        setIsLoading(true);
+
         const huntsession = await huntingSessionService.saveHuntingSession(
           user.UIID,
+          hut.id!,
           weather,
           duckTeam,
           participants
         );
-        setHuntSession(huntsession);
+        dispatch(setLoadingTrue());
+        navigation.goBack();
       } catch (e: any) {
         console.log(e);
       }
@@ -89,7 +110,7 @@ export default function HuntingForm({
     let prevIndex = activeIndex - 1;
 
     if (prevIndex < 0) {
-      setCancelForm(false);
+      navigation.goBack();
     }
     setActiveIndex(prevIndex);
     carouselRef.current?.prev();
@@ -101,7 +122,8 @@ export default function HuntingForm({
       case 0:
         rs = WeatherFormModel.isValidForm(weather);
         setWeather(rs);
-        return true;
+        return rs.isFormValid;
+
       default:
         return true;
     }

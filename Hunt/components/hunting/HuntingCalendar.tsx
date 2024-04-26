@@ -11,6 +11,7 @@ import { green } from "react-native-reanimated/lib/typescript/reanimated2/Colors
 
 import { LocaleConfig } from "react-native-calendars";
 import HuntingSessionService from "../../service/huntingSessionService";
+import { useAppSelector } from "../../redux/hook";
 
 LocaleConfig.locales["fr"] = {
   monthNames: [
@@ -65,11 +66,19 @@ function HuntingCalendar({
   isModalVisible,
   history,
   fetchHistoryHunting,
+  firstDate,
+  setFirstDate,
 }: any) {
-  const [firstDate, setFirstDate] = useState("");
+  const hut = useAppSelector((state) => state.hut);
   const [secondDate, setSecondDate] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [markedDates, setMarkedDates] = useState({});
+
+  useEffect(() => {
+    if (hut) {
+      setFirstDate("");
+    }
+  }, [hut]);
 
   const onDayPress = useCallback((day: any) => {
     if (!firstDate || secondDate) {
@@ -148,6 +157,21 @@ function HuntingCalendar({
           textColor: "white",
         };
 
+        return newMarkedDates;
+      });
+    } else {
+      setMarkedDates((prevMarkedDates: any) => {
+        const newMarkedDates: any = { ...prevMarkedDates };
+
+        Object.keys(prevMarkedDates).forEach((date) => {
+          if (prevMarkedDates[date].color === "green") {
+            if (!isDateInSessions(date, history)) {
+              newMarkedDates[date] = { disabled: true, textColor: "#e5e5e5" };
+            } else {
+              newMarkedDates[date] = {};
+            }
+          }
+        });
         return newMarkedDates;
       });
     }

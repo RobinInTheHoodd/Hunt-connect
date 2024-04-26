@@ -18,69 +18,79 @@ import React from "react";
 
 function HuntingParticipant({ huntParticipant }: any) {
   const styles = style(huntParticipant);
+  console.log(huntParticipant);
   return (
     <View style={styles.cardContainer}>
-      <SkeletonExpo show={huntParticipant === undefined} colorMode="light">
-        <>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-              paddingBottom: 5,
-              marginBottom: 5,
-            }}
-          >
-            <SkeletonExpo disableExitAnimation={true} colorMode="light">
-              <Text
-                style={{ fontSize: 20, fontWeight: "bold", color: "#34651e" }}
-              >
-                Participants
-              </Text>
+      <>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+            paddingBottom: 5,
+            marginBottom: 5,
+          }}
+        >
+          <SkeletonExpo disableExitAnimation={true} colorMode="light">
+            <Text
+              style={{ fontSize: 20, fontWeight: "bold", color: "#34651e" }}
+            >
+              Participants
+            </Text>
+          </SkeletonExpo>
+        </View>
+        <View>
+          <View style={{ paddingBottom: 5 }}>
+            <SkeletonExpo colorMode="light" disableExitAnimation={true}>
+              <View style={styles.row}>
+                <Text style={[styles.text, { width: 80 }]}></Text>
+                <Text style={[styles.text, styles.cell]}>Rôle</Text>
+                <Text
+                  style={[styles.text, styles.cell, { textAlign: "center" }]}
+                >
+                  Prénom nom
+                </Text>
+              </View>
             </SkeletonExpo>
           </View>
-          <View>
-            <View style={{ paddingBottom: 5 }}>
-              <SkeletonExpo colorMode="light" disableExitAnimation={true}>
-                <View style={styles.row}>
-                  <Text style={[styles.text, { width: 80 }]}></Text>
-                  <Text style={[styles.text, styles.cell]}>Rôle</Text>
-                  <Text
-                    style={[styles.text, styles.cell, { textAlign: "center" }]}
-                  >
-                    Prénom nom
+          <View style={{ marginBottom: 4 }}>
+            <SkeletonExpo
+              colorMode="light"
+              disableExitAnimation={true}
+              width={"100%"}
+            >
+              {huntParticipant && huntParticipant.length != 0 ? (
+                huntParticipant.map((participant: any, index: any) => (
+                  <View key={index} style={[styles.row, { padding: 2 }]}>
+                    <Text style={{ width: 80 }}>
+                      <FontAwesomeIcon
+                        icon={faUser}
+                        size={20}
+                        color={"black"}
+                      />
+                    </Text>
+                    <Text style={styles.cell}>
+                      {participant.hunterID === "" ? "Invité" : "Chasseur"}
+                    </Text>
+                    <Text style={[styles.cell, { textAlign: "center" }]}>
+                      {participant.displayName}
+                    </Text>
+                  </View>
+                ))
+              ) : (
+                <View key={90} style={[styles.row, { padding: 2 }]}>
+                  <Text style={{ width: 80 }}>
+                    <FontAwesomeIcon icon={faUser} size={20} color={"black"} />
                   </Text>
+                  <Text style={styles.cell}>/</Text>
+                  <Text style={[styles.cell, { textAlign: "center" }]}>/</Text>
                 </View>
-              </SkeletonExpo>
-            </View>
-            <View style={{ marginBottom: 4 }}>
-              <SkeletonExpo
-                colorMode="light"
-                height={80}
-                disableExitAnimation={true}
-              >
-                {huntParticipant &&
-                  huntParticipant.map((participant: any, index: any) => (
-                    <View key={index} style={[styles.row, { padding: 2 }]}>
-                      <Text style={{ width: 80 }}>
-                        <FontAwesomeIcon
-                          icon={faUser}
-                          size={20}
-                          color={"black"}
-                        />
-                      </Text>
-                      <Text style={styles.cell}>{participant.displayName}</Text>
-                      <Text style={[styles.cell, { textAlign: "center" }]}>
-                        {participant.role}
-                      </Text>
-                    </View>
-                  ))}
-              </SkeletonExpo>
-            </View>
+              )}
+            </SkeletonExpo>
           </View>
-        </>
-      </SkeletonExpo>
+        </View>
+      </>
     </View>
   );
 }
@@ -90,7 +100,7 @@ export default React.memo(HuntingParticipant);
 const style = (huntSession: any) =>
   StyleSheet.create({
     cardContainer: {
-      padding: huntSession ? 15 : 0,
+      padding: 15,
       borderRadius: 8,
       marginBottom: 10,
       width: 350,

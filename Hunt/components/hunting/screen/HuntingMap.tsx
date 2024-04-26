@@ -14,42 +14,42 @@ function HuntingMap({ ducksTeam, isFinish }: any) {
   const styles = style(ducksTeam);
   return (
     <View style={[styles.cardContainer, { height: 400 }]}>
-      <SkeletonExpo show={ducksTeam === undefined} colorMode="light">
-        <>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-              paddingBottom: 5,
-              marginBottom: 5,
-            }}
-          >
-            <SkeletonExpo disableExitAnimation={true} colorMode="light">
-              <Text
-                style={{ fontSize: 20, fontWeight: "bold", color: "#34651e" }}
-              >
-                Tableau de bord
-              </Text>
-            </SkeletonExpo>
-          </View>
-
-          <SkeletonExpo
-            boxHeight={325}
-            colorMode="light"
-            disableExitAnimation={true}
-          >
-            {ducksTeam && (
-              <HuntingMapContent
-                form={ducksTeam}
-                setForm={() => {}}
-                isFinish={isFinish}
-              />
-            )}
+      <>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+            paddingBottom: 5,
+            marginBottom: 5,
+          }}
+        >
+          <SkeletonExpo disableExitAnimation={true} colorMode="light">
+            <Text
+              style={{ fontSize: 20, fontWeight: "bold", color: "#34651e" }}
+            >
+              Tableau de bord
+            </Text>
           </SkeletonExpo>
-        </>
-      </SkeletonExpo>
+        </View>
+
+        <SkeletonExpo
+          boxHeight={300}
+          colorMode="light"
+          disableExitAnimation={true}
+        >
+          {ducksTeam !== undefined ? (
+            <HuntingMapContent
+              form={ducksTeam}
+              setForm={() => {}}
+              isFinish={isFinish}
+            />
+          ) : (
+            <></>
+          )}
+        </SkeletonExpo>
+      </>
     </View>
   );
 }
@@ -59,7 +59,7 @@ export default React.memo(HuntingMap);
 const style = (duckTeams: any) =>
   StyleSheet.create({
     cardContainer: {
-      padding: duckTeams ? 15 : 0,
+      padding: 15,
       borderRadius: 8,
       marginBottom: 10,
       width: 350,

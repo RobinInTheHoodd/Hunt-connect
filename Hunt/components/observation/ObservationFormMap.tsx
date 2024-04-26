@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Callout, Marker } from "react-native-maps";
-import ObservationFormDuckPosition from "../../model/observation/ObservationFormDuckPosition";
 import { mapJSON } from "./modal/ObservationFormModalMap";
 
 const initialRegion = {
@@ -85,6 +84,10 @@ export default function ObservationFormMap({ form }: IObservationFormMapProps) {
                   </Text>
                   <Text style={styles.calloutText}>
                     Statut: {marker.isKill == true ? " Tué " : " Vue "}
+                  </Text>
+
+                  <Text style={styles.calloutText}>
+                    Spécimen: {marker.specimen}
                   </Text>
                 </View>
               </Callout>

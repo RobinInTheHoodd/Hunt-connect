@@ -10,23 +10,14 @@ import {
 import ObservationFormBubble from "./modal/ObservationFormModalBubble";
 import ObservationFormMap from "./modal/ObservationFormModalMap";
 import ObservationFormSpecimen from "./modal/ObservationFormModalSpecimen";
-import ObservationFormTimeDatePicker from "./modal/ObservationFormModalTimeDatePicker";
 import ObservationFormViewKill from "./modal/ObservationFormModalViewKill";
-import { IDuckTeamsModel } from "../../model/DuckTeamsModel";
 import { ScrollView } from "react-native-gesture-handler";
 import ObservationForm from "../../model/observation/ObservationForm";
-import ObservationFormTimeDateModel from "../../model/observation/ObservationFormTimeDateModel";
 import ObservationFormTimeDate from "./modal/ObservationFormModalTimeDate";
-import ObservationFormDuckPosition from "../../model/observation/ObservationFormDuckPosition";
-import SexeStatutModal from "../duckTeams/DuckTeamFormModal";
+
 import ObservationModel from "../../model/form/ObservationModel";
 import ObservationService from "../../service/observationService";
 import { useAppDispatch, useAppSelector } from "../../redux/hook";
-import {
-  addObservation,
-  updateObservation,
-} from "../../redux/reducers/observationSlice";
-
 interface ObservationFormModal {
   isVisible: boolean;
   onClose: () => void;
@@ -50,8 +41,6 @@ export default function ({
   const [selectedButton, setSelectedButton] = useState<number | null>(null);
   const user = useAppSelector((state) => state.users);
   const dispatch = useAppDispatch();
-  const obs = useAppSelector((state) => state.observations);
-
   const [tempMarker, setTempMarker] = useState<IMarker | null>(null);
   const [isAddingMarker, setIsAddingMarker] = useState(false);
   const [isDeleteMarker, setIsDeleteMarker] = useState(false);
@@ -162,6 +151,7 @@ export default function ({
               <TouchableOpacity
                 onPress={async () => {
                   const rs = ObservationForm.isValide(observationForm);
+
                   setObservationForm(rs);
                   if (rs.isValid) {
                     try {

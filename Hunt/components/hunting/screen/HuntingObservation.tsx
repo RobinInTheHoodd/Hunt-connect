@@ -9,48 +9,49 @@ import { Skeleton } from "moti/skeleton";
 import React from "react";
 import SkeletonExpo from "moti/build/skeleton/expo";
 
-function HuntingObservation({ navigation, huntSession }: any) {
+function HuntingObservation({ navigation, huntSession, observations }: any) {
   const styles = style(huntSession);
+  const isLoading = useAppSelector((state) => state.isLoading);
 
   const sortedObservations = useMemo(() => {
-    if (huntSession === undefined) return;
-    if (Array.isArray(huntSession.observations)) {
-      return huntSession.observations.slice().sort((a: any, b: any) => {
+    if (observations === undefined) return;
+    if (Array.isArray(observations)) {
+      return observations.slice().sort((a: any, b: any) => {
         const dateA = new Date(a.viewDate);
         const dateB = new Date(b.viewDate);
         return dateB.getTime() - dateA.getTime();
       });
     }
     return [];
-  }, [huntSession]);
+  }, [observations]);
 
   const totalKill = useCallback(() => {
-    if (huntSession === undefined) return;
+    if (observations === undefined) return;
     let total: number = 0;
 
-    if (Array.isArray(huntSession.observations)) {
-      huntSession.observations.forEach((observation: ObservationModel) => {
+    if (Array.isArray(observations)) {
+      observations.forEach((observation: ObservationModel) => {
         total += observation.quantityKill;
       });
     }
     return total.toString();
-  }, [huntSession]);
+  }, [observations]);
 
   const totalView = useCallback(() => {
-    if (huntSession === undefined) return;
+    if (observations === undefined) return;
     let total: number = 0;
-    if (Array.isArray(huntSession.observations)) {
-      huntSession.observations.forEach((observation: ObservationModel) => {
+    if (Array.isArray(observations)) {
+      observations.forEach((observation: ObservationModel) => {
         total += observation.quantityView;
       });
     }
     return total.toString();
-  }, [huntSession]);
+  }, [observations]);
 
   const specimenDom = useCallback(() => {
-    if (huntSession === undefined) return;
-    if (Array.isArray(huntSession.observations)) {
-      const specimenCounts = huntSession.observations.reduce(
+    if (observations === undefined) return;
+    if (Array.isArray(observations)) {
+      const specimenCounts = observations.reduce(
         (
           acc: Record<
             string,
@@ -83,7 +84,7 @@ function HuntingObservation({ navigation, huntSession }: any) {
       }
       return dominantSpecimen;
     }
-  }, [huntSession]);
+  }, [observations]);
 
   const MemoizedFontAwesomeIcon = React.memo(
     ({ icon, ...props }: any) => {
@@ -98,133 +99,177 @@ function HuntingObservation({ navigation, huntSession }: any) {
 
   return (
     <View style={styles.cardContainer}>
-      <SkeletonExpo show={huntSession === undefined} colorMode="light">
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("Observation", { huntSession: huntSession })
-          }
-          style={{}}
-          disabled={huntSession ? huntSession.isFinish : true}
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("Observation", { huntSession: huntSession })
+        }
+        style={{}}
+        disabled={
+          isLoading
+            ? true
+            : huntSession != null
+            ? huntSession.isFinish && sortedObservations!.length == 0
+              ? true
+              : false
+            : true
+        }
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+            paddingBottom: 5,
+            marginBottom: 5,
+          }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-              paddingBottom: 5,
-              marginBottom: 5,
-            }}
-          >
-            <SkeletonExpo colorMode="light" disableExitAnimation={true}>
-              <Text
-                style={{ fontSize: 20, fontWeight: "bold", color: "#34651e" }}
-              >
-                Tableau de bord
-              </Text>
-            </SkeletonExpo>
-            {huntSession && (
-              <SkeletonExpo
-                colorMode="light"
-                width={50}
-                disableExitAnimation={true}
-              >
-                {huntSession.isFinish === false ? (
-                  <MemoizedFontAwesomeIcon
-                    icon={faPlusCircle}
-                    size={20}
-                    color={"#34651e"}
-                  />
-                ) : (
-                  <></>
-                )}
-              </SkeletonExpo>
-            )}
-          </View>
+          <SkeletonExpo colorMode="light" disableExitAnimation={true}>
+            <Text
+              style={{ fontSize: 20, fontWeight: "bold", color: "#34651e" }}
+            >
+              Tableau de bord
+            </Text>
+          </SkeletonExpo>
 
-          <View>
-            <View style={{ paddingBottom: 5 }}>
-              <SkeletonExpo colorMode="light" disableExitAnimation={true}>
-                <View style={styles.row}>
-                  <Text style={[styles.text, styles.cell]}>Éspèce</Text>
-                  <Text
-                    style={[styles.text, styles.cell, { textAlign: "center" }]}
-                  >
-                    Tué / Vue
-                  </Text>
-                  <Text
-                    style={[styles.text, styles.cell, { textAlign: "center" }]}
-                  >
-                    Heure
-                  </Text>
-                  <Text
-                    style={[styles.text, styles.cell, { textAlign: "center" }]}
-                  >
-                    Position
-                  </Text>
-                </View>
-              </SkeletonExpo>
-            </View>
+          <SkeletonExpo
+            colorMode="light"
+            width={50}
+            disableExitAnimation={true}
+          >
+            {huntSession != null ? (
+              huntSession.isFinish === false ? (
+                <MemoizedFontAwesomeIcon
+                  icon={faPlusCircle}
+                  size={20}
+                  color={"#34651e"}
+                />
+              ) : isLoading === true ? (
+                <MemoizedFontAwesomeIcon
+                  icon={faPlusCircle}
+                  size={20}
+                  color={"#34651e"}
+                />
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+          </SkeletonExpo>
+        </View>
+
+        <View>
+          <View style={{ paddingBottom: 5 }}>
+            <SkeletonExpo colorMode="light" disableExitAnimation={true}>
+              <View style={styles.row}>
+                <Text style={[styles.text, styles.cell]}>Éspèce</Text>
+                <Text
+                  style={[styles.text, styles.cell, { textAlign: "center" }]}
+                >
+                  Tué / Vue
+                </Text>
+                <Text
+                  style={[styles.text, styles.cell, { textAlign: "center" }]}
+                >
+                  Heure
+                </Text>
+                <Text
+                  style={[styles.text, styles.cell, { textAlign: "center" }]}
+                >
+                  Position
+                </Text>
+              </View>
+            </SkeletonExpo>
+          </View>
+          <SkeletonExpo
+            colorMode="light"
+            height={90}
+            disableExitAnimation={true}
+          >
+            <>
+              {sortedObservations && (
+                <>
+                  {sortedObservations.length == 0 ? (
+                    <>
+                      <View key={0} style={[styles.row, { padding: 2 }]}>
+                        <Text style={styles.cell}>/</Text>
+                        <Text style={[styles.cell, { textAlign: "center" }]}>
+                          -/-
+                        </Text>
+                        <Text style={[styles.cell, { textAlign: "center" }]}>
+                          /
+                        </Text>
+
+                        <Text style={[styles.cell, { textAlign: "center" }]}>
+                          /
+                        </Text>
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      {sortedObservations
+                        .slice(0, 4)
+                        .map((value: ObservationModel, index: number) => (
+                          <View
+                            key={index}
+                            style={[styles.row, { padding: 2 }]}
+                          >
+                            <Text style={styles.cell}>{value.specimen}</Text>
+                            <Text
+                              style={[styles.cell, { textAlign: "center" }]}
+                            >
+                              {value.quantityKill}/{value.quantityView}
+                            </Text>
+                            <Text
+                              style={[styles.cell, { textAlign: "center" }]}
+                            >
+                              {new Date(value.viewDate).toLocaleTimeString(
+                                "fr-FR",
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
+                            </Text>
+
+                            <Text
+                              style={[styles.cell, { textAlign: "center" }]}
+                            >
+                              {value.isInFlight ? "Vol" : "Pose"}
+                            </Text>
+                          </View>
+                        ))}
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          </SkeletonExpo>
+        </View>
+
+        <View style={[styles.row, { paddingTop: 8 }]}>
+          <View style={[styles.halfCardContainer]}>
             <SkeletonExpo
               colorMode="light"
-              height={90}
+              width={90}
               disableExitAnimation={true}
             >
-              <>
-                {huntSession && (
-                  <>
-                    {sortedObservations
-                      .slice(0, 4)
-                      .map((value: ObservationModel, index: number) => (
-                        <View key={index} style={[styles.row, { padding: 2 }]}>
-                          <Text style={styles.cell}>{value.specimen}</Text>
-                          <Text style={[styles.cell, { textAlign: "center" }]}>
-                            {value.quantityKill}/{value.quantityView}
-                          </Text>
-                          <Text style={[styles.cell, { textAlign: "center" }]}>
-                            {new Date(value.viewDate).toLocaleTimeString(
-                              "fr-FR",
-                              {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              }
-                            )}
-                          </Text>
-
-                          <Text style={[styles.cell, { textAlign: "center" }]}>
-                            {value.isInFlight ? "Vol" : "Pose"}
-                          </Text>
-                        </View>
-                      ))}
-                  </>
-                )}
-              </>
+              <Text style={styles.text}>
+                {huntSession && "Total :  " + totalKill() + "/" + totalView()}
+              </Text>
             </SkeletonExpo>
           </View>
 
-          <View style={[styles.row, { paddingTop: 8 }]}>
-            <View style={[styles.halfCardContainer]}>
-              <SkeletonExpo
-                colorMode="light"
-                width={90}
-                disableExitAnimation={true}
-              >
-                <Text style={styles.text}>
-                  {huntSession && "Total :  " + totalKill() + "/" + totalView()}
-                </Text>
-              </SkeletonExpo>
-            </View>
-
-            <View style={[styles.halfCardContainer]}>
-              <SkeletonExpo colorMode="light" disableExitAnimation={true}>
-                <Text style={styles.text}>
-                  {huntSession && "Dominante : " + specimenDom()}
-                </Text>
-              </SkeletonExpo>
-            </View>
+          <View style={[styles.halfCardContainer]}>
+            <SkeletonExpo colorMode="light" disableExitAnimation={true}>
+              <Text style={styles.text}>
+                {huntSession && "Dominante : " + specimenDom()}
+              </Text>
+            </SkeletonExpo>
           </View>
-        </TouchableOpacity>
-      </SkeletonExpo>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -234,7 +279,7 @@ export default React.memo(HuntingObservation);
 const style = (huntSession: any) =>
   StyleSheet.create({
     cardContainer: {
-      padding: huntSession ? 15 : 0,
+      padding: 15,
       borderRadius: 8,
       marginBottom: 10,
       width: 350,

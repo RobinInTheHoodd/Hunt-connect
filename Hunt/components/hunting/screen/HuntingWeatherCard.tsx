@@ -1,6 +1,6 @@
 import { faWind, faDroplet } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useState, useEffect, Profiler } from "react";
+import { useState, useEffect, Profiler, useDebugValue, Fragment } from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
 import WeatherInfoModel from "../../../model/WeatherModel";
 import WeatherService from "../../../service/weather/weatherService";
@@ -8,11 +8,38 @@ import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
 import React from "react";
 import SkeletonExpo from "moti/build/skeleton/expo";
+import HuntingSessionModel from "../../../model/HuntingSession";
+import { useAppSelector } from "../../../redux/hook";
+import HutModel from "../../../model/HutModel";
 
-function HuntingWeatherCard({ huntinSession }: any) {
+function HuntingWeatherCard({
+  huntinSession,
+}: {
+  huntinSession: HuntingSessionModel | undefined;
+}) {
   const [date, setDate] = useState<any>();
   const styles = style(huntinSession);
+  const hut: HutModel = useAppSelector((state) => state.hut!);
   useEffect(() => {
+    if (huntinSession && huntinSession.weather) {
+      setDate(
+        new Date(huntinSession.fromDate).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "long",
+        })
+      );
+    }
+  }, [huntinSession]);
+
+  useEffect(() => {
+    if (huntinSession?.weather) {
+      setDate(
+        new Date(huntinSession.fromDate).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "long",
+        })
+      );
+    }
     if (huntinSession !== undefined)
       setDate(
         new Date(huntinSession.fromDate).toLocaleDateString("fr-FR", {
@@ -24,80 +51,100 @@ function HuntingWeatherCard({ huntinSession }: any) {
 
   return (
     <View style={styles.cardContainer}>
-      <SkeletonExpo show={huntinSession === undefined} colorMode="light">
-        <>
-          <View style={styles.rowSpaceBetween}>
-            <SkeletonExpo colorMode="light" disableExitAnimation={true}>
-              <Text style={styles.huntName}>HUTTE NAME</Text>
-            </SkeletonExpo>
+      <View style={{ height: 150, padding: 15 }}>
+        <View style={styles.rowSpaceBetween}>
+          <SkeletonExpo
+            colorMode="light"
+            disableExitAnimation={true}
+            width={130}
+          >
+            <Text style={styles.huntName}>{hut.hut_name!}</Text>
+          </SkeletonExpo>
 
-            <SkeletonExpo colorMode="light" disableExitAnimation={true}>
+          <SkeletonExpo
+            colorMode="light"
+            disableExitAnimation={true}
+            width={130}
+          >
+            <View style={{ alignItems: "flex-end" }}>
               <Text style={styles.dateText}>
                 {" "}
                 {date === undefined ? "" : "Le " + date}
               </Text>
-            </SkeletonExpo>
-          </View>
+            </View>
+          </SkeletonExpo>
+        </View>
 
-          <View style={[styles.row]}>
-            <SkeletonExpo
-              radius={"round"}
-              height={60}
-              width={60}
-              colorMode="light"
-              disableExitAnimation={true}
+        <View style={[styles.row]}>
+          <SkeletonExpo
+            radius={"round"}
+            height={55}
+            width={100}
+            colorMode="light"
+            disableExitAnimation={true}
+          >
+            <Text
+              style={[styles.temperatureText, { justifyContent: "center" }]}
             >
-              <Text
-                style={[styles.temperatureText, { justifyContent: "center" }]}
-              >
-                {huntinSession === undefined
-                  ? ""
-                  : " " + huntinSession.weather.tempC + "°"}
-              </Text>
-            </SkeletonExpo>
+              {huntinSession !== undefined &&
+              huntinSession.weather !== undefined
+                ? huntinSession.weather.tempC + "°"
+                : "10"}
+            </Text>
+          </SkeletonExpo>
 
-            <SkeletonExpo
-              boxHeight={30}
-              colorMode="light"
-              disableExitAnimation={true}
-            >
+          <SkeletonExpo
+            boxHeight={30}
+            width={180}
+            colorMode="light"
+            disableExitAnimation={true}
+          >
+            <View style={{ alignItems: "flex-end" }}>
               <Text style={styles.weatherDescription}>
-                {huntinSession === undefined
-                  ? ""
-                  : huntinSession.weather.conditionText}
+                {huntinSession && huntinSession.weather
+                  ? huntinSession.weather.conditionText
+                  : ""}
               </Text>
-            </SkeletonExpo>
-          </View>
+            </View>
+          </SkeletonExpo>
+        </View>
 
-          <View style={[styles.row, { marginTop: 5 }]}>
-            <SkeletonExpo colorMode="light" disableExitAnimation={true}>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailValue}>
-                  <FontAwesomeIcon icon={faWind} />{" "}
-                  {huntinSession === undefined
-                    ? ""
-                    : huntinSession.weather.windKph + " km/h  -  "}
-                  <Text style={styles.detailText}>
-                    {huntinSession === undefined
-                      ? ""
-                      : huntinSession.weather.windDir}
-                  </Text>
+        <View style={[styles.row, { marginTop: 5 }]}>
+          <SkeletonExpo
+            colorMode="light"
+            disableExitAnimation={true}
+            width={150}
+          >
+            <View style={styles.detailItem}>
+              <Text style={styles.detailValue}>
+                <FontAwesomeIcon icon={faWind} />{" "}
+                {huntinSession && huntinSession.weather
+                  ? huntinSession.weather.windKph + " km/h  -  "
+                  : ""}
+                <Text style={styles.detailText}>
+                  {huntinSession && huntinSession.weather
+                    ? huntinSession.weather.windDir
+                    : ""}
                 </Text>
-              </View>
-            </SkeletonExpo>
-            <SkeletonExpo colorMode="light" disableExitAnimation={true}>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailValue}>
-                  <FontAwesomeIcon icon={faDroplet} />{" "}
-                  {huntinSession === undefined
-                    ? ""
-                    : " " + huntinSession.weather.humidity + " %"}
-                </Text>
-              </View>
-            </SkeletonExpo>
-          </View>
-        </>
-      </SkeletonExpo>
+              </Text>
+            </View>
+          </SkeletonExpo>
+          <SkeletonExpo
+            colorMode="light"
+            disableExitAnimation={true}
+            width={120}
+          >
+            <View style={[styles.detailItem, { alignItems: "flex-end" }]}>
+              <Text style={styles.detailValue}>
+                <FontAwesomeIcon icon={faDroplet} />{" "}
+                {huntinSession && huntinSession.weather
+                  ? " " + huntinSession.weather.humidity + " %"
+                  : ""}
+              </Text>
+            </View>
+          </SkeletonExpo>
+        </View>
+      </View>
     </View>
   );
 }
@@ -107,7 +154,7 @@ const style = (huntSession: any) =>
   StyleSheet.create({
     cardContainer: {
       backgroundColor: "#EEEEEE",
-      padding: huntSession ? 15 : 0,
+
       borderRadius: 8,
       marginBottom: 10,
       width: 350,

@@ -1,13 +1,11 @@
-import { IHuntingParticipanModel } from "../../model/HuntingParticipantModel";
-import { ParticipantFormModel } from "../../model/ParticipantFormModel";
-import DuckTeamFormContent from "../duckTeams/DuckTeamFormContent";
-import DuckTeamFormHeader from "../duckTeams/DuckTeamFormHeader";
+import { IHutHunterModel } from "../../model/HutHunterModel";
+
 import ParticipantFormContent from "./ParticipantFormContent";
 import ParticipantFormHeader from "./ParticipantFormHeader";
 
 export interface IParticipantFormProps {
-  form: IHuntingParticipanModel[];
-  setForm: React.Dispatch<React.SetStateAction<IHuntingParticipanModel[]>>;
+  form: IHutHunterModel[];
+  setForm: React.Dispatch<React.SetStateAction<IHutHunterModel[]>>;
 }
 
 export default function ParticipantForm({
@@ -17,7 +15,7 @@ export default function ParticipantForm({
   return (
     <>
       <ParticipantFormHeader />
-      {/* DES PROPS A PAASER */}
+
       <ParticipantFormContent form={form} setForm={setForm} />
     </>
   );

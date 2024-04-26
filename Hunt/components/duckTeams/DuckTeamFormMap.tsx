@@ -100,39 +100,42 @@ function DuckTeamFormMap({
       paddingAdjustmentBehavior="automatic"
       mapPadding={mapPadding}
     >
-      {form.map((marker, index) => (
-        <Marker
-          key={`marker_${index}`}
-          coordinate={{
-            latitude: marker.latitude,
-            longitude: marker.longitude,
-          }}
-          tappable={false}
-          draggable={true}
-          onPress={(event) => {
-            if (isDeleteMarker) {
-              setForm((currentMarkers) =>
-                currentMarkers.filter((marker) => marker.id !== index + 1)
-              );
-              setSelectedMarkerId(null);
-            } else selectMarker(index + 1);
-          }}
-        >
-          {marker.type === "Vivant" ? (
-            <FontAwesomeIcon icon={faCircle} color="green" size={20} />
-          ) : (
-            <FontAwesomeIcon icon={faCircle} color="grey" size={20} />
-          )}
+      {form &&
+        form.map((marker, index) => (
+          <Marker
+            key={`marker_${index}`}
+            coordinate={{
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            }}
+            tappable={false}
+            draggable={true}
+            onPress={(event) => {
+              if (isDeleteMarker) {
+                setForm((currentMarkers) =>
+                  currentMarkers.filter((marker) => marker.id !== index + 1)
+                );
+                setSelectedMarkerId(null);
+              } else selectMarker(index + 1);
+            }}
+          >
+            {marker.type === "Vivant" ? (
+              <FontAwesomeIcon icon={faCircle} color="green" size={20} />
+            ) : (
+              <FontAwesomeIcon icon={faCircle} color="grey" size={20} />
+            )}
 
-          <Callout>
-            <View style={styles.calloutView}>
-              <Text style={styles.calloutText}>Espèce: {marker.specimen}</Text>
-              <Text style={styles.calloutText}>Sexe: {marker.sex}</Text>
-              <Text style={styles.calloutText}>Statut: {marker.type}</Text>
-            </View>
-          </Callout>
-        </Marker>
-      ))}
+            <Callout>
+              <View style={styles.calloutView}>
+                <Text style={styles.calloutText}>
+                  Espèce: {marker.specimen}
+                </Text>
+                <Text style={styles.calloutText}>Sexe: {marker.sex}</Text>
+                <Text style={styles.calloutText}>Statut: {marker.type}</Text>
+              </View>
+            </Callout>
+          </Marker>
+        ))}
     </MapView>
   );
 }

@@ -15,14 +15,13 @@ import { WeatherFormModel } from "../../model/form/WeatherFormModel";
 import { ParticipantFormModel } from "../../model/ParticipantFormModel";
 import { IDuckTeamsModel } from "../../model/DuckTeamsModel";
 import { IHuntingParticipanModel } from "../../model/HuntingParticipantModel";
+import { IHutHunterModel } from "../../model/HutHunterModel";
 
 interface IHuntingFormCarousselProps {
   weather: WeatherFormModel;
   setWeather: React.Dispatch<React.SetStateAction<WeatherFormModel>>;
-  participants: IHuntingParticipanModel[];
-  setParticipants: React.Dispatch<
-    React.SetStateAction<IHuntingParticipanModel[]>
-  >;
+  participants: IHutHunterModel[];
+  setParticipants: React.Dispatch<React.SetStateAction<IHutHunterModel[]>>;
   duckTeam: IDuckTeamsModel[];
   setDuckTeam: React.Dispatch<React.SetStateAction<IDuckTeamsModel[]>>;
   carouselData: number[];

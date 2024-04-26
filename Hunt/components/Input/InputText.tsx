@@ -18,13 +18,13 @@ import { StyleSheet } from "react-native";
 
 interface inputTextField {
   tagName: string;
-  iconName: IconDefinition; // L'icône à utiliser
-  value: any; // La valeur actuelle de l'input
-  onChangeText: (value: any) => void; // La fonction à appeler lors de la modification du texte
-  onBlur?: () => void; // La fonction à appeler lorsque l'input perd le focus
-  placeholder: string; // Le texte indicatif à afficher
-  isTouched: boolean; // Booléen pour indiquer si l'input a été touché
-  isValid: boolean; // Booléen pour indiquer si la valeur de l'input est valide
+  iconName: IconDefinition;
+  value: any;
+  onChangeText: (value: any) => void;
+  onBlur?: () => void;
+  placeholder: string;
+  isTouched: boolean;
+  isValid: boolean;
   errorMessage: string;
   require: boolean;
   isPassword: boolean;
@@ -106,14 +106,9 @@ const InputText = ({
         )}
       </View>
 
-      <Text
-        style={[
-          styles.errorMessage,
-          { marginBottom: errorMessage === "" ? -20 : height * 0.02 },
-        ]}
-      >
-        {errorMessage !== "" && errorMessage}
-      </Text>
+      {errorMessage !== "" && (
+        <Text style={styles.errorMessage}>{errorMessage}</Text>
+      )}
     </View>
   );
 };

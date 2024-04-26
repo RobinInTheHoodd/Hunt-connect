@@ -1,5 +1,6 @@
 import {
   faArrowLeft,
+  faBars,
   faCalendarDays,
   faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
@@ -9,14 +10,18 @@ import { useState } from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 
 export const HuntingHeader = React.memo(
-  ({ navigation, openModal, title }: any) => {
-    console.log("RENDER HuntingHeader");
-
+  ({
+    navigation,
+    openModal,
+    title,
+    IconLeft = faBars,
+    TouchIcon = () => navigation.openDrawer(),
+  }: any) => {
     return (
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{}}>
-            <FontAwesomeIcon icon={faArrowLeft} color="black" size={24} />
+          <TouchableOpacity onPress={TouchIcon} style={{}}>
+            <FontAwesomeIcon icon={IconLeft} color="black" size={24} />
           </TouchableOpacity>
         </View>
         <View>
@@ -122,6 +127,5 @@ const styles = StyleSheet.create({
   },
   weatherIcon: {
     width: 50,
-    //height: 50,
   },
 });

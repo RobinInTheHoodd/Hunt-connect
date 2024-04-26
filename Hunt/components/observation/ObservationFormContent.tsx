@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ObservationFormModal from "./ObservationFormModal";
 
 import { ScrollView } from "react-native-gesture-handler";
@@ -17,7 +17,6 @@ import ObservationFormMap from "./ObservationFormMap";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faPencil,
-  faPlus,
   faPlusCircle,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -28,11 +27,13 @@ import ObservationService from "../../service/observationService";
 interface IObservationFormContentProps {
   huntingID: number;
   observations: ObservationModel[];
+  isFinish: Boolean;
 }
 
 export default function ObservationFormContent({
   huntingID,
   observations,
+  isFinish,
 }: IObservationFormContentProps) {
   const observationService = new ObservationService();
   const [isVisible, setIsVisibile] = useState(false);
@@ -108,21 +109,24 @@ export default function ObservationFormContent({
           >
             Mouvement
           </Text>
-          <TouchableOpacity
-            onPress={() => {
-              setIsVisibile(true),
-                setObservationForm(
-                  new ObservationForm(undefined, user.UIID, huntingID)
-                );
-            }}
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <FontAwesomeIcon icon={faPlusCircle} size={25} color="#38761d" />
-          </TouchableOpacity>
+          {!isFinish && (
+            <TouchableOpacity
+              onPress={() => {
+                setIsVisibile(true),
+                  setObservationForm(
+                    new ObservationForm(undefined, user.UIID, huntingID)
+                  );
+              }}
+              disabled={isFinish ? true : false}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <FontAwesomeIcon icon={faPlusCircle} size={25} color="#38761d" />
+            </TouchableOpacity>
+          )}
         </View>
 
         <ScrollView style={{ height: 200 }}>
@@ -148,50 +152,54 @@ export default function ObservationFormContent({
                     {row.isInPose == true ? "En pose" : "En vol"}
                   </Text>
 
-                  <TouchableOpacity
-                    key={Math.random()}
-                    style={{
-                      flex: 0.5,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    onPress={() => {
-                      const form: ObservationForm =
-                        ObservationModel.toForm(row);
-                      setObservationForm(form);
-                      setIsVisibile(true);
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      key={Math.random()}
-                      icon={faPencil}
-                      size={20}
-                      color="black"
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    key={Math.random()}
-                    style={{
-                      flex: 0.5,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    onPress={async () => {
-                      try {
-                        await observationService.deleteObservation(
-                          row.id!,
-                          row.huntingSession
-                        );
-                      } catch (e) {}
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      key={Math.random()}
-                      icon={faTrash}
-                      size={20}
-                      color="black"
-                    />
-                  </TouchableOpacity>
+                  {!isFinish && (
+                    <>
+                      <TouchableOpacity
+                        key={Math.random()}
+                        style={{
+                          flex: 0.5,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        onPress={() => {
+                          const form: ObservationForm =
+                            ObservationModel.toForm(row);
+                          setObservationForm(form);
+                          setIsVisibile(true);
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          key={Math.random()}
+                          icon={faPencil}
+                          size={20}
+                          color="black"
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        key={Math.random()}
+                        style={{
+                          flex: 0.5,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        onPress={async () => {
+                          try {
+                            await observationService.deleteObservation(
+                              row.id!,
+                              row.huntingSession
+                            );
+                          } catch (e) {}
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          key={Math.random()}
+                          icon={faTrash}
+                          size={20}
+                          color="black"
+                        />
+                      </TouchableOpacity>
+                    </>
+                  )}
                 </View>
               ))}
             </>

@@ -2,7 +2,6 @@ import {
   faLocation,
   faPlusCircle,
   faTrash,
-  faTrashCan,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -15,23 +14,16 @@ import {
   StyleSheet,
   useWindowDimensions,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
 import MyCustomPicker from "../Input/CustomPicker";
-import {
-  IGuestModel,
-  IParticipantModel,
-  ParticipantFormModel,
-} from "../../model/ParticipantFormModel";
 import InputText from "../Input/InputText";
 import { useAppSelector } from "../../redux/hook";
 import HutService from "../../service/hutService";
-import HuntingParticipantModel, {
-  IHuntingParticipanModel,
-} from "../../model/HuntingParticipantModel";
+import HutModel from "../../model/HutModel";
+import HutHunterModel, { IHutHunterModel } from "../../model/HutHunterModel";
 
 export interface IParticipantFormProps {
-  form: IHuntingParticipanModel[];
-  setForm: React.Dispatch<React.SetStateAction<IHuntingParticipanModel[]>>;
+  form: IHutHunterModel[];
+  setForm: React.Dispatch<React.SetStateAction<IHutHunterModel[]>>;
 }
 
 const hutService = new HutService();
@@ -40,58 +32,47 @@ export default function ParticipantFormContent({
   form,
   setForm,
 }: IParticipantFormProps) {
+  const hutService = new HutService();
   const user = useAppSelector((state) => state.users);
+  const hut: HutModel = useAppSelector((state) => state.hut!);
   const { height, width } = useWindowDimensions();
   const [optionsParticipant, setOptionsParticipant] = useState<
-    IHuntingParticipanModel[]
+    IHutHunterModel[]
   >([]);
+
+  useEffect(() => {
+    const fetchHunterInfo = async () => {
+      try {
+        let participant = await hutService.getHutHunterInfo(hut.hunter);
+        setOptionsParticipant(participant);
+      } catch (e) {
+        setOptionsParticipant([]);
+      }
+    };
+
+    if (hut == null || hut === undefined) return;
+    else fetchHunterInfo();
+  }, [hut]);
 
   const [pickers, setPickers] = useState([
     {
       id: Math.random(),
-      selectedValue: new HuntingParticipantModel(
-        undefined,
-        "Participant",
-        undefined
-      ),
+      selectedValue: new HutHunterModel("", undefined, "", ""),
     },
   ]);
 
-  useEffect(() => {
-    const fetchParticipants = async () => {
-      let res = await hutService.getHutParticipantsByHutID(1);
-      if (res !== undefined) {
-        const hutParticipants: IHuntingParticipanModel[] = res;
-        hutParticipants.push({
-          displayName: "ROBIN",
-          role: "Participant",
-          userID: user.UIID,
-        });
-        let fetParticipants = hutParticipants.map((hutParticipant) => ({
-          displayName: hutParticipant.displayName!,
-          userID: hutParticipant.userID!,
-          role: "Participant",
-        }));
-        setOptionsParticipant((prevOptions) => [
-          ...prevOptions,
-          ...fetParticipants,
-        ]);
-      }
-    };
-    fetchParticipants();
-  }, []);
-
-  useEffect(() => {}, [optionsParticipant, form, user]);
+  //useEffect(() => {}, [optionsParticipant, form, user]);
 
   const handleAddGuest = () => {
     const id = Math.random().toLocaleString();
-    const gu = new HuntingParticipantModel("", "Invité", id);
+
+    const gu = new HutHunterModel("", undefined, "", Math.random().toString());
     setForm((prev) => [...prev, gu]);
   };
 
   const handleRemoveGuest = (indexToRemove: string) => {
     setForm((previousForm) =>
-      previousForm.filter((value) => value.userID !== indexToRemove)
+      previousForm.filter((value) => value.email !== indexToRemove)
     );
   };
 
@@ -103,11 +84,11 @@ export default function ParticipantFormContent({
       if (pickerToRemove.selectedValue == undefined)
         setPickers((current) => current.filter((picker) => picker.id !== id));
       else {
-        const userIDToRemove = pickerToRemove.selectedValue.userID;
+        const userIDToRemove = pickerToRemove.selectedValue.hunterID;
 
         setForm((currentParticipants) =>
           currentParticipants.filter(
-            (participant) => participant.userID !== userIDToRemove
+            (participant) => participant.hunterID !== userIDToRemove
           )
         );
         setPickers((current) => current.filter((picker) => picker.id !== id));
@@ -115,17 +96,17 @@ export default function ParticipantFormContent({
     }
   };
 
-  const handleSelect = (value: IHuntingParticipanModel, id: any) => {
+  const handleSelect = (value: IHutHunterModel, id: any) => {
+    setOpenPickerId(null);
     setPickers((current) =>
       current.map((picker) => {
         if (picker.id === id) {
-          setForm((currentParticipant) => [...currentParticipant, value]);
           return { ...picker, selectedValue: value };
         }
         return picker;
       })
     );
-    setOpenPickerId(null);
+    setForm((currentParticipant) => [...currentParticipant, value]);
   };
 
   const toggleOpen = (id: any) => {
@@ -137,11 +118,7 @@ export default function ParticipantFormContent({
       ...current,
       {
         id: Math.random(),
-        selectedValue: new HuntingParticipantModel(
-          undefined,
-          "Participant",
-          undefined
-        ),
+        selectedValue: new HutHunterModel("", undefined, "", ""),
       },
     ]);
   };
@@ -174,7 +151,7 @@ export default function ParticipantFormContent({
               <MyCustomPicker
                 key={picker.id}
                 items={optionsParticipant}
-                onItemSelect={(value: IHuntingParticipanModel) =>
+                onItemSelect={(value: IHutHunterModel) =>
                   handleSelect(value, picker.id)
                 }
                 title={picker.selectedValue.displayName}
@@ -211,7 +188,7 @@ export default function ParticipantFormContent({
           <ScrollView>
             {form.map(
               (guest, index) =>
-                guest.role == "Invité" && (
+                guest.hunterID == "" && (
                   <View
                     key={index}
                     style={{
@@ -224,11 +201,12 @@ export default function ParticipantFormContent({
                       value={guest.displayName || ""}
                       onChangeText={(value) => {
                         const updatedParticipants = form.map((p) => {
-                          if (p.userID === guest.userID) {
-                            return new HuntingParticipantModel(
+                          if (p.email === guest.email) {
+                            return new HutHunterModel(
+                              "",
+                              undefined,
                               value,
-                              "Invité",
-                              p.userID
+                              p.email
                             );
                           }
                           return p;
@@ -248,7 +226,7 @@ export default function ParticipantFormContent({
                       isIconRight={false}
                     />
                     <TouchableOpacity
-                      onPress={() => handleRemoveGuest(guest.userID!)}
+                      onPress={() => handleRemoveGuest(guest.email!)}
                       style={{ padding: 15, marginRight: 3 }}
                     >
                       <FontAwesomeIcon
