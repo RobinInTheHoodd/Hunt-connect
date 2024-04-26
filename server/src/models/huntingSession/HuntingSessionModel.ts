@@ -1,5 +1,6 @@
 import { IDuckTeamsModel } from "../duckTeams/DuckTeamsModel";
 import { IHuntingParticipanModel } from "../huntingParticipant/HuntingPariticpantModel";
+import HutHunterModel from "../hutHunterModel";
 import { IWeatherInfoModel } from "../weather/WeatherModel";
 
 export interface IHuntingSessionModel {
@@ -9,7 +10,7 @@ export interface IHuntingSessionModel {
   fromDate: Date;
   toDate: Date;
   weather?: IWeatherInfoModel;
-  participants?: IHuntingParticipanModel[];
+  participants?: HutHunterModel[];
   duckTeams?: IDuckTeamsModel[];
   isFinish: boolean;
 }
@@ -21,7 +22,7 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
   fromDate: Date;
   toDate: Date;
   weather?: IWeatherInfoModel;
-  participants?: IHuntingParticipanModel[];
+  participants?: HutHunterModel[];
   duckTeams?: IDuckTeamsModel[];
   isFinish: boolean;
 
@@ -32,7 +33,7 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
     toDate: Date,
     isFinish: boolean,
     weather?: IWeatherInfoModel,
-    participants?: IHuntingParticipanModel[],
+    participants?: HutHunterModel[],
     id?: number,
     duckTeams?: IDuckTeamsModel[]
   ) {

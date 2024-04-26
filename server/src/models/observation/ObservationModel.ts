@@ -1,5 +1,6 @@
 import { spec } from "node:test/reporters";
 import ObservationDuckPositionModel from "../observationDuck/ObservationDuckPositionModel";
+import { generateDuckTeamsModelData } from "../duckTeams/DuckTeamsModelTestData";
 
 export interface IObservationModel {
   id: number | undefined;
@@ -52,6 +53,22 @@ export default class ObservationModel implements IObservationModel {
     this.quantityKill = quantityKill;
     this.quantityView = quantityView;
     this.specimenPosition = specimenPosition;
+  }
+
+  public static generateObservation() {
+    return new ObservationModel(
+      9999,
+      "userID",
+      22222,
+      "Sifleur",
+      false,
+      true,
+      new Date(),
+      new Date(),
+      2,
+      3,
+      [ObservationDuckPositionModel.generateDuckPositionModel()]
+    );
   }
 
   public static validateBody() {

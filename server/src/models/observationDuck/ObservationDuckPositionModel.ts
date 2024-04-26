@@ -28,6 +28,16 @@ export default class ObservationDuckPositionModel
     this.isKill = isKill;
   }
 
+  public static generateDuckPositionModel() {
+    return new ObservationDuckPositionModel(
+      9999,
+      1234543,
+      24349828432,
+      2,
+      true
+    );
+  }
+
   public static fromQuery(duck: any) {
     return new ObservationDuckPositionModel(
       duck.id,

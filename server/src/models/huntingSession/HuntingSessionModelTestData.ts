@@ -1,5 +1,8 @@
 import { generateDuckTeamsModelData } from "../duckTeams/DuckTeamsModelTestData";
-import { generateHuntingParticipantModelData } from "../huntingParticipant/huntingParticipantModelTestData";
+import {
+  generateHuntingHunter,
+  generateHuntingParticipantModelData,
+} from "../huntingParticipant/huntingParticipantModelTestData";
 import { generateWeatherModelData } from "../weather/WeatherModelTestData";
 import HuntingSessionModel from "./HuntingSessionModel";
 
@@ -15,7 +18,7 @@ export function generateHuntingSessionModelData(
     new Date(),
     false,
     generateWeatherModelData(),
-    generateHuntingParticipantModelData(),
+    generateHuntingHunter(),
     1,
     generateDuckTeamsModelData()
   );
