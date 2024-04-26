@@ -68,7 +68,7 @@ export default class WeatherInfoModel {
       apiResponse.current.temp_c,
       apiResponse.current.condition.text,
       apiResponse.current.wind_kph,
-      this.getWindDirString(apiResponse.current.wind_dir),
+      apiResponse.current.wind_dir,
       apiResponse.current.humidity
     );
   }
@@ -86,28 +86,17 @@ export default class WeatherInfoModel {
     );
   }
 
-  public static getWindDirString(wind_dir: string): string {
-    console.log(wind_dir);
-    switch (wind_dir) {
-      case "NE":
-        return "Nord / Est";
-      case "NW":
-        return "Nord / Ouest";
-      case "N":
-        return "Nord";
-      case "S":
-        return "Sud";
-      case "SE":
-        return "Sud / Est";
-      case "SO":
-        return "Sud / Ouest";
-      case "O":
-        return "Ouest";
-      case "E":
-        return "Est";
-      default:
-        return "";
-    }
+  public static fromFirebase(weather: any) {
+    return new WeatherInfoModel(
+      undefined,
+      undefined,
+      weather.name,
+      weather.tempC,
+      weather.conditionText,
+      weather.windKph,
+      weather.windDir,
+      weather.humidity
+    );
   }
 
   public getName() {

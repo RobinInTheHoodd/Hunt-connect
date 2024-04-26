@@ -1,7 +1,4 @@
-import {
-  IParticipantFormModel,
-  IParticipantModel,
-} from "./ParticipantFormModel";
+import { ParticipantFormModel } from "./ParticipantFormModel";
 
 export interface IHuntingParticipanModel {
   userID: string | undefined;
@@ -26,10 +23,10 @@ export default class HuntingParticipantModel
     this.role = role;
   }
 
-  public static fromFormModel(participantForm: IParticipantFormModel) {
+  public static fromFormModel(participantForm: ParticipantFormModel) {
     let participants: IHuntingParticipanModel[] = [];
 
-    participantForm.participants.forEach((participant) =>
+    participantForm.participants.forEach((participant: any) =>
       participants.push(
         new HuntingParticipantModel(
           participant.displayName,
@@ -39,7 +36,7 @@ export default class HuntingParticipantModel
       )
     );
     let guets: IHuntingParticipanModel[] = [];
-    participantForm.guest.forEach((guest) =>
+    participantForm.guest.forEach((guest: any) =>
       participants.push(
         new HuntingParticipantModel(guest.displayName, "guest", undefined)
       )
@@ -61,5 +58,19 @@ export default class HuntingParticipantModel
     });
 
     return participants;
+  }
+
+  static fromFirebase(participants: any[]) {
+    let newObjects: HuntingParticipantModel[] = [];
+    for (const participant of participants) {
+      newObjects.push(
+        new HuntingParticipantModel(
+          participant.displayName,
+          participant.role,
+          participant.userID
+        )
+      );
+    }
+    return newObjects;
   }
 }

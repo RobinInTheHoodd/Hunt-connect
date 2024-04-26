@@ -60,6 +60,22 @@ export default class ObservationModel implements IObservationModel {
     this.specimenPosition = specimenPosition;
   }
 
+  static fromFirebase(form: any): ObservationModel {
+    return new ObservationModel(
+      form.id!,
+      form.hunterId,
+      form.huntingSession,
+      form.specimen,
+      form.isInFlight,
+      !form.isInPose,
+      new Date(form.viewDate),
+      new Date(form.killDate),
+      form.quantityKill,
+      form.quantityView,
+      ObservationDuckPosition.fromFirebase(form.specimenPosition)
+    );
+  }
+
   static fromForm(form: ObservationForm): ObservationModel {
     return new ObservationModel(
       form.id!,

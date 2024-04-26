@@ -1,6 +1,9 @@
-import { IDuckTeamsModel } from "./DuckTeamsModel";
-import { IHuntingParticipanModel } from "./HuntingParticipantModel";
-import { IWeatherInfoModel } from "./WeatherModel";
+import DuckTeamsModel, { IDuckTeamsModel } from "./DuckTeamsModel";
+import HuntingParticipantModel, {
+  IHuntingParticipanModel,
+} from "./HuntingParticipantModel";
+import HutHunterModel, { IHutHunterModel } from "./HutHunterModel";
+import WeatherInfoModel, { IWeatherInfoModel } from "./WeatherModel";
 import ObservationModel from "./form/ObservationModel";
 
 export interface IHuntingSessionModel {
@@ -11,9 +14,9 @@ export interface IHuntingSessionModel {
   toDate: Date;
   isFinish: boolean;
   weather?: IWeatherInfoModel;
-  participants?: IHuntingParticipanModel[];
+  participants?: IHutHunterModel[];
   duckTeams?: IDuckTeamsModel[];
-  observations?: ObservationModel[];
+  observation?: number[];
 }
 
 export default class HuntingSessionModel implements IHuntingSessionModel {
@@ -24,9 +27,9 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
   toDate: Date;
   isFinish: boolean;
   weather?: IWeatherInfoModel;
-  participants?: IHuntingParticipanModel[];
+  participants?: IHutHunterModel[];
   duckTeams?: IDuckTeamsModel[];
-  observations?: ObservationModel[];
+  observation?: number[];
 
   constructor(
     id: number | undefined,
@@ -36,9 +39,9 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
     toDate: Date,
     isFinish: boolean,
     weather?: IWeatherInfoModel,
-    participants?: IHuntingParticipanModel[],
+    participants?: IHutHunterModel[],
     duckTeams?: IDuckTeamsModel[],
-    observations?: ObservationModel[]
+    observations?: number[]
   ) {
     this.id = id;
     this.hutID = hutID;
@@ -49,6 +52,10 @@ export default class HuntingSessionModel implements IHuntingSessionModel {
     this.weather = weather;
     this.participants = participants;
     this.duckTeams = duckTeams;
-    this.observations = observations;
+    this.observation = observations;
+  }
+
+  static toJSON() {
+    return JSON.stringify(this);
   }
 }

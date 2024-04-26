@@ -38,6 +38,23 @@ export default class ObservationFormDuckPosition
     this.isValid = isValid === undefined ? false : isValid;
   }
 
+  static fromFirebase(ducks: any[]) {
+    let newArray: ObservationFormDuckPosition[] = [];
+    for (const duck of ducks) {
+      newArray.push(
+        new ObservationFormDuckPosition(
+          duck.id,
+          duck.latitude,
+          duck.longitude,
+          duck.quantity,
+          duck.isKill,
+          true
+        )
+      );
+    }
+    return newArray;
+  }
+
   static validate(form: ObservationForm): ObservationForm {
     try {
       if (
