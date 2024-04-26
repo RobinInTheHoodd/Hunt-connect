@@ -1,22 +1,21 @@
+import { firebase } from "@react-native-firebase/database";
 import { IDuckTeamsModel } from "../model/DuckTeamsModel";
-import HuntingParticipantModel, {
-  IHuntingParticipanModel,
-} from "../model/HuntingParticipantModel";
 import HuntingSessionModel, {
   IHuntingSessionModel,
 } from "../model/HuntingSession";
+import { IHutHunterModel } from "../model/HutHunterModel";
 import WeatherInfoModel, { IWeatherInfoModel } from "../model/WeatherModel";
-
 import { IWeatherFormModel } from "../model/form/WeatherFormModel";
-import { useAppSelector } from "../redux/hook";
 import { HuntingSessionController } from "./huntingSessionContrller";
+import { addHuntSession } from "../redux/reducers/huntSessionSlice";
 
 export default class HuntingSessionService {
   async saveHuntingSession(
     creatorID: string,
+    hutID: number,
     weatherForm: IWeatherFormModel,
     duckTeams: IDuckTeamsModel[],
-    participantsForm: IHuntingParticipanModel[]
+    participantsForm: IHutHunterModel[]
   ) {
     try {
       let toDate = new Date();
@@ -27,7 +26,7 @@ export default class HuntingSessionService {
 
       const huntSession = new HuntingSessionModel(
         undefined,
-        undefined,
+        hutID,
         creatorID,
         new Date(),
         toDate,
@@ -36,6 +35,7 @@ export default class HuntingSessionService {
         participantsForm,
         duckTeams
       );
+
       const result = await HuntingSessionController.saveHuntSession(
         huntSession
       );
@@ -79,21 +79,54 @@ export default class HuntingSessionService {
   }
 
   async getHistoryHuntingSession(userID: string) {
-    try {
-      const res = await HuntingSessionController.getHistoryHuntSession(userID);
-      let huntSession: { id: number; fromDate: Date }[] = [];
+    let huntsID: any = [];
+    let huntsDate: any = [];
 
-      res.data.map((value: any) => {
-        huntSession.push({
-          id: value.huntingId,
-          fromDate: new Date(value.fromDate),
-        });
+    try {
+      const userRef = firebase.database().ref("/user/" + userID);
+      const huntRef = firebase.database().ref("/huntSessions/");
+
+      await userRef.once("value", (snapShot) => {
+        if (snapShot.exists()) {
+          huntsID = snapShot.val().huntSession;
+        }
       });
 
-      return huntSession;
+      for (const id of huntsID) {
+        await huntRef.child(id.toString()).once("value", (snapShot) => {
+          if (snapShot.exists()) {
+            let hunt = snapShot.val();
+            huntsDate.push({
+              id: id,
+              fromDate: new Date(hunt.fromDate),
+            });
+          }
+        });
+      }
+      return huntsDate;
     } catch (e: any) {
       console.log(e);
-      throw e;
+      return [];
+    }
+  }
+
+  async fetHuntSession(huntID: string, dispatch: any) {
+    let hunt;
+
+    try {
+      const huntRef = firebase.database().ref("/huntSessions/" + huntID);
+
+      await huntRef.once("value", (snapShot) => {
+        if (snapShot.exists()) {
+          hunt = snapShot.val();
+          dispatch(addHuntSession(JSON.stringify(hunt)));
+        }
+      });
+
+      return;
+    } catch (e: any) {
+      console.log(e);
+      return [];
     }
   }
 }

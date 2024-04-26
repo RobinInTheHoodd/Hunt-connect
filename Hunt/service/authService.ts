@@ -2,7 +2,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { UserContext } from "../model/UserContext";
 import { LoginManager, AccessToken } from "react-native-fbsdk-next";
-import { useAppDispatch } from "../redux/hook";
+import { useAppDispatch, useAppSelector } from "../redux/hook";
 import { setIsNew, signIn, signOut } from "../redux/reducers/userSlice";
 import { ISignUpForm, SignUpForm } from "../model/form/SignUpForm";
 import { AppDispatch } from "../redux/store";
@@ -11,7 +11,7 @@ import { authController } from "./authController";
 
 export default class AuthService {
   dispatch: AppDispatch;
-
+  user = useAppSelector((state) => state.users);
   constructor() {
     this.dispatch = useAppDispatch();
   }
@@ -22,8 +22,10 @@ export default class AuthService {
     try {
       await authController.userRegister(resgisterRequest);
       if (resgisterRequest.UUID == "")
-        this.login(signForm.email!, signForm.password!);
-      else this.dispatch(setIsNew("false"));
+        await this.login(signForm.email!, signForm.password!);
+      else {
+        this.dispatch(setIsNew("false"));
+      }
     } catch (e: any) {
       throw e;
     }
@@ -41,7 +43,7 @@ export default class AuthService {
     try {
       userCredential = await auth().signInWithEmailAndPassword(email, password);
       userContext = UserContext.fromUserCredential(userCredential);
-      this.dispatch(signIn(userContext.toJson()));
+      this.dispatch(signIn(JSON.stringify(userContext)));
     } catch (e: any) {
       console.log(e);
     }
@@ -57,15 +59,18 @@ export default class AuthService {
 
       userCredential = await auth().signInWithCredential(googleCredential);
 
-      if (userCredential.additionalUserInfo?.isNewUser)
+      if (userCredential.additionalUserInfo?.isNewUser) {
+        userContext = UserContext.fromUserCredential(userCredential);
+        this.dispatch(signIn(JSON.stringify(userContext)));
         navigation.navigate("SignUp", {
           signForm: SignUpForm.fromUserCredential(userCredential),
         });
-      else {
+      } else {
         userContext = UserContext.fromUserCredential(userCredential);
-        this.dispatch(signIn(userContext.toJson()));
+        this.dispatch(signIn(JSON.stringify(userContext)));
       }
     } catch (error) {
+      JSON.stringify(error);
       console.log(error);
     }
   }
@@ -97,13 +102,15 @@ export default class AuthService {
 
       userCredential = await auth().signInWithCredential(facebookCredential);
 
-      if (userCredential.additionalUserInfo?.isNewUser)
+      if (userCredential.additionalUserInfo?.isNewUser) {
+        userContext = UserContext.fromUserCredential(userCredential);
+        this.dispatch(signIn(JSON.stringify(userContext)));
         navigation.navigate("SignUp", {
           signForm: SignUpForm.fromUserCredential(userCredential),
         });
-      else {
+      } else {
         userContext = UserContext.fromUserCredential(userCredential);
-        this.dispatch(signIn(userContext.toJson()));
+        this.dispatch(signIn(JSON.stringify(userContext)));
       }
     } catch (error: any) {
       console.log(error);

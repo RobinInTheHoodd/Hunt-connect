@@ -1,6 +1,6 @@
 import ObservationModel from "../model/form/ObservationModel";
 import ObservationForm from "../model/observation/ObservationForm";
-import ObservationFormDuckPosition from "../model/observation/ObservationFormDuckPosition";
+
 import { ObservationController } from "./observationController";
 
 export default class ObservationService {
@@ -42,9 +42,7 @@ export default class ObservationService {
       model.hunterId = userID;
       await ObservationController.updateObservations(model);
       return model;
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   }
 
   async deleteObservation(observationId: number, huntingId: number) {
