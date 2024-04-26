@@ -2,8 +2,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ObservationFormContent from "../../components/observation/ObservationFormContent";
 import ObservationFormHeader from "../../components/observation/ObservationFormHeader";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useAppDispatch, useAppSelector } from "../../redux/hook";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useAppSelector } from "../../redux/hook";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 
 export default function ObservationScreen({}) {
@@ -11,6 +11,8 @@ export default function ObservationScreen({}) {
   const { huntSession } = route.params!;
   const [session, setSession] = useState<any>();
   const currentHuntSession: any = useAppSelector((state) => state.huntSession);
+  const observations: any = useAppSelector((state) => state.observation);
+
   useEffect(() => {
     setSession(huntSession);
   }, []);
@@ -31,7 +33,8 @@ export default function ObservationScreen({}) {
         {huntSession != null && (
           <ObservationFormContent
             huntingID={huntSession.id}
-            observations={session ? session.observations : []}
+            isFinish={huntSession.isFinish}
+            observations={observations ? observations : []}
           />
         )}
       </GestureHandlerRootView>

@@ -40,7 +40,6 @@ export default function SignInScreen({ navigation, route }: any) {
   }, [shouldLogin]);
 
   useEffect(() => {
-    console.log("SIGNIN");
     setSignForm(new SignUpForm());
   }, [route?.params]);
 
@@ -78,7 +77,7 @@ export default function SignInScreen({ navigation, route }: any) {
   const errorLogin = async (e: any) => {
     setIsLoading(false);
     let updateSignForm: any;
-    console.log(e);
+
     if (e.code) {
       updateSignForm = UtilsSign.ErrorForm(signForm, e.code);
     } else {

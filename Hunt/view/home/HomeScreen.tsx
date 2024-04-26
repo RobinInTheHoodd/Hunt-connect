@@ -21,7 +21,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Home() {
+export default function Home({ navigation }: any) {
   const [activeTab, setActiveTab] = useState("All");
   const [filterPeriod, setFilterPeriod] = useState("Février - Mars");
   const [modalVisible, setModalVisible] = useState(false);
