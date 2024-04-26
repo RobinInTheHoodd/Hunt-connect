@@ -2,18 +2,13 @@ import SignInScreen from "../view/sign/signIn/SignInScreen";
 import SignUpScreen from "../view/sign/signUp/SignUpScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../redux/hook";
+import React from "react";
+import { useAppSelector } from "../redux/hook";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../view/home/HomeScreen";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faDove, faLocation } from "@fortawesome/free-solid-svg-icons";
-import { useLoadingVisibility } from "../utils/LoadingVisibilityContext";
-import HuntingScreen from "../view/huntingSession/HuntingScreen";
 import ObservationScreen from "../view/huntingSession/ObservationScreen";
-import { useHuntSession } from "../redux/middleware/huntSessionMiddleware";
-import MigTrackingScreen from "../view/liveTracking/MigTracking";
 import { useMigTracking } from "../redux/middleware/migTrackingMiddleware";
+import DrawerNavigation from "../components/navigation/drawer/DrawerNavigation";
+import HuntingForm from "../components/hunting/HuntingForm";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -21,10 +16,6 @@ const Tab = createBottomTabNavigator();
 export default function RootNavigation() {
   const user = useAppSelector((state) => state.users);
 
-  const { isLoadingVisible, setLoadingVisible } = useLoadingVisibility();
-  const dispatch = useAppDispatch();
-
-  useHuntSession(user);
   useMigTracking(user);
 
   return (
@@ -40,68 +31,14 @@ export default function RootNavigation() {
           </>
         ) : (
           <>
-            <Stack.Screen name="Dashboard">
-              {() => (
-                <Tab.Navigator
-                  initialRouteName="Home"
-                  screenOptions={({ route }) => ({
-                    headerShown: false,
-                    tabBarIcon: ({ focused, color, size }) => {
-                      let iconName;
+            <Stack.Screen name="Dashboard" component={DrawerNavigation} />
 
-                      return (
-                        <FontAwesomeIcon
-                          icon={faDove}
-                          size={size}
-                          color={color}
-                        />
-                      );
-                    },
-                    tabBarActiveTintColor: "tomato",
-                    tabBarInactiveTintColor: "gray",
-                  })}
-                >
-                  <Tab.Screen name="Home" component={HomeScreen} />
-                  <Tab.Screen
-                    name="Session de chasse"
-                    component={HuntingScreen}
-                    listeners={{
-                      tabPress: (e) => {
-                        setLoadingVisible(true);
-                      },
-                    }}
-                    options={{ tabBarStyle: { display: "none" } }}
-                  />
-                  <Tab.Screen
-                    name="Live Tracking"
-                    component={MigTrackingScreen}
-                    options={{ tabBarStyle: { display: "none" } }}
-                  />
-                </Tab.Navigator>
-              )}
-            </Stack.Screen>
             <Stack.Screen name="Observation" component={ObservationScreen} />
+
+            <Stack.Screen name="newHunting" component={HuntingForm} />
           </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-/*
-{user.isNew ? (
-        <Stack.Navigator
-          initialRouteName="SignIn"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-        </Stack.Navigator>
-      ) : (
-        <Tab.Navigator initialRouteName="Home">
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Settings" component={HomeScreen} />
-        </Tab.Navigator>
-      )}
-      ;
-*/
