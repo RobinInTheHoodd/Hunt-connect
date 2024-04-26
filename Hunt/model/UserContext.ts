@@ -1,5 +1,4 @@
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { Use } from "react-native-svg";
 
 interface IUser {
   UIID: string;

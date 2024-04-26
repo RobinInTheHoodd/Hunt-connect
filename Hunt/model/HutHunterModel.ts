@@ -1,10 +1,3 @@
-import DuckTeamsModel, { IDuckTeamsModel } from "./DuckTeamsModel";
-import HuntingParticipantModel, {
-  IHuntingParticipanModel,
-} from "./HuntingParticipantModel";
-import WeatherInfoModel, { IWeatherInfoModel } from "./WeatherModel";
-import ObservationModel from "./form/ObservationModel";
-
 export interface IHutHunterModel {
   hunterID: string;
   displayName?: string;

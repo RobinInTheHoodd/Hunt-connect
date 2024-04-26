@@ -1,6 +1,5 @@
 import { IWeatherFormModel } from "./form/WeatherFormModel";
 
-// Définir une interface pour structurer la réponse de l'API
 export interface IWeatherApiResponse {
   location: {
     name: string;

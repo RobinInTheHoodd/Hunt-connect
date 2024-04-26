@@ -1,4 +1,3 @@
-import DuckTeamsModel from "../DuckTeamsModel";
 import ObservationForm from "../observation/ObservationForm";
 import ObservationFormBubble from "../observation/ObservationFormBubbleModel";
 import ObservationFormDuckPosition from "../observation/ObservationFormDuckPosition";

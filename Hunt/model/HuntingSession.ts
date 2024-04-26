@@ -1,10 +1,6 @@
-import DuckTeamsModel, { IDuckTeamsModel } from "./DuckTeamsModel";
-import HuntingParticipantModel, {
-  IHuntingParticipanModel,
-} from "./HuntingParticipantModel";
-import HutHunterModel, { IHutHunterModel } from "./HutHunterModel";
-import WeatherInfoModel, { IWeatherInfoModel } from "./WeatherModel";
-import ObservationModel from "./form/ObservationModel";
+import { IDuckTeamsModel } from "./DuckTeamsModel";
+import { IHutHunterModel } from "./HutHunterModel";
+import { IWeatherInfoModel } from "./WeatherModel";
 
 export interface IHuntingSessionModel {
   id: number | undefined;
