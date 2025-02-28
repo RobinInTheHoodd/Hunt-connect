@@ -23,7 +23,7 @@ export default {
       bundleIdentifier: "com.ios.huntconnect",
       googleServicesFile: "/home/robin/Downloads/g_service.json", //process.env.GOOGLE_SERVICES_JSON,
       config: {
-        googleMapsApiKey: "AIzaSyDamYRarsYON1ClmgzMYVrwOhTFwqHw4CY",
+        googleMapsApiKey: "",
       },
     },
     android: {
